@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Chiudi Pagina";
+}
+
+<h2>OK, puoi chiudere la pagina</h2>
+
+<button onclick="tryClose()">Chiudi la pagina</button>
+
+<script>
+    function tryClose() {
+        if (window.opener) {
+            window.close();
+        } else {
+            alert("Chiudi manualmente la pagina.");
+        }
+    }
+
+    // opzionale: chiusura automatica dopo 3 secondi se possibile
+    setTimeout(() => {
+        if (window.opener) {
+            window.close();
+        }
+    }, 3000);
+</script>

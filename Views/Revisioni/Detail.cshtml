@@ -1,0 +1,91 @@
+@model List<RevisioneViewModel>
+
+<div class="row">
+    <div class="col-md-8">
+        <h2>@ViewData["Title"]</h2>
+    </div>
+</div>
+
+@if (Model.Any()) // Se il Model contiene almeno un elemento
+{
+    <div class="d-flex justify-content-between align-items-center">
+        <h4 class="mb-3 text-primary">@Model.First().Filtro</h4>
+        <button onclick="window.history.back()" class="btn btn-outline-primary ml-auto">
+            <i class="fa fa-arrow-left"></i> Indietro
+        </button>
+    </div>
+}
+
+<div class="row fw-bold text-white bg-primary p-2 rounded">
+    <div class="col-md-6">Indicatori</div>
+    <div class="col-md-3">Info</div>
+    <div class="col-md-3">Note Istruttore</div>
+</div>
+
+@for (int i = 0; i < Model.Count; i++)
+{
+    var revisione = Model[i];
+    var rowClass = revisione.Tipo_Colonna == 2 ? "bg-warning" : "";
+
+    <div class="row border-bottom py-2 align-items-center @rowClass">
+        <div class="col-md-6">
+            <span>@revisione.NomeColonna</span>
+        </div>
+        @if (revisione.Tipo_Colonna != 2)
+        {
+            <div class="col-md-3 @(revisione.Info == "SI" || revisione.Info == "ACCESO" ? "text-danger fw-bold" : "")">
+                <span class="form-control-plaintext">@Model[i].Info</span>
+            </div>
+            <div class="col-md-3 d-flex align-items-center justify-content-end">
+                @Html.AntiForgeryToken()
+
+                <input type="text"
+                        class="form-control form-control-sm"
+                        id="note-@i"
+                        value="@revisione.NoteIstruttore" />
+                <button type="button"
+                        id="btn-salva-@i"
+                        class="btn btn-outline-success btn-sm ms-2"
+                        onclick="salvaNote('@revisione.Id', @i)">
+                    <i class="fas fa-save"></i>
+                </button>
+            </div>
+        }
+    </div>
+}
+
+<div class="text-center">
+    <a class="btn btn-primary mt-3" asp-controller="Revisioni" asp-action="CreatePdf" asp-route-nag="@Model.First().Nag_Affidato"><i class="fas fa-file-alt"></i> Crea PDF</a>
+</div>
+
+<script>
+    function salvaNote(id, index) {
+        const note = $('#note-' + index).val();
+        const token = $('input[name="__RequestVerificationToken"]').val();
+
+        console.log("Invio:", { Id: id, NoteIstruttore: note, Token: token });
+
+        $.ajax({
+            url: '/Revisioni/SaveNote',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                __RequestVerificationToken: token,
+                id: id,
+                noteIstruttore: note
+            },
+            success: function (response) {
+                alert(response.message);
+            },
+            error: function (xhr) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    alert(response.message || "Errore durante il salvataggio della nota.");
+                } catch (e) {
+                    console.error("Errore AJAX:", xhr.responseText);
+                    alert("Errore imprevisto.");
+                }
+            }
+        });
+    }
+</script>

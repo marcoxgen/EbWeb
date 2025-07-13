@@ -1,0 +1,47 @@
+@model List<AnomaliaRegistrazioneViewModel>
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+<div class="container bg-light p-4 rounded shadow-sm">
+    <div class="row font-weight-bold text-white bg-primary p-2 rounded">
+        <div class="col-md-2">NAG</div>
+        <div class="col-md-2">Codice Fiscale</div>
+        <div class="col-md-4">Intestazione</div>
+        <div class="col-md-1">Id Socio</div>
+        <div class="col-md-2">Anomalia</div>
+        <div class="col-md-1">Azioni</div>
+    </div>
+
+    @foreach (var anomalia in Model)
+    {
+        <div class="row border-bottom py-2 align-items-center">
+            <div class="col-md-2">
+                <h5 class="mb-0">@anomalia.Nag</h5>
+            </div>
+            <div class="col-md-2">
+                <span>@anomalia.CodiceFiscale</span>
+            </div>
+            <div class="col-md-4">
+                <span>@anomalia.Intestazione</span>
+            </div>
+            <div class="col-md-1">
+                <span>@anomalia.IdSocio</span>
+            </div>
+            <div class="col-md-2">
+                <span class="text-danger">
+                    <i class="fas fa-exclamation-circle"></i> @anomalia.AnomaliaDes
+                </span>
+            </div>
+            <div class="col-md-1">
+                <form asp-action="Forza" method="post">
+                    <input type="hidden" name="Nag" value="@anomalia.Nag" />
+                    <input type="hidden" name="CodiceFiscale" value="@anomalia.CodiceFiscale" />
+                    <input type="hidden" name="Intestazione" value="@anomalia.Intestazione" />
+                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                        Forza
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+</div>

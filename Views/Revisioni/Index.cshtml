@@ -1,0 +1,76 @@
+@model RevisioneListViewModel
+<div class="row">
+    <div class="col-md-8">
+        <h2>@ViewData["Title"]</h2>
+    </div>
+    <div class="col-md-4 d-flex align-items-center">
+        <form asp-controller="Revisioni" asp-action="Index" method="get">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Cerca..." aria-label="Cerca..." aria-describedby="search-button" value="@Model.Input.Search">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" id="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container bg-light p-4 rounded shadow-sm">
+    <div class="row">
+        <div class="col-md-2"><a asp-route-orderby="Nag_Affidato" asp-route-ascending="@(Model.Input.OrderBy == "Nag_Affidato" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Nag @if(Model.Input.OrderBy == "Nag_Affidato") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
+        <div class="col-md-6"><a asp-route-orderby="Intestazione" asp-route-ascending="@(Model.Input.OrderBy == "Intestazione" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Intestazione @if(Model.Input.OrderBy == "Intestazione") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
+    </div>
+
+    @foreach (var revisione in Model.Revisioni.Results)
+    {
+        <div class="row border-bottom py-2 align-items-center">
+            <div class="col-md-2">
+                <span>@revisione.Nag_Affidato</span>
+            </div>
+            <div class="col-md-6">
+                <span>@revisione.Intestazione</span>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <a class="btn btn-outline-primary btn-sm" asp-controller="Revisioni" asp-action="Detail" asp-route-nag="@revisione.Nag_Affidato"><i class="fas fa-file-alt"></i> Dettaglio</a>
+            </div>
+        </div>
+    }
+</div>
+
+@{
+    int totalPages = (int) Math.Ceiling(Model.Revisioni.TotalCount / (decimal) Model.Input.Limit);
+    int currentPage = Model.Input.Page;
+}
+<nav aria-label="Paginazione">
+    <ul class="pagination d-flex justify-content-center mt-3">
+        @if(currentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-route-page="@(currentPage - 1)" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending"><i class="fas fa-angle-left"></i></a>
+            </li>   
+        }
+        @for(int p = Math.Max(1, currentPage - 4); p <= Math.Min(totalPages, currentPage + 4); p++)
+        {
+            if (p == currentPage)
+            {
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" asp-route-page="@p" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending">@p <span class="sr-only">(current)</span></a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-route-page="@p" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending">@p</a>
+                </li>
+            }
+        }
+        @if(currentPage < totalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-route-page="@(currentPage + 1)" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending"><i class="fas fa-angle-right"></i></a>
+            </li>   
+        }
+    </ul>
+</nav>
