@@ -180,14 +180,6 @@ C:\src\EbWeb\bin\Debug\net8.0\publish\EbWeb.runtimeconfig.json
 C:\src\EbWeb\bin\Debug\net8.0\publish\wwwroot\lib\fontawesome\metadata\icon-families.json
 C:\src\EbWeb\bin\Debug\net8.0\publish\wwwroot\lib\fontawesome\metadata\icons.json
 C:\src\EbWeb\bin\Debug\net8.0\publish\wwwroot\lib\fontawesome\metadata\shims.json
-C:\src\EbWeb\bin\Debug\net8.0\publish\publish\web.config
-C:\src\EbWeb\bin\Debug\net8.0\publish\publish\appsettings.Development.json
-C:\src\EbWeb\bin\Debug\net8.0\publish\publish\appsettings.json
-C:\src\EbWeb\bin\Debug\net8.0\publish\publish\EbWeb.deps.json
-C:\src\EbWeb\bin\Debug\net8.0\publish\publish\EbWeb.runtimeconfig.json
-C:\src\EbWeb\bin\Debug\net8.0\publish\publish\wwwroot\lib\fontawesome\metadata\icon-families.json
-C:\src\EbWeb\bin\Debug\net8.0\publish\publish\wwwroot\lib\fontawesome\metadata\icons.json
-C:\src\EbWeb\bin\Debug\net8.0\publish\publish\wwwroot\lib\fontawesome\metadata\shims.json
 C:\src\EbWeb\bin\Debug\net8.0\LatoFont\Lato-Black.ttf
 C:\src\EbWeb\bin\Debug\net8.0\LatoFont\Lato-BlackItalic.ttf
 C:\src\EbWeb\bin\Debug\net8.0\LatoFont\Lato-Bold.ttf
@@ -243,3 +235,4 @@ C:\src\EbWeb\bin\Debug\net8.0\ICSharpCode.SharpZipLib.dll
 C:\src\EbWeb\bin\Debug\net8.0\SixLabors.Fonts.dll
 C:\src\EbWeb\bin\Debug\net8.0\SixLabors.ImageSharp.dll
 C:\src\EbWeb\bin\Debug\net8.0\de\PdfSharpCore.resources.dll
+C:\src\EbWeb\obj\Debug\net8.0\EbWeb.sourcelink.json

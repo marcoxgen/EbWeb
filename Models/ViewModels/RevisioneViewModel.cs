@@ -30,14 +30,14 @@ namespace EbWeb.Models.ViewModels
         {
             var revisioneViewModel = new RevisioneViewModel
             {
+                Id = revisioneRow.Field<int>("Id"),
                 Tipo_Colonna = revisioneRow.Field<int>("Tipo_Colonna"),
                 Nag_Affidato = revisioneRow.Field<int>("Nag_Affidato"),
                 Intestazione = revisioneRow.Field<string?>("Intestazione"),
                 NomeColonna = revisioneRow.Field<string?>("NomeColonna"),
                 Info = revisioneRow.Field<string?>("Info"),
                 NoteIstruttore = revisioneRow.Field<string?>("Note Istruttore"),
-                Filtro = revisioneRow.Field<string?>("Filtro"),
-                Id = revisioneRow.Field<int>("Id")
+                Filtro = revisioneRow.Field<string?>("Filtro")
             };
             return revisioneViewModel;
         }

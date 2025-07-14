@@ -172,22 +172,6 @@ C:\src\EbWeb\obj\Release\net8.0\refint\EbWeb.dll
 C:\src\EbWeb\obj\Release\net8.0\EbWeb.pdb
 C:\src\EbWeb\obj\Release\net8.0\EbWeb.genruntimeconfig.cache
 C:\src\EbWeb\obj\Release\net8.0\ref\EbWeb.dll
-C:\src\EbWeb\bin\Release\net8.0\publish.save\publish\web.config
-C:\src\EbWeb\bin\Release\net8.0\publish.save\web.config
-C:\src\EbWeb\bin\Release\net8.0\publish.save\appsettings.Development.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\appsettings.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\EbWeb.deps.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\EbWeb.runtimeconfig.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\publish\appsettings.Development.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\publish\appsettings.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\publish\EbWeb.deps.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\publish\EbWeb.runtimeconfig.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\publish\wwwroot\lib\fontawesome\metadata\icon-families.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\publish\wwwroot\lib\fontawesome\metadata\icons.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\publish\wwwroot\lib\fontawesome\metadata\shims.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\wwwroot\lib\fontawesome\metadata\icon-families.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\wwwroot\lib\fontawesome\metadata\icons.json
-C:\src\EbWeb\bin\Release\net8.0\publish.save\wwwroot\lib\fontawesome\metadata\shims.json
 C:\src\EbWeb\bin\Release\net8.0\LatoFont\Lato-Black.ttf
 C:\src\EbWeb\bin\Release\net8.0\LatoFont\Lato-BlackItalic.ttf
 C:\src\EbWeb\bin\Release\net8.0\LatoFont\Lato-Bold.ttf
@@ -243,3 +227,4 @@ C:\src\EbWeb\bin\Release\net8.0\runtimes\win-x86\native\libgcc_s_dw2-1.dll
 C:\src\EbWeb\bin\Release\net8.0\runtimes\win-x86\native\libstdc++-6.dll
 C:\src\EbWeb\bin\Release\net8.0\runtimes\win-x86\native\libwinpthread-1.dll
 C:\src\EbWeb\bin\Release\net8.0\runtimes\win-x86\native\qpdf.dll
+C:\src\EbWeb\obj\Release\net8.0\EbWeb.sourcelink.json

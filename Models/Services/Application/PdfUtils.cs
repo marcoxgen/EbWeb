@@ -54,7 +54,15 @@ namespace EbWeb.Models.Services.Application
                             isEven = !isEven;
 
                             table.Cell().Element(container => CellStyle(container, bgColor)).Text(rev.NomeColonna);
-                            table.Cell().Element(container => CellStyle(container, bgColor)).Text(rev.Info);
+                            table.Cell().Element(container => CellStyle(container, bgColor)).Text(text =>
+                            {
+                                if (rev.Info == "SI" || rev.Info == "ACCESO")
+                                {
+                                    text.DefaultTextStyle(x => x.FontColor(Colors.Red.Medium).SemiBold());
+                                }
+
+                                text.Span(rev.Info);
+                            });
                             table.Cell().Element(container => CellStyle(container, bgColor)).Text(rev.NoteIstruttore);
                         }
                     });

@@ -34,7 +34,7 @@
         @if (revisione.Tipo_Colonna != 2)
         {
             <div class="col-md-3 @(revisione.Info == "SI" || revisione.Info == "ACCESO" ? "text-danger fw-bold" : "")">
-                <span class="form-control-plaintext">@Model[i].Info</span>
+                <span>@Model[i].Info</span>
             </div>
             <div class="col-md-3 d-flex align-items-center justify-content-end">
                 @Html.AntiForgeryToken()

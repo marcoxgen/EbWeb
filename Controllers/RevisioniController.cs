@@ -58,14 +58,14 @@ namespace EbWeb.Controllers
 
             var pdfUnito = PdfUtils.UnisciPdf(pdfLegenda, pdfEsistente);
 
-            return File(pdfUnito, "application/pdf", "pdf-unito.pdf");
+            return File(pdfUnito, "application/pdf", $"dettaglio_indicatori_{nag}.pdf");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SaveNote(int id, string noteIstruttore)
         {
-            int updated = await revisioneService.EditNoteAsync(id, noteIstruttore);
+            int updated = await revisioneService.EditNoteAsync(id, noteIstruttore ?? "");
 
             if (updated > 0)
                 return Ok(new { message = "Nota aggiornata correttamente" });
