@@ -31,7 +31,7 @@ namespace EbWeb.Models.Services.Application
             logger.LogInformation("Nag {id} requested", id);
 
             FormattableString query = $"SELECT NAG, Intestazione FROM Anag_Anagrafe_Generale WHERE NAG={@id}";
-            DataSet dataSet = await db.QueryAsync(connectionStringOptions.CurrentValue.Anagrafe, query);
+            DataSet dataSet = await db.QueryAsync("Anagrafe", query);
 
             var dataTable = dataSet.Tables[0];
             if (dataTable.Rows.Count != 1) {
@@ -54,7 +54,7 @@ namespace EbWeb.Models.Services.Application
             try
             {
                 FormattableString query = $"INSERT INTO Attr.Anomalie_Registrazione_Forzature (NAG, Utente, Data_Forzatura) VALUES ({nag}, {utente}, {dataForzatura})";
-                DataSet dataSet = await db.QueryAsync(connectionStringOptions.CurrentValue.AppXteDb, query);
+                DataSet dataSet = await db.QueryAsync("AppXteDb", query);
             }
             catch (SqlException exc) when (exc.Number == 2601)
             {
@@ -65,7 +65,7 @@ namespace EbWeb.Models.Services.Application
         public async Task<List<AnomaliaRegistrazioneViewModel>> GetAnomalieRegistrazioniAsync()
         {
             FormattableString query = $"SELECT NAG, codice_fiscale, INTESTAZIONE, Id_Socio, Anomalia_Des FROM XTE.Anomalie_Registrazione_Forzabili";
-            DataSet dataSet = await db.QueryAsync(connectionStringOptions.CurrentValue.AppXteDb, query);
+            DataSet dataSet = await db.QueryAsync("AppXteDb", query);
             var dataTable = dataSet.Tables[0];
             var anomaliaRegistrazioneList = new List<AnomaliaRegistrazioneViewModel>();
             foreach(DataRow anomaliaRegistrazioneRow in dataTable.Rows) {

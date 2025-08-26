@@ -1,0 +1,62 @@
+@model List<IstruttoriaViewModel>
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+    
+<div class="container bg-light p-4 rounded shadow-sm">
+    <!-- contenitore scrollabile -->
+    <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+        <table class="table table-bordered table-striped table-sm">
+            <thead class="table-primary">
+                <tr>
+                    <th>Numero Pratica</th>
+                    <th>NAG</th>
+                    <th>Intestazione</th>
+                    <th>Tipo Controparte</th>
+                    <th>Gestore</th>
+                    <th>Organo Deliberante</th>
+                    <th>Data Inserimento</th>
+                    <th>Data Ultimo Trasferimento</th>
+                    <th>Ultimo Codice GoBack</th>
+                    <th>Data Ultimo GoBack</th>
+                    <th>Elimina Code</th>
+                    <th>Tipo Istruttoria</th>
+                    <th>Stato Pratica</th>
+                    <th>GradoRischioCod</th>
+                    <th>Profilo Antiriciclaggio</th>
+                    <th>Cluster Pratica</th>
+                    <th>Istruttore</th>
+                    <th>Note</th>
+                    <th>Note Escalation Indicatori Bilancio</th>
+                    <th>Note Nuovo Questionario ESG</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var istruttoria in Model)
+                {
+                    <tr>
+                        <td>@istruttoria.NumeroPratica</td>
+                        <td>@istruttoria.Nag</td>
+                        <td>@istruttoria.Intestazione</td>
+                        <td>@istruttoria.TipoControparteCod</td>
+                        <td>@istruttoria.Gestore</td>
+                        <td>@istruttoria.OrganoDeliberanteCod</td>
+                        <td>@istruttoria.DataInserimentoPratica?.ToString("dd/MM/yyyy")</td>
+                        <td>@istruttoria.DataUltimoTrasferimento?.ToString("dd/MM/yyyy")</td>
+                        <td>@istruttoria.UltimoCodGoBack</td>
+                        <td>@istruttoria.DataUltimoGoBack?.ToString("dd/MM/yyyy")</td>
+                        <td>@istruttoria.EliminaCode</td>
+                        <td>@istruttoria.TipoIstruttoriaCod</td>
+                        <td>@istruttoria.StatoPraticaCod</td>
+                        <td>@istruttoria.GradoRischioCod</td>
+                        <td>@istruttoria.ProfiloAntiriciclaggio</td>
+                        <td>@istruttoria.ClusterPratica</td>
+                        <td>@istruttoria.Istruttore</td>
+                        <td>@istruttoria.Note</td>
+                        <td>@istruttoria.NoteEscalationIndicatoriBilancio</td>
+                        <td>@istruttoria.NoteNuovoQuestionarioEsg</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

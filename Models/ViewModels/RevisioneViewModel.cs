@@ -5,6 +5,7 @@ namespace EbWeb.Models.ViewModels
 {
     public class RevisioneViewModel
     {
+        public int Id { get; set; }
         public int? Tipo_Colonna { get; set; }
         public int Nag_Affidato { get; set; }
         public required string? Intestazione { get; set; }
@@ -13,7 +14,6 @@ namespace EbWeb.Models.ViewModels
         [Column("Note Istruttore")]
         public string? NoteIstruttore { get; set; }
         public required string? Filtro { get; set; }
-        public int Id { get; set; }
 
         public static RevisioneViewModel FromDataRowSearch(DataRow revisioneRow)
         {

@@ -1,0 +1,106 @@
+@model IstruttoriaListViewModel
+
+<div class="row">
+    <div class="col-md-8">
+        <h2>@ViewData["Title"]</h2>
+    </div>
+    <div class="col-md-4 d-flex align-items-center">
+        <form asp-controller="Istruttorie" asp-action="Index" method="get">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Cerca..." aria-label="Cerca..." aria-describedby="search-button" value="@Model.Input.Search">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit" id="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container bg-light p-4 rounded shadow-sm">
+    <div class="row">
+        <div class="col-md-1"><a asp-route-orderby="Nag" asp-route-ascending="@(Model.Input.OrderBy == "Nag" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Nag @if(Model.Input.OrderBy == "Nag") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
+        <div class="col-md-2">Intestazione</div>
+        <div class="col-md-1"><a asp-route-orderby="Istruttore" asp-route-ascending="@(Model.Input.OrderBy == "Istruttore" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Istruttore @if(Model.Input.OrderBy == "Istruttore") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
+        <div class="col-md-1"><a asp-route-orderby="Cluster_Pratica" asp-route-ascending="@(Model.Input.OrderBy == "Cluster_Pratica" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Cluster Pratica @if(Model.Input.OrderBy == "Cluster_Pratica") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
+        <div class="col-md-1">Data Ins Prat</div>
+        <div class="col-md-1">Data Ult Trasf</div>
+        <div class="col-md-2">Note</div>
+        <div class="col-md-1">Note Escal</div>
+        <div class="col-md-1">Note Esg</div>
+        <div class="col-md-1">Num Pratica</div>
+    </div>
+
+    @foreach (var istruttoria in Model.Istruttorie.Results)
+    {
+        <div class="row border-bottom py-2 align-items-center">
+            <div class="col-md-1">
+                <span>@istruttoria.Nag</span>
+            </div>
+            <div class="col-md-2">
+                <span>@istruttoria.Intestazione</span>
+            </div>
+            <div class="col-md-1">
+                <span>@istruttoria.Istruttore</span>
+            </div>
+            <div class="col-md-1">
+                <span>@istruttoria.ClusterPratica</span>
+            </div>
+            <div class="col-md-1">
+                <span>@istruttoria.DataInserimentoPratica</span>
+            </div>
+            <div class="col-md-1">
+                <span>@istruttoria.DataUltimoTrasferimento</span>
+            </div>
+            <div class="col-md-2">
+                <span>@istruttoria.Note</span>
+            </div>
+            <div class="col-md-1">
+                <span>@istruttoria.NoteEscalationIndicatoriBilancio</span>
+            </div>
+            <div class="col-md-1">
+                <span>@istruttoria.NoteNuovoQuestionarioEsg</span>
+            </div>
+            <div class="col-md-1">
+                <span>@istruttoria.NumeroPratica</span>
+            </div>
+        </div>
+    }
+</div>
+
+@{
+    int totalPages = (int) Math.Ceiling(Model.Istruttorie.TotalCount / (decimal) Model.Input.Limit);
+    int currentPage = Model.Input.Page;
+}
+<nav aria-label="Paginazione">
+    <ul class="pagination d-flex justify-content-center mt-3">
+        @if(currentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-route-page="@(currentPage - 1)" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending"><i class="fas fa-angle-left"></i></a>
+            </li>   
+        }
+        @for(int p = Math.Max(1, currentPage - 4); p <= Math.Min(totalPages, currentPage + 4); p++)
+        {
+            if (p == currentPage)
+            {
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" asp-route-page="@p" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending">@p <span class="sr-only">(current)</span></a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-route-page="@p" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending">@p</a>
+                </li>
+            }
+        }
+        @if(currentPage < totalPages)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-route-page="@(currentPage + 1)" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending"><i class="fas fa-angle-right"></i></a>
+            </li>   
+        }
+    </ul>
+</nav>

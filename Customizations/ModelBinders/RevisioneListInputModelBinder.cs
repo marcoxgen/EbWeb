@@ -20,7 +20,7 @@ namespace EbWeb.Customizations.ModelBinders
             string OrderBy = bindingContext.ValueProvider.GetValue("OrderBy").FirstValue;
             bool Ascending = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("Ascending").FirstValue);
 
-            //Creo l'istanza del CourseListInputModel
+            //Creo l'istanza del RevisioneListInputModel
             RevisioniOptions options = revisioniOptions.CurrentValue;
             var inputModel = new RevisioneListInputModel(search, page, OrderBy, Ascending, options.PerPage, options.Order);
 

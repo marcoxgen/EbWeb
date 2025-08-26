@@ -15,16 +15,23 @@ builder.Services.AddTransient<IAnomaliaService, AdoNetAnomaliaService>();
 builder.Services.AddTransient<IDatabaseAccessor, SqlDatabaseAccessor>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IRevisioneService, AdoNetRevisioneService>();
+builder.Services.AddTransient<IIstruttoriaService, EFCoreIstruttoriaService>();
 
 // Registrazione dell'autenticazione Windows (IIS)
-builder.Services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme;
+    options.DefaultForbidScheme = Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme;
+});
 
 // Options
 builder.Services.Configure<ConnectionStringsOptions>(builder.Configuration.GetSection("ConnectionStrings"));
 builder.Services.Configure<RevisioniOptions>(builder.Configuration.GetSection("Revisioni"));
+builder.Services.Configure<IstruttorieOptions>(builder.Configuration.GetSection("Istruttorie"));
 
-builder.Services.AddDbContextPool<DB_AnagrafeDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Anagrafe")));
+builder.Services.AddDbContext<IstruttoriaDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Cruscotto_Istruttoria")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -49,6 +56,14 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Route personalizzata con parametri opzionali
+app.MapControllerRoute(
+    name: "ClientiFiltro",
+    pattern: "Clienti/{stato?}/{anno?}",
+    defaults: new { controller = "Clienti", action = "Index" }
+);
+
+// Route di default
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
