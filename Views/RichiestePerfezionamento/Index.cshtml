@@ -1,0 +1,200 @@
+@using EbWeb.Models.Entities
+@model RichiestaPerfezionamentoListViewModel
+
+@Html.AntiForgeryToken()
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white d-flex align-items-center">
+        <i class="fas fa-tasks me-2"></i>
+        <h3 class="mb-0">@ViewData["Title"]</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm table-small-text" style="table-layout: fixed; min-width: 1600px;">
+                <thead class="bg-light text-primary text-center">
+                    <tr>
+                        <th style="width: 40px;">Id</th>
+                        <th style="width: 50px;">Data</th>
+                        <th style="width: 30px;">Filiale</th>
+                        <th style="width: 30px;">Nag</th>
+                        <th style="width: 60px;">Intestazione</th>
+                        <th style="width: 80px;">Step Richiesta</th>
+                        <th style="width: 100px;">Richiesta 1</th>
+                        <th style="width: 80px;">Assegnatario 1</th>
+                        <th style="width: 30px;" title="Azione 1">
+                            <i class="fas fa-running"></i>
+                        </th>
+                        <th style="width: 100px;">Richiesta 2</th>
+                        <th style="width: 80px;">Assegnatario 2</th>
+                        <th style="width: 30px;" title="Azione 2">
+                            <i class="fas fa-running"></i>
+                        </th>
+                        <th style="width: 100px;">Richiesta 3</th>
+                        <th style="width: 80px;">Assegnatario 3</th>
+                        <th style="width: 30px;" title="Azione 3">
+                            <i class="fas fa-running"></i>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var richiestaPerfezionamento in Model.RichiestePerfezionamento.Results)
+                    {
+                        <tr>
+                            <td>@richiestaPerfezionamento.IdRichiesta</td>
+                            <td>@richiestaPerfezionamento.DataRichiesta.ToString(format: "d")</td>
+                            <td>@richiestaPerfezionamento.Filiale</td>
+                            <td>@richiestaPerfezionamento.Nag</td>
+                            <td>@richiestaPerfezionamento.Intestazione</td>
+                            <td>@richiestaPerfezionamento.StatoRichiesta</td>
+                            <td>@richiestaPerfezionamento.TipoRichiesta1</td>
+                            <td class="assegnatario1">@richiestaPerfezionamento.Assegnatario1</td>
+                            <td class="azioni d-flex justify-content-center">
+                                @{
+                                    bool isRichiesta1Empty = string.IsNullOrEmpty(richiestaPerfezionamento.TipoRichiesta1);
+                                }
+                                <button class="btn btn-sm @(string.IsNullOrEmpty(richiestaPerfezionamento.Assegnatario1) ? "btn-outline-success" : "btn-outline-danger") btn-toggle-assegnatario1 flex-fill" style="max-width: 40px;" @(isRichiesta1Empty ? "disabled" : "")>
+                                    <i class="fas @(string.IsNullOrEmpty(richiestaPerfezionamento.Assegnatario1) ? "fa-user-plus" : "fa-user-times")"></i>
+                                </button>
+                            </td>
+                            <td>@richiestaPerfezionamento.TipoRichiesta2</td>
+                            <td class="assegnatario2">@richiestaPerfezionamento.Assegnatario2</td>
+                            <td class="azioni d-flex justify-content-center">
+                                @{
+                                    bool isRichiesta2Empty = string.IsNullOrEmpty(richiestaPerfezionamento.TipoRichiesta2);
+                                }
+                                <button class="btn btn-sm @(string.IsNullOrEmpty(richiestaPerfezionamento.Assegnatario2) ? "btn-outline-success" : "btn-outline-danger") btn-toggle-assegnatario2 flex-fill" style="max-width: 40px;" @(isRichiesta2Empty ? "disabled" : "")>
+                                    <i class="fas @(string.IsNullOrEmpty(richiestaPerfezionamento.Assegnatario2) ? "fa-user-plus" : "fa-user-times")"></i>
+                                </button>
+                            </td>
+                            <td>@richiestaPerfezionamento.TipoRichiesta3</td>
+                            <td class="assegnatario3">@richiestaPerfezionamento.Assegnatario3</td>
+                            <td class="azioni d-flex justify-content-center">
+                                @{
+                                    bool isRichiesta3Empty = string.IsNullOrEmpty(richiestaPerfezionamento.TipoRichiesta3);
+                                }
+                                <button class="btn btn-sm @(string.IsNullOrEmpty(richiestaPerfezionamento.Assegnatario3) ? "btn-outline-success" : "btn-outline-danger") btn-toggle-assegnatario3 flex-fill" style="max-width: 40px;" @(isRichiesta3Empty ? "disabled" : "")>
+                                    <i class="fas @(string.IsNullOrEmpty(richiestaPerfezionamento.Assegnatario3) ? "fa-user-plus" : "fa-user-times")"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @{
+        int totalPages = (int) Math.Ceiling(Model.RichiestePerfezionamento.TotalCount / (decimal) Model.Input.Limit);
+        int currentPage = Model.Input.Page;
+    }
+
+    @if (totalPages > 1)
+    {
+        <div class="card-footer d-flex justify-content-center">
+
+            <nav aria-label="Paginazione">
+                <ul class="pagination d-flex justify-content-center mt-3">
+                    @if(currentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-route-page="@(currentPage - 1)"><i class="fas fa-angle-left"></i></a>
+                        </li>   
+                    }
+                    @for(int p = Math.Max(1, currentPage - 4); p <= Math.Min(totalPages, currentPage + 4); p++)
+                    {
+                        if (p == currentPage)
+                        {
+                            <li class="page-item active" aria-current="page">
+                                <a class="page-link" asp-route-page="@p">@p <span class="sr-only">(current)</span></a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-route-page="@p">@p</a>
+                            </li>
+                        }
+                    }
+                    @if(currentPage < totalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-route-page="@(currentPage + 1)"><i class="fas fa-angle-right"></i></a>
+                        </li>   
+                    }
+                </ul>
+            </nav>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        const assignUrl = '@Url.Action("Assign", "RichiestePerfezionamento")';
+        const revokeUrl = '@Url.Action("Revoke", "RichiestePerfezionamento")';
+
+        document.querySelectorAll(".btn-toggle-assegnatario1").forEach(function(button) {
+            button.addEventListener("click", async function () {
+                await toggleAssegnatario(button, 1);
+            });
+        });
+        document.querySelectorAll(".btn-toggle-assegnatario2").forEach(function(button) {
+            button.addEventListener("click", async function () {
+                await toggleAssegnatario(button, 2);
+            });
+        });
+        document.querySelectorAll(".btn-toggle-assegnatario3").forEach(function(button) {
+            button.addEventListener("click", async function () {
+                await toggleAssegnatario(button, 3);
+            });
+        });
+
+        async function toggleAssegnatario(button, assignedIndex) {
+            var row = button.closest("tr");
+            if (!row) return;
+            var idRichiesta = row.querySelector("td:nth-child(1)").textContent.trim();
+            
+            var cellSelector = `.assegnatario${assignedIndex}`;
+            var dataKey = `assegnatario${assignedIndex}`;
+            
+            var cell = row.querySelector(cellSelector);
+            if (!cell) {
+                console.error(`Cella ${cellSelector} non trovata.`);
+                return;
+            }
+
+            var actionUrl = button.classList.contains("btn-outline-success") ? assignUrl : revokeUrl;
+
+            var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            var formData = new FormData();
+            formData.append("__RequestVerificationToken", token);
+            formData.append("idRichiesta", idRichiesta);
+
+            formData.append("assegnatarioIndex", assignedIndex); 
+
+            try {
+                var response = await fetch(actionUrl, {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error(`Server error: ${response.status}`);
+                var data = await response.json();
+
+                if (actionUrl === assignUrl) {
+                    cell.textContent = data[dataKey];
+                    button.classList.remove("btn-outline-success");
+                    button.classList.add("btn-outline-danger");
+                    //button.innerHTML = '<i class="fas fa-user-times"></i> Revoca';
+                } else {
+                    cell.textContent = "";
+                    button.classList.remove("btn-outline-danger");
+                    button.classList.add("btn-outline-success");
+                    //button.innerHTML = '<i class="fas fa-user-plus"></i> Assegna';
+                }
+            } catch (err) {
+                console.error("Fetch error:", err);
+                alert("Errore di rete. Controlla token CSRF o connessione.");
+            }
+        }
+    </script>
+}

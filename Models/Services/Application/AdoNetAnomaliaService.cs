@@ -26,24 +26,6 @@ namespace EbWeb.Models.Services.Application
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<AnagraficaViewModel> GetAnagraficaAsync(int id)
-        {
-            logger.LogInformation("Nag {id} requested", id);
-
-            FormattableString query = $"SELECT NAG, Intestazione FROM Anag_Anagrafe_Generale WHERE NAG={@id}";
-            DataSet dataSet = await db.QueryAsync("Anagrafe", query);
-
-            var dataTable = dataSet.Tables[0];
-            if (dataTable.Rows.Count != 1) {
-                logger.LogWarning("Nag {id} not found", id);
-                throw new AnomaliaNotFoundException(id);
-            }
-            var dataRow = dataTable.Rows[0];
-            var anagrafeViewModel = AnagraficaViewModel.FromDataRow(dataRow);
-
-            return anagrafeViewModel;
-        }
-        
         public async Task ForzaAnomaliaAsync(int id)
         {
             int nag = id;

@@ -4,74 +4,116 @@ using EbWeb.Models.Services.Infrastructure;
 using EbWeb.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace EbWeb.Models.Services.Application
+namespace EbWeb.Models.Services.Application;
+
+public class EFCoreIstruttoriaService : IIstruttoriaService
 {
-    public class EFCoreIstruttoriaService : IIstruttoriaService
+    private readonly IstruttoriaDbContext _dbContext;
+    private readonly IUserService _userService;
+
+    public EFCoreIstruttoriaService(IstruttoriaDbContext dbContext, IUserService userService)
     {
-        private readonly IstruttoriaDbContext dbContext;
+        _dbContext = dbContext;
+        _userService = userService;
+    }
 
-        public EFCoreIstruttoriaService(IstruttoriaDbContext dbContext)
-        {
-            this.dbContext = dbContext;
-        }
-
-        public async Task<ListViewModel<IstruttoriaViewModel>> GetIstruttorieAsync(IstruttoriaListInputModel model)
-        {
-            IQueryable<Istruttoria> baseQuery = dbContext.Istruttorie;
-
-            switch(model.OrderBy)
+    public async Task<ListViewModel<IstruttoriaViewModel>> GetIstruttorieAsync(IstruttoriaListInputModel model)
+    {
+        var baseQuery =
+            from i in _dbContext.Istruttorie
+            join a in _dbContext.Assegna_Pratiche
+                on i.Numero_Pratica equals a.Numero_Pratica into gj
+            from a in gj.DefaultIfEmpty()
+            select new
             {
-                case "Istruttore":
-                    if (model.Ascending)
-                    {
-                        baseQuery = baseQuery.OrderBy(istruttoria => istruttoria.Istruttore);
-                    }
-                    else
-                    {
-                        baseQuery = baseQuery.OrderByDescending(istruttoria => istruttoria.Istruttore);
-                    }
-                    break;
-                case "Nag":
-                    if (model.Ascending)
-                    {
-                        baseQuery = baseQuery.OrderBy(istruttoria => istruttoria.Nag);
-                    }
-                    else
-                    {
-                        baseQuery = baseQuery.OrderByDescending(istruttoria => istruttoria.Nag);
-                    }
-                    break;
-                case "Cluster_Pratica":
-                    if (model.Ascending)
-                    {
-                        baseQuery = baseQuery.OrderBy(istruttoria => istruttoria.Cluster_Pratica);
-                    }
-                    else
-                    {
-                        baseQuery = baseQuery.OrderByDescending(istruttoria => istruttoria.Cluster_Pratica);
-                    }
-                    break;
-            }
-
-            IQueryable<IstruttoriaViewModel> queryLinq = baseQuery
-                .Where(istruttoria => istruttoria.Intestazione.Contains(model.Search))
-                .AsNoTracking()
-                .Select(istruttoria => IstruttoriaViewModel.FromEntity(istruttoria)); //Usando metodi statici come FromEntity, la query potrebbe essere inefficiente. Mantenere il mapping nella lambda oppure usare un extension method personalizzato
-
-            List<IstruttoriaViewModel> courses = await queryLinq
-                .Skip(model.Offset)
-                .Take(model.Limit)
-                .ToListAsync(); //La query al database viene inviata qui, quando manifestiamo l'intenzione di voler leggere i risultati
-
-            int totalCount = await queryLinq.CountAsync();
-
-            ListViewModel<IstruttoriaViewModel> result = new ListViewModel<IstruttoriaViewModel>
-            {
-                Results = courses,
-                TotalCount = totalCount
+                Istruttoria = i,
+                IstruttoreEffettivo = a != null
+                    ? (string.IsNullOrEmpty(a.Istruttore) ? "" : a.Istruttore)
+                    : i.Istruttore
             };
 
-            return result;
+        if (model.Nag.HasValue)
+            baseQuery = baseQuery.Where(x => x.Istruttoria.Nag == model.Nag.Value);
+
+        int totalCount = await baseQuery.CountAsync();
+
+        var results = await baseQuery
+            .AsNoTracking()
+            .Skip(model.Offset)
+            .Take(model.Limit)
+            .Select(x => new IstruttoriaViewModel
+            {
+                Nag = x.Istruttoria.Nag,
+                Intestazione = x.Istruttoria.Intestazione,
+                NumeroPratica = x.Istruttoria.Numero_Pratica,
+                ClusterPratica = x.Istruttoria.Cluster_Pratica,
+                EliminaCode = x.Istruttoria.Elimina_Code,
+                Gestore = x.Istruttoria.Gestore,
+                Rating = x.Istruttoria.Rating,
+                Istruttore = x.IstruttoreEffettivo,
+                Note = x.Istruttoria.Note,
+                NoteEscalationIndicatoriBilancio = x.Istruttoria.Note_escalation_indicatori_bilancio
+            })
+            .ToListAsync();
+
+        return new ListViewModel<IstruttoriaViewModel>
+        {
+            Results = results,
+            TotalCount = totalCount
+        };
+    }
+
+    public async Task<string> AssegnaPraticaAsync(long numeroPratica)
+    {
+        var nomeIstruttore = _userService.GetDisplayName().ToUpperInvariant();
+        var record = await _dbContext.Assegna_Pratiche
+            .FirstOrDefaultAsync(x => x.Numero_Pratica == numeroPratica);
+
+        if (record != null)
+        {
+            // Se esiste già, aggiorna l'istruttore (anche se è già valorizzato)
+            record.Istruttore = nomeIstruttore;
+            _dbContext.Assegna_Pratiche.Update(record);
         }
+        else
+        {
+            // Se non esiste, crea un nuovo record
+            var nuovaAssegnazione = new Assegna_Pratica
+            {
+                Numero_Pratica = numeroPratica,
+                Istruttore = nomeIstruttore,
+                Data = DateTime.Now
+            };
+            _dbContext.Assegna_Pratiche.Add(nuovaAssegnazione);
+        }
+
+        await _dbContext.SaveChangesAsync();
+        return nomeIstruttore;
+    }
+    
+    public async Task RevocaPraticaAsync(long numeroPratica)
+    {
+        var record = await _dbContext.Assegna_Pratiche
+            .FirstOrDefaultAsync(x => x.Numero_Pratica == numeroPratica);
+
+        if (record != null)
+        {
+            // Se esiste: aggiorna mettendo la stringa vuota
+            record.Istruttore = null;
+            _dbContext.Assegna_Pratiche.Update(record);
+        }
+        else
+        {
+            // Se non esiste: crea un nuovo record
+            var nuovoRecord = new Assegna_Pratica
+            {
+                Numero_Pratica = numeroPratica,
+                Istruttore = null,
+                Data = DateTime.Now
+            };
+            _dbContext.Assegna_Pratiche.Add(nuovoRecord);
+        }
+
+        await _dbContext.SaveChangesAsync();
     }
 }

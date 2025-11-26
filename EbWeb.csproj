@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\" />
-    <Compile Remove="Models/Services/Application/AnomaliaService.cs" />
     <Compile Remove="Models/Services/Application/EfCoreAnomaliaService.cs" />
   </ItemGroup>
 
@@ -25,6 +24,7 @@
     </PackageReference>
     <PackageReference Include="PdfSharpCore" Version="1.3.67" />
     <PackageReference Include="QuestPDF" Version="2025.5.0" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="9.0.9" />
   </ItemGroup>
 
 </Project>

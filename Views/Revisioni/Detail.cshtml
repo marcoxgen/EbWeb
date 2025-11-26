@@ -33,7 +33,7 @@
         </div>
         @if (revisione.Tipo_Colonna != 2)
         {
-            <div class="col-md-3 @(revisione.Info == "SI" || revisione.Info == "ACCESO" ? "text-danger fw-bold" : "")">
+            <div class="col-md-3 @(revisione.Info == "SI" || revisione.Info == "ACCESO" || revisione.Info == "Indicatore non rispettato" ? "text-danger fw-bold" : "")">
                 <span>@Model[i].Info</span>
             </div>
             <div class="col-md-3 d-flex align-items-center justify-content-end">

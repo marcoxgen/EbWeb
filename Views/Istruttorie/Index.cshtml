@@ -1,106 +1,148 @@
 @model IstruttoriaListViewModel
 
-<div class="row">
-    <div class="col-md-8">
-        <h2>@ViewData["Title"]</h2>
-    </div>
-    <div class="col-md-4 d-flex align-items-center">
-        <form asp-controller="Istruttorie" asp-action="Index" method="get">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Cerca..." aria-label="Cerca..." aria-describedby="search-button" value="@Model.Input.Search">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit" id="search-button">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
+@Html.AntiForgeryToken() <!-- CSRF token -->
 
-<div class="container bg-light p-4 rounded shadow-sm">
-    <div class="row">
-        <div class="col-md-1"><a asp-route-orderby="Nag" asp-route-ascending="@(Model.Input.OrderBy == "Nag" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Nag @if(Model.Input.OrderBy == "Nag") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
-        <div class="col-md-2">Intestazione</div>
-        <div class="col-md-1"><a asp-route-orderby="Istruttore" asp-route-ascending="@(Model.Input.OrderBy == "Istruttore" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Istruttore @if(Model.Input.OrderBy == "Istruttore") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
-        <div class="col-md-1"><a asp-route-orderby="Cluster_Pratica" asp-route-ascending="@(Model.Input.OrderBy == "Cluster_Pratica" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Cluster Pratica @if(Model.Input.OrderBy == "Cluster_Pratica") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
-        <div class="col-md-1">Data Ins Prat</div>
-        <div class="col-md-1">Data Ult Trasf</div>
-        <div class="col-md-2">Note</div>
-        <div class="col-md-1">Note Escal</div>
-        <div class="col-md-1">Note Esg</div>
-        <div class="col-md-1">Num Pratica</div>
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white d-flex align-items-center">
+        <i class="fas fa-tasks me-2"></i>
+        <h3 class="mb-0">@ViewData["Title"]</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm table-small-text" style="table-layout: fixed; min-width: 1800px;">
+                <thead class="bg-light text-primary text-center">
+                    <tr>
+                        <th style="width: 80px;">NAG</th>
+                        <th style="width: 250px;">Intestazione</th>
+                        <th style="width: 120px;">Numero Pratica</th>
+                        <th style="width: 150px;">Cluster Pratica</th>
+                        <th style="width: 80px;">Data Lavor Ricalcolata</th>
+                        <th style="width: 150px;">Gestore</th>
+                        <th style="width: 50px;">Rating</th>
+                        <th style="width: 150px;">Istruttore</th>
+                        <th style="width: 120px;">Azioni</th>
+                        <th style="width: 250px;">Note</th>
+                        <th style="width: 250px;">Note Escalation Indicatori Bilancio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var istruttoria in Model.Istruttorie.Results)
+                    {
+                        <tr>
+                            <td>@istruttoria.Nag</td>
+                            <td>@istruttoria.Intestazione</td>
+                            <td>@istruttoria.NumeroPratica</td>
+                            <td>@istruttoria.ClusterPratica</td>
+                            <td class="text-center">@istruttoria.EliminaCode</td>
+                            <td>@istruttoria.Gestore</td>
+                            <td class="text-center">@istruttoria.Rating</td>
+                            <td class="istruttore">@istruttoria.Istruttore</td> <!-- Aggiunta classe -->
+                            <td class="azioni d-flex justify-content-center">
+                                <button class="btn btn-sm @(string.IsNullOrEmpty(istruttoria.Istruttore) ? "btn-outline-success" : "btn-outline-danger") btn-toggle-istruttore flex-fill" style="max-width: 100px;">
+                                    <i class="fas @(string.IsNullOrEmpty(istruttoria.Istruttore) ? "fa-user-plus" : "fa-user-times")"></i>
+                                    @(string.IsNullOrEmpty(istruttoria.Istruttore) ? "Assegna" : "Revoca")
+                                </button>
+                            </td>
+                            <td>@istruttoria.Note</td>
+                            <td>@istruttoria.NoteEscalationIndicatoriBilancio</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    @foreach (var istruttoria in Model.Istruttorie.Results)
+    @{
+        int totalPages = (int) Math.Ceiling(Model.Istruttorie.TotalCount / (decimal) Model.Input.Limit);
+        int currentPage = Model.Input.Page;
+    }
+
+    @if (totalPages > 1)
     {
-        <div class="row border-bottom py-2 align-items-center">
-            <div class="col-md-1">
-                <span>@istruttoria.Nag</span>
-            </div>
-            <div class="col-md-2">
-                <span>@istruttoria.Intestazione</span>
-            </div>
-            <div class="col-md-1">
-                <span>@istruttoria.Istruttore</span>
-            </div>
-            <div class="col-md-1">
-                <span>@istruttoria.ClusterPratica</span>
-            </div>
-            <div class="col-md-1">
-                <span>@istruttoria.DataInserimentoPratica</span>
-            </div>
-            <div class="col-md-1">
-                <span>@istruttoria.DataUltimoTrasferimento</span>
-            </div>
-            <div class="col-md-2">
-                <span>@istruttoria.Note</span>
-            </div>
-            <div class="col-md-1">
-                <span>@istruttoria.NoteEscalationIndicatoriBilancio</span>
-            </div>
-            <div class="col-md-1">
-                <span>@istruttoria.NoteNuovoQuestionarioEsg</span>
-            </div>
-            <div class="col-md-1">
-                <span>@istruttoria.NumeroPratica</span>
-            </div>
+        <div class="card-footer d-flex justify-content-center">
+
+            <nav aria-label="Paginazione">
+                <ul class="pagination d-flex justify-content-center mt-3">
+                    @if(currentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-route-page="@(currentPage - 1)"><i class="fas fa-angle-left"></i></a>
+                        </li>   
+                    }
+                    @for(int p = Math.Max(1, currentPage - 4); p <= Math.Min(totalPages, currentPage + 4); p++)
+                    {
+                        if (p == currentPage)
+                        {
+                            <li class="page-item active" aria-current="page">
+                                <a class="page-link" asp-route-page="@p">@p <span class="sr-only">(current)</span></a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-route-page="@p">@p</a>
+                            </li>
+                        }
+                    }
+                    @if(currentPage < totalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-route-page="@(currentPage + 1)"><i class="fas fa-angle-right"></i></a>
+                        </li>   
+                    }
+                </ul>
+            </nav>
         </div>
     }
 </div>
 
-@{
-    int totalPages = (int) Math.Ceiling(Model.Istruttorie.TotalCount / (decimal) Model.Input.Limit);
-    int currentPage = Model.Input.Page;
+<!-- SCRIPT AJAX ASSEGNA/REVOCA -->
+@section Scripts {
+    <script>
+        const assignUrl = '@Url.Action("Assign", "Istruttorie")';
+        const revokeUrl = '@Url.Action("Revoke", "Istruttorie")';
+
+        document.querySelectorAll(".btn-toggle-istruttore").forEach(function(button) {
+            button.addEventListener("click", async function () {
+                var row = button.closest("tr");
+                if (!row) return;
+
+                var numeroPratica = row.querySelector("td:nth-child(3)").textContent.trim();
+                var cell = row.querySelector(".istruttore");
+                if (!cell) return;
+
+                var actionUrl = button.classList.contains("btn-outline-success") ? assignUrl : revokeUrl;
+
+                var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                var formData = new FormData();
+                formData.append("__RequestVerificationToken", token);
+                formData.append("numeroPratica", numeroPratica);
+
+                try {
+                    var response = await fetch(actionUrl, {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    if (!response.ok) throw new Error(`Server error: ${response.status}`);
+                    var data = await response.json();
+
+                    if (actionUrl === assignUrl) {
+                        cell.textContent = data.istruttore;
+                        button.classList.remove("btn-outline-success");
+                        button.classList.add("btn-outline-danger");
+                        button.innerHTML = '<i class="fas fa-user-times"></i> Revoca';
+                    } else {
+                        cell.textContent = "";
+                        button.classList.remove("btn-outline-danger");
+                        button.classList.add("btn-outline-success");
+                        button.innerHTML = '<i class="fas fa-user-plus"></i> Assegna';
+                    }
+                } catch (err) {
+                    console.error("Fetch error:", err);
+                    alert("Errore di rete. Controlla token CSRF o connessione.");
+                }
+            });
+        });
+    </script>
 }
-<nav aria-label="Paginazione">
-    <ul class="pagination d-flex justify-content-center mt-3">
-        @if(currentPage > 1)
-        {
-            <li class="page-item">
-                <a class="page-link" asp-route-page="@(currentPage - 1)" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending"><i class="fas fa-angle-left"></i></a>
-            </li>   
-        }
-        @for(int p = Math.Max(1, currentPage - 4); p <= Math.Min(totalPages, currentPage + 4); p++)
-        {
-            if (p == currentPage)
-            {
-                <li class="page-item active" aria-current="page">
-                    <a class="page-link" asp-route-page="@p" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending">@p <span class="sr-only">(current)</span></a>
-                </li>
-            }
-            else
-            {
-                <li class="page-item">
-                    <a class="page-link" asp-route-page="@p" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending">@p</a>
-                </li>
-            }
-        }
-        @if(currentPage < totalPages)
-        {
-            <li class="page-item">
-                <a class="page-link" asp-route-page="@(currentPage + 1)" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending"><i class="fas fa-angle-right"></i></a>
-            </li>   
-        }
-    </ul>
-</nav>

@@ -236,3 +236,12 @@ C:\src\EbWeb\bin\Debug\net8.0\publish\EbWeb.runtimeconfig.json
 C:\src\EbWeb\bin\Debug\net8.0\publish\wwwroot\lib\fontawesome\metadata\icon-families.json
 C:\src\EbWeb\bin\Debug\net8.0\publish\wwwroot\lib\fontawesome\metadata\icons.json
 C:\src\EbWeb\bin\Debug\net8.0\publish\wwwroot\lib\fontawesome\metadata\shims.json
+C:\src\EbWeb\bin\Debug\net8.0\System.DirectoryServices.dll
+C:\src\EbWeb\bin\Debug\net8.0\System.DirectoryServices.AccountManagement.dll
+C:\src\EbWeb\bin\Debug\net8.0\System.DirectoryServices.Protocols.dll
+C:\src\EbWeb\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.Messages.dll
+C:\src\EbWeb\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.DirectoryServices.dll
+C:\src\EbWeb\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.DirectoryServices.AccountManagement.dll
+C:\src\EbWeb\bin\Debug\net8.0\runtimes\linux\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\src\EbWeb\bin\Debug\net8.0\runtimes\osx\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\src\EbWeb\bin\Debug\net8.0\runtimes\win\lib\net8.0\System.DirectoryServices.Protocols.dll

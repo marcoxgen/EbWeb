@@ -75,3 +75,32 @@
         }
     </ul>
 </nav>
+
+<script>
+    // Toggle filtri
+    document.getElementById("toggleFilters").addEventListener("click", function () {
+        document.getElementById("filtersRow").classList.toggle("d-none");
+    });
+
+    // Event listener per toggle assegnazione istruttore (solo UI, poi fai AJAX o post)
+    document.querySelectorAll(".btn-toggle-istruttore").forEach(function(button) {
+        button.addEventListener("click", function () {
+            var row = button.closest("tr");
+            var cell = row.querySelector(".istruttore");
+
+            if (cell.textContent.trim() === "") {
+                // Assegna
+                cell.textContent = "TUO_ISTRUTTORE"; // sostituire con utente corrente o ajax call
+                button.classList.remove("btn-primary");
+                button.classList.add("btn-danger");
+                button.innerHTML = '<i class="fas fa-user-times"></i> Revoca';
+            } else {
+                // Revoca
+                cell.textContent = "";
+                button.classList.remove("btn-danger");
+                button.classList.add("btn-primary");
+                button.innerHTML = '<i class="fas fa-user-plus"></i> Assegna';
+            }
+        });
+    });
+</script>

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EbWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ae2e8e5245c5c0508276fff5b4e4e0ef0709621")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3f71ee83891009d3db81836fc5c268c5586879d0")]
 [assembly: System.Reflection.AssemblyProductAttribute("EbWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EbWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

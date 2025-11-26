@@ -228,3 +228,12 @@ C:\src\EbWeb\bin\Release\net8.0\runtimes\win-x86\native\libstdc++-6.dll
 C:\src\EbWeb\bin\Release\net8.0\runtimes\win-x86\native\libwinpthread-1.dll
 C:\src\EbWeb\bin\Release\net8.0\runtimes\win-x86\native\qpdf.dll
 C:\src\EbWeb\obj\Release\net8.0\EbWeb.sourcelink.json
+C:\src\EbWeb\bin\Release\net8.0\System.DirectoryServices.dll
+C:\src\EbWeb\bin\Release\net8.0\System.DirectoryServices.AccountManagement.dll
+C:\src\EbWeb\bin\Release\net8.0\System.DirectoryServices.Protocols.dll
+C:\src\EbWeb\bin\Release\net8.0\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.Messages.dll
+C:\src\EbWeb\bin\Release\net8.0\runtimes\win\lib\net8.0\System.DirectoryServices.dll
+C:\src\EbWeb\bin\Release\net8.0\runtimes\win\lib\net8.0\System.DirectoryServices.AccountManagement.dll
+C:\src\EbWeb\bin\Release\net8.0\runtimes\linux\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\src\EbWeb\bin\Release\net8.0\runtimes\osx\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\src\EbWeb\bin\Release\net8.0\runtimes\win\lib\net8.0\System.DirectoryServices.Protocols.dll

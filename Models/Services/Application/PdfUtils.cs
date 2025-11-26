@@ -56,7 +56,7 @@ namespace EbWeb.Models.Services.Application
                             table.Cell().Element(container => CellStyle(container, bgColor)).Text(rev.NomeColonna);
                             table.Cell().Element(container => CellStyle(container, bgColor)).Text(text =>
                             {
-                                if (rev.Info == "SI" || rev.Info == "ACCESO")
+                                if (rev.Info == "SI" || rev.Info == "ACCESO" || rev.Info == "Indicatore non rispettato")
                                 {
                                     text.DefaultTextStyle(x => x.FontColor(Colors.Red.Medium).SemiBold());
                                 }

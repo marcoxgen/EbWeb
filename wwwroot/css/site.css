@@ -20,3 +20,12 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.table-small-text th,
+.table-small-text td {
+  font-size: 0.8rem; /* default è 1rem */
+}
+
+.table thead th {
+    vertical-align: top !important;
+}

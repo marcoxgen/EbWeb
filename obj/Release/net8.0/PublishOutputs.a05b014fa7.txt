@@ -59,6 +59,9 @@ C:\src\EbWeb\publish\System.ClientModel.dll
 C:\src\EbWeb\publish\System.Configuration.ConfigurationManager.dll
 C:\src\EbWeb\publish\System.Diagnostics.DiagnosticSource.dll
 C:\src\EbWeb\publish\System.Diagnostics.EventLog.dll
+C:\src\EbWeb\publish\System.DirectoryServices.dll
+C:\src\EbWeb\publish\System.DirectoryServices.AccountManagement.dll
+C:\src\EbWeb\publish\System.DirectoryServices.Protocols.dll
 C:\src\EbWeb\publish\System.Formats.Asn1.dll
 C:\src\EbWeb\publish\System.IdentityModel.Tokens.Jwt.dll
 C:\src\EbWeb\publish\System.IO.Pipelines.dll
@@ -116,7 +119,13 @@ C:\src\EbWeb\publish\runtimes\win-x86\native\libgcc_s_dw2-1.dll
 C:\src\EbWeb\publish\runtimes\win-x86\native\libstdc++-6.dll
 C:\src\EbWeb\publish\runtimes\win-x86\native\libwinpthread-1.dll
 C:\src\EbWeb\publish\runtimes\win-x86\native\qpdf.dll
+C:\src\EbWeb\publish\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.Messages.dll
 C:\src\EbWeb\publish\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll
+C:\src\EbWeb\publish\runtimes\win\lib\net8.0\System.DirectoryServices.dll
+C:\src\EbWeb\publish\runtimes\win\lib\net8.0\System.DirectoryServices.AccountManagement.dll
+C:\src\EbWeb\publish\runtimes\linux\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\src\EbWeb\publish\runtimes\osx\lib\net8.0\System.DirectoryServices.Protocols.dll
+C:\src\EbWeb\publish\runtimes\win\lib\net8.0\System.DirectoryServices.Protocols.dll
 C:\src\EbWeb\publish\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
 C:\src\EbWeb\publish\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 C:\src\EbWeb\publish\EbWeb.deps.json

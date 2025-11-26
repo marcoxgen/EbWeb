@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using EbWeb.Controllers;
 using EbWeb.Models.Options;
 using EbWeb.Models.Services.Application;
@@ -7,61 +8,58 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Qui builder.Configuration è già un IConfiguration!
+// --- CONFIGURAZIONE SERVIZI ---
+
 var configuration = builder.Configuration;
 
-// Configurazione dei servizi
+// Services DI
 builder.Services.AddTransient<IAnomaliaService, AdoNetAnomaliaService>();
 builder.Services.AddTransient<IDatabaseAccessor, SqlDatabaseAccessor>();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IRevisioneService, AdoNetRevisioneService>();
 builder.Services.AddTransient<IIstruttoriaService, EFCoreIstruttoriaService>();
+builder.Services.AddTransient<IAgendaStipulaService, EFCoreAgendaStipulaService>();
+builder.Services.AddTransient<IRichiestaPerfezionamentoService, EFCoreRichiestaPerfezionamentoService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
-// Registrazione dell'autenticazione Windows (IIS)
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme;
-    options.DefaultForbidScheme = Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme;
-});
+// HttpContextAccessor
+builder.Services.AddHttpContextAccessor();
 
-// Options
-builder.Services.Configure<ConnectionStringsOptions>(builder.Configuration.GetSection("ConnectionStrings"));
-builder.Services.Configure<RevisioniOptions>(builder.Configuration.GetSection("Revisioni"));
-builder.Services.Configure<IstruttorieOptions>(builder.Configuration.GetSection("Istruttorie"));
-
+// DbContext
 builder.Services.AddDbContext<IstruttoriaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Cruscotto_Istruttoria")));
+builder.Services.AddDbContext<ThinsoftDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Thinsoft")));
 
-// Add services to the container.
+// Options
+builder.Services.Configure<ConnectionStringsOptions>(configuration.GetSection("ConnectionStrings"));
+builder.Services.Configure<RevisioniOptions>(configuration.GetSection("Revisioni"));
+builder.Services.Configure<IstruttorieOptions>(configuration.GetSection("Istruttorie"));
+builder.Services.Configure<AgendaStipuleOptions>(configuration.GetSection("AgendaStipule"));
+builder.Services.Configure<RichiestePerfezionamentoOptions>(configuration.GetSection("RichiestaPerfezionamento"));
+
+// --- AUTENTICAZIONE WINDOWS ---
+builder.Services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
+
+
+// --- CONTROLLERS WITH VIEWS ---
 builder.Services.AddControllersWithViews();
 
+// --- BUILD APP ---
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// --- PIPELINE ---
 if (!app.Environment.IsDevelopment())
 {
-    // app.UseExceptionHandler("/Home/Error");
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
-// Middleware per l'autenticazione e l'autorizzazione
 app.UseAuthentication();
 app.UseAuthorization();
-
-// Route personalizzata con parametri opzionali
-app.MapControllerRoute(
-    name: "ClientiFiltro",
-    pattern: "Clienti/{stato?}/{anno?}",
-    defaults: new { controller = "Clienti", action = "Index" }
-);
 
 // Route di default
 app.MapControllerRoute(

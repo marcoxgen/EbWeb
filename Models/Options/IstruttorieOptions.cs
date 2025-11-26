@@ -4,7 +4,7 @@ namespace EbWeb.Models.Options
     {
         public int PerPage { get; set; }
         public int InHome { get; set; }
-        public RevisioniOrderOptions Order { get; set; }
+        public IstruttorieOrderOptions Order { get; set; }
     }
 
     public class IstruttorieOrderOptions
