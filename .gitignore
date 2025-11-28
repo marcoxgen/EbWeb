@@ -1,0 +1,10 @@
+# Cartelle di compilazione e file temporanei da ignorare
+
+# Cartelle generate da .NET/C#/Visual Studio:
+bin/
+obj/
+publish/
+
+# Altri file o cartelle comuni da escludere:
+*.log
+.vscode/
