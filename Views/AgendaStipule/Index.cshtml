@@ -9,7 +9,7 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered table-sm table-small-text" style="table-layout: fixed; min-width: 1800px;">
+            <table class="table table-bordered table-sm table-small-text" style="table-layout: fixed; min-width: 1200px;">
                 <thead class="bg-light text-primary text-center">
                     <tr>
                         <th style="width: 30px;">Id</th>
@@ -21,12 +21,8 @@
                         <th style="width: 60px;">Tipo Atto</th>
                         <th style="width: 60px;">Importo Deliberato</th>
                         <th style="width: 40px;">Mutuo SAL</th>
-                        <th style="width: 40px;">Numero Mutuo</th>
                         <th style="width: 100px;">Assegnatario</th>
                         <th style="width: 80px;">Azioni</th>
-                        <th style="width: 160px;">Stato Fondo</th>
-                        <th style="width: 160px;">Step Richiesta</th>
-                        <th style="width: 40px;">Stato Stipula</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,7 +38,6 @@
                             <td>@agendaStipula.TipoAtto</td>
                             <td>@(agendaStipula.ImportoDeliberato.Split(separator: ',')[0])</td>
                             <td>@agendaStipula.MutuoSAL</td>
-                            <td>@agendaStipula.NumeroMutuo</td>
                             <td class="assegnatario">@agendaStipula.Assegnatario</td>
                             <td class="azioni d-flex justify-content-center">
                                 <button class="btn btn-sm @(string.IsNullOrEmpty(agendaStipula.Assegnatario) ? "btn-outline-success" : "btn-outline-danger") btn-toggle-assegnatario flex-fill" style="max-width: 100px;">
@@ -50,9 +45,6 @@
                                     @(string.IsNullOrEmpty(agendaStipula.Assegnatario) ? "Assegna" : "Revoca")
                                 </button>
                             </td>
-                            <td>@agendaStipula.StatoFondo</td>
-                            <td>@agendaStipula.StatoRichiesta</td>
-                            <td>@agendaStipula.StatoStipula</td>
                         </tr>
                     }
                 </tbody>
