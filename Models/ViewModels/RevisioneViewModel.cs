@@ -7,7 +7,7 @@ namespace EbWeb.Models.ViewModels
     {
         public int Id { get; set; }
         public int? Tipo_Colonna { get; set; }
-        public int Nag_Affidato { get; set; }
+        public long Nag_Affidato { get; set; }
         public required string? Intestazione { get; set; }
         public string? NomeColonna { get; set; }
         public string? Info { get; set; }
@@ -19,7 +19,7 @@ namespace EbWeb.Models.ViewModels
         {
             var revisioneViewModel = new RevisioneViewModel
             {
-                Nag_Affidato = revisioneRow.Field<int>("Nag_Affidato"),
+                Nag_Affidato = revisioneRow.Field<long>("Nag_Affidato"),
                 Intestazione = revisioneRow.Field<string?>("Intestazione"),
                 Filtro = revisioneRow.Field<string?>("Filtro")
             };
@@ -32,11 +32,11 @@ namespace EbWeb.Models.ViewModels
             {
                 Id = revisioneRow.Field<int>("Id"),
                 Tipo_Colonna = revisioneRow.Field<int>("Tipo_Colonna"),
-                Nag_Affidato = revisioneRow.Field<int>("Nag_Affidato"),
+                Nag_Affidato = revisioneRow.Field<long>("Nag_Affidato"),
                 Intestazione = revisioneRow.Field<string?>("Intestazione"),
                 NomeColonna = revisioneRow.Field<string?>("NomeColonna"),
                 Info = revisioneRow.Field<string?>("Info"),
-                NoteIstruttore = revisioneRow.Field<string?>("Note Istruttore"),
+                NoteIstruttore = revisioneRow.Field<string?>("Note_Istruttore"),
                 Filtro = revisioneRow.Field<string?>("Filtro")
             };
             return revisioneViewModel;

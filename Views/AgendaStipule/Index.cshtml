@@ -36,7 +36,7 @@
                             <td>@agendaStipula.Intestazione</td>
                             <td>@agendaStipula.DescrizioneProdotto</td>
                             <td>@agendaStipula.TipoAtto</td>
-                            <td>@(agendaStipula.ImportoDeliberato.Split(separator: ',')[0])</td>
+                            <td>@(string.IsNullOrEmpty(agendaStipula.ImportoDeliberato) ? "0" : agendaStipula.ImportoDeliberato.Split(',')[0])</td>
                             <td>@agendaStipula.MutuoSAL</td>
                             <td class="assegnatario">@agendaStipula.Assegnatario</td>
                             <td class="azioni d-flex justify-content-center">

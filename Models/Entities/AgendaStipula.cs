@@ -14,12 +14,14 @@ public partial class AgendaStipula
         public string? Nag { get; set; }
         public string? Intestazione { get; set; }
         public string? Numero_Pratica { get; set; }
-        public string? Filiale { get; set; }
+        public short Filiale { get; set; }
         public string? Linea_di_Credito { get; set; }
         public string? Descrizione_Prodotto { get; set; }
         public string? Importo_Deliberato { get; set; }
         public string? Stato_Fondo { get; set; }
         public string? Mutuo_SAL { get; set; }
+        public string? Surroga { get; set; }
+        public string? Art585 { get; set; }
         public string? Numero_Mutuo { get; set; }
         public string? Stipula_Prima13 { get; set; }
         public string? Mediatore_Convenzionato { get; set; }

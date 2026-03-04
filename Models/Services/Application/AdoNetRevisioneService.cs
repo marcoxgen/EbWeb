@@ -25,8 +25,8 @@ namespace EbWeb.Models.Services.Application
             string orderby = model.OrderBy;
             string direction = model.Ascending ? "ASC" : "DESC";
 
-            FormattableString query = $@"SELECT DISTINCT Nag_Affidato, Intestazione, Filtro FROM dbo.Revisioni_Semplificate_BI WHERE Filtro LIKE {"%" + model.Search + "%"} ORDER BY {(Sql)orderby} {(Sql)direction} OFFSET {model.Offset} ROWS FETCH NEXT {model.Limit} ROWS ONLY; 
-            SELECT COUNT(DISTINCT Nag_Affidato) FROM dbo.Revisioni_Semplificate_BI WHERE Filtro LIKE {"%" + model.Search + "%"}";
+            FormattableString query = $@"SELECT DISTINCT Nag_Affidato, Intestazione, Filtro FROM REV.Revisioni_Semplificate_BI WHERE Filtro LIKE {"%" + model.Search + "%"} ORDER BY {(Sql)orderby} {(Sql)direction} OFFSET {model.Offset} ROWS FETCH NEXT {model.Limit} ROWS ONLY; 
+            SELECT COUNT(DISTINCT Nag_Affidato) FROM REV.Revisioni_Semplificate_BI WHERE Filtro LIKE {"%" + model.Search + "%"}";
             DataSet dataSet = await db.QueryAsync("Processo_Credito", query);
             var dataTable = dataSet.Tables[0];
             var revisioneList = new List<RevisioneViewModel>();
@@ -47,7 +47,7 @@ namespace EbWeb.Models.Services.Application
 
         public async Task<List<RevisioneViewModel>> GetRevisioneAsync(int nag)
         {
-            FormattableString query = $"SELECT * FROM dbo.Revisioni_Semplificate_BI WHERE Nag_Affidato={nag} ORDER BY NomeColonna";
+            FormattableString query = $"SELECT * FROM REV.Revisioni_Semplificate_BI WHERE Nag_Affidato={nag} ORDER BY NomeColonna";
             DataSet dataSet = await db.QueryAsync("Processo_Credito", query);
             var dataTable = dataSet.Tables[0];
             var revisioneList = new List<RevisioneViewModel>();
@@ -61,11 +61,11 @@ namespace EbWeb.Models.Services.Application
 
         public async Task<int> EditNoteAsync(int id, string note)
         {
-            FormattableString cmd = $"UPDATE dbo.Revisioni_Semplificate_BI SET [Note Istruttore]={note} WHERE Id={id}";
+            FormattableString cmd = $"UPDATE REV.Revisioni_Semplificate_BI SET [Note_Istruttore]={note} WHERE Id={id}";
             int affectedRows = await db.CommandAsync("Processo_Credito", cmd);
             if (affectedRows == 0)
             {
-                FormattableString query = $"SELECT COUNT(*) FROM dbo.Revisioni_Semplificate_BI WHERE Id={id}";
+                FormattableString query = $"SELECT COUNT(*) FROM REV.Revisioni_Semplificate_BI WHERE Id={id}";
                 bool lessonExists = await db.QueryScalarAsync<bool>("Processo_Credito", query);
                 if (lessonExists)
                 {

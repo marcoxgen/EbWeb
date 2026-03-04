@@ -6,7 +6,7 @@ public class AgendaStipulaViewModel
 {
     public int IdRichiesta { get; set; }
     public DateTime DataRichiesta { get; set; }
-    public string? Filiale { get; set; }
+    public short Filiale { get; set; }
     public string? Nag { get; set; }
     public string? Intestazione { get; set; }
     public string? DescrizioneProdotto { get; set; }

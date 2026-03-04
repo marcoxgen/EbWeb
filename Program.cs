@@ -48,7 +48,11 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 // --- PIPELINE ---
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();

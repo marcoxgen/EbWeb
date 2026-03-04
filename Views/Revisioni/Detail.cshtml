@@ -62,11 +62,12 @@
     function salvaNote(id, index) {
         const note = $('#note-' + index).val();
         const token = $('input[name="__RequestVerificationToken"]').val();
+        const urlSalvataggio = '@Url.Action("SaveNote", "Revisioni")';
 
         console.log("Invio:", { Id: id, NoteIstruttore: note, Token: token });
 
         $.ajax({
-            url: '/Revisioni/SaveNote',
+            url: urlSalvataggio,
             method: 'POST',
             dataType: 'json',
             data: {
