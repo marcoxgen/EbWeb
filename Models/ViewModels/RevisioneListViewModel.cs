@@ -4,7 +4,7 @@ namespace EbWeb.Models.ViewModels
 {
     public class RevisioneListViewModel
     {
-        public ListViewModel<RevisioneViewModel> Revisioni { get; set; }
-        public RevisioneListInputModel Input { get; set; }
+        public ListViewModel<RevisioneViewModel> Revisioni { get; set; } = new();
+        public RevisioneListInputModel Input { get; set; } = default!;
     }
 }

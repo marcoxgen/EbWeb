@@ -18,7 +18,7 @@ public class RichiestaPerfezionamentoListInputModelBinder : IModelBinder
         //Recupero i valori grazie ai value provider
         int id_richiesta = Convert.ToInt32(bindingContext.ValueProvider.GetValue("Id_Richiesta").FirstValue);
         int page = Convert.ToInt32(bindingContext.ValueProvider.GetValue("Page").FirstValue);
-        string OrderBy = bindingContext.ValueProvider.GetValue("OrderBy").FirstValue;
+        string OrderBy = bindingContext.ValueProvider.GetValue("OrderBy").FirstValue!;
         bool Ascending = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("Ascending").FirstValue);
 
         //Creo l'istanza del RichiestaPerfezionamentoListInputModel

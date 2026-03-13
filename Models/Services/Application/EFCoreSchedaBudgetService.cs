@@ -43,7 +43,7 @@ public class EFCoreSchedaBudgetService : ISchedaBudgetService
                 x => x.joinedAbilitazioni.DefaultIfEmpty(),
                 (x, a) => new { x.sb, a }
             )
-            .Where(x => x.a.Utenza_Dominio_BccSi == utenzaTarget 
+            .Where(x => x.a!.Utenza_Dominio_BccSi == utenzaTarget 
                     && x.sb.Etichetta_Data == etichettaTarget)
             .OrderBy(x => x.sb.Ordinamento)
             .Select(x => new 

@@ -22,7 +22,7 @@ public class SqlDatabaseAccessor : IDatabaseAccessor
         try
         {
             string? connectionString = configuration.GetConnectionString(connectionName);
-            using SqlConnection conn = await GetOpenedConnection(connectionString);
+            using SqlConnection conn = await GetOpenedConnection(connectionString!);
             using SqlCommand cmd = GetCommand(formattableCommand, conn);
             int affectedRows = await cmd.ExecuteNonQueryAsync();
             return affectedRows;
@@ -38,7 +38,7 @@ public class SqlDatabaseAccessor : IDatabaseAccessor
         logger.LogInformation(formattableQuery.Format, formattableQuery.GetArguments());
 
         string? connectionString = configuration.GetConnectionString(connectionName);
-        using SqlConnection conn = await GetOpenedConnection(connectionString);
+        using SqlConnection conn = await GetOpenedConnection(connectionString!);
         using SqlCommand cmd = GetCommand(formattableQuery, conn);
 
         //Invio la query al database e ottengo un SqlDataReader
@@ -71,9 +71,20 @@ public class SqlDatabaseAccessor : IDatabaseAccessor
         try
         {
             string? connectionString = configuration.GetConnectionString(connectionName);
+
+            if (string.IsNullOrEmpty(connectionString))
+                throw new InvalidOperationException($"ConnectionString '{connectionName}' non trovata.");
+
             using SqlConnection conn = await GetOpenedConnection(connectionString);
             using SqlCommand cmd = GetCommand(formattableQuery, conn);
-            object result = await cmd.ExecuteScalarAsync();
+
+            object? result = await cmd.ExecuteScalarAsync();
+
+            if (result == null || result == DBNull.Value)
+            {
+                return default!; 
+            }
+
             return (T)Convert.ChangeType(result, typeof(T));
         }
         catch (SqlException exc) when (exc.ErrorCode == 19)

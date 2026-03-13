@@ -8,7 +8,7 @@ namespace EbWeb.Controllers;
 public class AbilitazioniMifidController : Controller
 {
     private readonly IAbilitazioneMifidService abilitazioneMifidService;
-    public AbilitazioniMifidController(IAbilitazioneMifidService abilitazione)
+    public AbilitazioniMifidController(IAbilitazioneMifidService abilitazioneMifidService)
     {
         this.abilitazioneMifidService = abilitazioneMifidService;
     }

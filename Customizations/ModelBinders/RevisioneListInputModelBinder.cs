@@ -15,9 +15,9 @@ namespace EbWeb.Customizations.ModelBinders
         public Task BindModelAsync(ModelBindingContext bindingContext)
         {
             //Recupero i valori grazie ai value provider
-            string search = bindingContext.ValueProvider.GetValue("Search").FirstValue;
+            string search = bindingContext.ValueProvider.GetValue("Search").FirstValue!;
             int page = Convert.ToInt32(bindingContext.ValueProvider.GetValue("Page").FirstValue);
-            string OrderBy = bindingContext.ValueProvider.GetValue("OrderBy").FirstValue;
+            string OrderBy = bindingContext.ValueProvider.GetValue("OrderBy").FirstValue!;
             bool Ascending = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("Ascending").FirstValue);
 
             //Creo l'istanza del RevisioneListInputModel

@@ -4,6 +4,6 @@ namespace EbWeb.Models.ViewModels;
 
 public class AbilitazioneMifidListViewModel
 {
-    public ListViewModel<AbilitazioneMifidViewModel> AbilitazioniMifid { get; set; }
-    public AbilitazioneMifidListInputModel Input { get; set; }
+    public ListViewModel<AbilitazioneMifidViewModel> AbilitazioniMifid { get; set; } = new();
+    public AbilitazioneMifidListInputModel Input { get; set; } = default!;
 }

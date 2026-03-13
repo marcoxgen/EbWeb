@@ -16,10 +16,10 @@ public class IstruttoriaListInputModelBinder : IModelBinder
     {
         //Recupero i valori grazie ai value provider
         int nag = Convert.ToInt32(bindingContext.ValueProvider.GetValue("Nag").FirstValue);
-        string cluster_pratica = bindingContext.ValueProvider.GetValue("Cluster_Pratica").FirstValue;
+        string cluster_pratica = bindingContext.ValueProvider.GetValue("Cluster_Pratica").FirstValue!;
         bool istruttore = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("Istruttore").FirstValue);
         int page = Convert.ToInt32(bindingContext.ValueProvider.GetValue("Page").FirstValue);
-        string OrderBy = bindingContext.ValueProvider.GetValue("OrderBy").FirstValue;
+        string OrderBy = bindingContext.ValueProvider.GetValue("OrderBy").FirstValue!;
         bool Ascending = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("Ascending").FirstValue);
 
         //Creo l'istanza del IstruttoriaListInputModel

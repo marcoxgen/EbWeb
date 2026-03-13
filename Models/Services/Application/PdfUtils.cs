@@ -117,7 +117,7 @@ public static class PdfUtils
                                 for (int i = 0; i < 13; i++) columns.RelativeColumn(1f);
                             });
 
-                            void RenderHeaderRows(string tipologia)
+                            void RenderHeaderRows(string? tipologia)
                             {
                                 table.Cell().Element(BlueHeaderStyle).Text($"Metrica - {tipologia}");
                                 table.Cell().Element(BlueHeaderStyle).Text("Dicembre AP");
@@ -141,7 +141,7 @@ public static class PdfUtils
                                 RenderHeaderRows(primaTipologia);
                             });
 
-                            string ultimaTipologia = null;
+                            string? ultimaTipologia = null;
 
                             foreach (var item in gruppo)
                             {
