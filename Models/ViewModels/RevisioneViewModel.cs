@@ -21,7 +21,8 @@ namespace EbWeb.Models.ViewModels
             {
                 Nag_Affidato = revisioneRow.Field<long>("Nag_Affidato"),
                 Intestazione = revisioneRow.Field<string?>("Intestazione"),
-                Filtro = revisioneRow.Field<string?>("Filtro")
+                Filtro = revisioneRow.Field<string?>("Filtro"),
+                Info = revisioneRow.Field<string?>("Info")
             };
             return revisioneViewModel;
         }

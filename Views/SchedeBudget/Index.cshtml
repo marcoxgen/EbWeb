@@ -1,0 +1,148 @@
+@model SchedaBudgetListViewModel
+
+<div class="row">
+    <div class="col-md-8">
+        <h2>@ViewData["Title"]</h2>
+    </div>
+</div>
+
+<form method="get" asp-action="Index" id="budgetForm" class="mb-4">
+    <label class="text-primary fw-bold small mb-1">Filtro per Data</label>
+    
+    <div class="d-flex gap-2 align-items-center justify-content-between">
+        <select name="EtichettaSelezionata" 
+                class="form-select form-select-sm shadow-sm" 
+                onchange="this.form.submit()"
+                style="font-size: 0.85rem; flex-grow: 1; max-width: 400px;">
+            
+            @foreach (var item in Model.EtichetteData)
+            {
+                var itemPulito = item?.Trim() ?? string.Empty;
+                var selezionato = itemPulito == Model.Input?.EtichettaSelezionata?.Trim();
+
+                <option value="@itemPulito" selected="@selezionato">
+                    @itemPulito
+                </option>
+            }
+        </select>
+
+        <button type="submit" asp-action="CreatePdf" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1">
+            <i class="fas fa-file-pdf"></i>
+            <span>Crea PDF</span>
+        </button>
+    </div>
+</form>
+
+@{
+    int ultimaUO = 0;
+    string? ultimaTipologia = null;
+}
+
+<div class="table-responsive">
+    <table class="table table-sm table-budget w-100 small">
+        <tbody>
+            @foreach (var schedaBudget in Model.SchedeBudget.Results)
+            {
+                if (schedaBudget.ID_UO != ultimaUO)
+                {
+                    if (ultimaUO != 0)
+                    {
+                        <tr style="height: 40px;"><td colspan="14" class="border-0"></td></tr>
+                    }
+
+                    <tr class="table-secondary fw-bold border-top row-uo">
+                        <td colspan="14" class="py-2 px-3 text-dark">
+                        <i class="bi bi-diagram-3 me-2"></i> @schedaBudget.EtichettaUO
+                    </td>
+                    </tr>
+                    ultimaUO = schedaBudget.ID_UO;
+                }
+
+                if (schedaBudget.TipologiaDes != ultimaTipologia)
+                {
+                    <tr class="bg-primary text-white text-center align-middle fw-bold" style="font-size: 0.7rem;">
+                        <td style="width: 18%;" class="text-start ps-2">Metrica - @schedaBudget.TipologiaDes</td>
+                        <td>Dicembre AP</td>
+                        <td>Rettifiche</td>
+                        <td>Dicembre AP Rettificato</td>
+                        <td>Stesso Periodo AP</td>
+                        <td>Valore Alla Data</td>
+                        <td>Flusso Data</td>
+                        <td>Obiettivo Annuale</td>
+                        <td>Valore da Ragg. Annuale</td>
+                        <td>% Ragg.to Annuale</td>
+                        <td>Obiettivo Mensile</td>
+                        <td>Valore da Ragg. Mensile</td>
+                        <td>% Ragg.to Mensile</td>
+                        <td>Punti</td>
+                    </tr>
+                    ultimaTipologia = schedaBudget.TipologiaDes;
+                }
+
+                <tr>
+                    <td class="ps-3">@schedaBudget.MetricaDes</td>
+                    <td class="text-end">
+                        @((schedaBudget.ValoreFineAnnoPrecedente ?? 0) == 0 ? "" : schedaBudget.ValoreFineAnnoPrecedente?.ToString("N0"))
+                    </td>
+                    <td class="text-end @(schedaBudget.Rettifiche < 0 ? "text-danger" : "")">
+                        @((schedaBudget.Rettifiche ?? 0) == 0 ? "" : schedaBudget.Rettifiche?.ToString("N0"))
+                    </td>
+                    <td class="text-end">
+                        @((schedaBudget.ValoreAnnoPrecedenteRettificato ?? 0) == 0 ? "" : schedaBudget.ValoreAnnoPrecedenteRettificato?.ToString("N0"))
+                    </td>
+                    <td class="text-end">
+                        @((schedaBudget.ValoreStessoPeriodoAnnoPrecedenteRettificato ?? 0) == 0 ? "" : schedaBudget.ValoreStessoPeriodoAnnoPrecedenteRettificato?.ToString("N0"))
+                    </td>
+                    <td class="text-end">
+                        @((schedaBudget.ValoreAllaDataRif ?? 0) == 0 ? "" : schedaBudget.ValoreAllaDataRif?.ToString("N0"))
+                    </td>
+                    <td class="text-end @(schedaBudget.FlussoAllaData < 0 ? "text-danger" : "")">
+                        @((schedaBudget.FlussoAllaData ?? 0) == 0 ? "" : schedaBudget.FlussoAllaData?.ToString("N0"))
+                    </td>
+                    <td class="text-end" style="background-color: #80cbc4;">
+                        @((schedaBudget.ObiettivoAnnuale ?? 0) == 0 ? "" : schedaBudget.ObiettivoAnnuale?.ToString("N0"))
+                    </td>
+                    <td class="text-end">
+                        @((schedaBudget.ValoreDaRaggiungereAnnuale ?? 0) == 0 ? "" : schedaBudget.ValoreDaRaggiungereAnnuale?.ToString("N0"))
+                    </td>
+                    <td class="align-middle text-center" style="width: 100px;">
+                        @{
+                            var valoreIstogramma = schedaBudget.PercentualeRaggiungimentoObiettivoAnnualeIstogramma ?? 0;
+                            
+                            var larghezzaBarra = Math.Min(Math.Abs(valoreIstogramma), 100);
+                            var coloreBarra = valoreIstogramma >= 0 ? "bg-success" : "bg-danger";
+
+                            var testoPercentuale = string.IsNullOrEmpty(schedaBudget.PercentualeRaggiungimentoObiettivoAnnuale) && valoreIstogramma == 0
+                                ? "0%" 
+                                : schedaBudget.PercentualeRaggiungimentoObiettivoAnnuale;
+                        }
+
+                        <div class="progress" style="height: 6px; background-color: #dee2e6;">
+                            <div class="progress-bar @coloreBarra" 
+                                role="progressbar" 
+                                style="width: @(larghezzaBarra)%;" 
+                                aria-valuenow="@larghezzaBarra" 
+                                aria-valuemin="0" 
+                                aria-valuemax="100">
+                            </div>
+                        </div>
+
+                        <div class="fw-bold @(valoreIstogramma < 0 ? "text-danger" : "")" style="font-size: 0.75rem; margin-top: 2px;">
+                            @testoPercentuale
+                        </div>
+                    </td>
+                    <td class="text-end" style="background-color: #b2ebf2;">
+                        @((schedaBudget.ObiettivoMensile ?? 0) == 0 ? "" : schedaBudget.ObiettivoMensile?.ToString("N0"))
+                    </td>
+                    <td class="text-end cell-cyan">
+                        @((schedaBudget.ValoreDaRaggiungereMensile ?? 0) == 0 ? "" : schedaBudget.ValoreDaRaggiungereMensile?.ToString("N0"))
+                    </td>
+                    <td class="text-center">@schedaBudget.PercentualeRaggiungimentoObiettivoMensile</td>
+                    <td class="text-end">
+                        @((schedaBudget.Punteggio ?? 0) == 0 ? "" : schedaBudget.Punteggio?.ToString("N0"))
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

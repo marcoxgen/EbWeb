@@ -19,6 +19,8 @@ builder.Services.AddTransient<IRevisioneService, AdoNetRevisioneService>();
 builder.Services.AddTransient<IIstruttoriaService, EFCoreIstruttoriaService>();
 builder.Services.AddTransient<IAgendaStipulaService, EFCoreAgendaStipulaService>();
 builder.Services.AddTransient<IRichiestaPerfezionamentoService, EFCoreRichiestaPerfezionamentoService>();
+builder.Services.AddTransient<ISchedaBudgetService, EFCoreSchedaBudgetService>();
+builder.Services.AddTransient<IAbilitazioneMifidService, EFCoreAbilitazioneMifidService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 // HttpContextAccessor
@@ -29,6 +31,10 @@ builder.Services.AddDbContext<IstruttoriaDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Cruscotto_Istruttoria")));
 builder.Services.AddDbContext<ThinsoftDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Thinsoft")));
+builder.Services.AddDbContext<BudgetDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Budget")));
+builder.Services.AddDbContext<MifidDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Abilitazioni_Mifid")));
 
 // Options
 builder.Services.Configure<ConnectionStringsOptions>(configuration.GetSection("ConnectionStrings"));
@@ -36,10 +42,10 @@ builder.Services.Configure<RevisioniOptions>(configuration.GetSection("Revisioni
 builder.Services.Configure<IstruttorieOptions>(configuration.GetSection("Istruttorie"));
 builder.Services.Configure<AgendaStipuleOptions>(configuration.GetSection("AgendaStipule"));
 builder.Services.Configure<RichiestePerfezionamentoOptions>(configuration.GetSection("RichiestaPerfezionamento"));
+builder.Services.Configure<SchedeBudgetOptions>(configuration.GetSection("SchedeBudget"));
 
 // --- AUTENTICAZIONE WINDOWS ---
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
-
 
 // --- CONTROLLERS WITH VIEWS ---
 builder.Services.AddControllersWithViews();
@@ -58,7 +64,7 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 

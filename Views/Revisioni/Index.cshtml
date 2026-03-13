@@ -20,18 +20,22 @@
 
 <div class="container bg-light p-4 rounded shadow-sm">
     <div class="row">
-        <div class="col-md-2"><a asp-route-orderby="Nag_Affidato" asp-route-ascending="@(Model.Input.OrderBy == "Nag_Affidato" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Nag @if(Model.Input.OrderBy == "Nag_Affidato") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
+        <div class="col-md-1"><a asp-route-orderby="Nag_Affidato" asp-route-ascending="@(Model.Input.OrderBy == "Nag_Affidato" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Nag @if(Model.Input.OrderBy == "Nag_Affidato") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
         <div class="col-md-6"><a asp-route-orderby="Intestazione" asp-route-ascending="@(Model.Input.OrderBy == "Intestazione" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Intestazione @if(Model.Input.OrderBy == "Intestazione") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
+        <div class="col-md-3"><a asp-route-orderby="Info" asp-route-ascending="@(Model.Input.OrderBy == "Info" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Info @if(Model.Input.OrderBy == "Info") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
     </div>
 
     @foreach (var revisione in Model.Revisioni.Results)
     {
         <div class="row border-bottom py-2 align-items-center">
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <span>@revisione.Nag_Affidato</span>
             </div>
             <div class="col-md-6">
                 <span>@revisione.Intestazione</span>
+            </div>
+            <div class="col-md-3">
+                <span>@revisione.Info</span>
             </div>
             <div class="col-md-2 d-flex align-items-center">
                 <a class="btn btn-outline-primary btn-sm" asp-controller="Revisioni" asp-action="Detail" asp-route-nag="@revisione.Nag_Affidato"><i class="fas fa-file-alt"></i> Dettaglio</a>

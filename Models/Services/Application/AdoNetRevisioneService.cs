@@ -25,8 +25,9 @@ namespace EbWeb.Models.Services.Application
             string orderby = model.OrderBy;
             string direction = model.Ascending ? "ASC" : "DESC";
 
-            FormattableString query = $@"SELECT DISTINCT Nag_Affidato, Intestazione, Filtro FROM REV.Revisioni_Semplificate_BI WHERE Filtro LIKE {"%" + model.Search + "%"} ORDER BY {(Sql)orderby} {(Sql)direction} OFFSET {model.Offset} ROWS FETCH NEXT {model.Limit} ROWS ONLY; 
+            FormattableString query = $@"SELECT DISTINCT Nag_Affidato, Intestazione, Info, Filtro FROM REV.Revisioni_Semplificate_BI WHERE NomeCOlonna = '02.04 - Revisione semplificata' AND Filtro LIKE {"%" + model.Search + "%"} ORDER BY {(Sql)orderby} {(Sql)direction} OFFSET {model.Offset} ROWS FETCH NEXT {model.Limit} ROWS ONLY;
             SELECT COUNT(DISTINCT Nag_Affidato) FROM REV.Revisioni_Semplificate_BI WHERE Filtro LIKE {"%" + model.Search + "%"}";
+
             DataSet dataSet = await db.QueryAsync("Processo_Credito", query);
             var dataTable = dataSet.Tables[0];
             var revisioneList = new List<RevisioneViewModel>();

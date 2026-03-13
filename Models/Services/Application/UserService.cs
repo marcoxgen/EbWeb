@@ -1,4 +1,5 @@
 using System.DirectoryServices.AccountManagement;
+using System.Security.Principal;
 
 namespace EbWeb.Models.Services.Application;
 
@@ -14,8 +15,14 @@ public class UserService : IUserService
     public string GetUserName()
     {
         var nome = _httpContextAccessor.HttpContext?.User?.Identity?.Name;
+        if (string.IsNullOrEmpty(nome))
+        {
+            nome = WindowsIdentity.GetCurrent().Name;
+        }
         if (string.IsNullOrEmpty(nome)) return "Anonimo";
-        return nome.Contains('\\') ? nome.Split('\\').Last().ToUpperInvariant() : nome.ToUpperInvariant();
+        string userName = Path.GetFileName(nome);
+
+        return userName;
     }
 
     public string GetDisplayName()
