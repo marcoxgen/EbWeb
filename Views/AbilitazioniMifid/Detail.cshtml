@@ -1,0 +1,134 @@
+@model AbilitazioneMifidDetailViewModel
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div class="d-flex align-items-center">
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle me-3" title="Torna all'elenco" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h2 class=mb-0>
+                @ViewData["Title"]: <span class="text-primary">@Model.Matricola - @Model.Intestazione</span></h2>
+            </h2>
+            <a class="btn btn-outline-primary btn-sm ms-3" asp-action="Edit" asp-route-matricola="@Model.Matricola">
+                <i class="fas fa-pencil-alt me-1"></i> Modifica
+            </a>
+        </div>
+        <span class="badge bg-secondary">
+            Ultimo aggiornamento: @Model.DataUltimoAggiornamento?.ToString("dd/MM/yyyy")
+        </span>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-light fw-bold"><i class="fas fa-user me-2"></i>Dati Generali</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-5 text-muted">Unità Organizzativa</div>
+                        <div class="col-sm-7 fw-bold">@Model.DescrUO</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-5 text-muted">Codice Fiscale</div>
+                        <div class="col-sm-7 font-monospace">@Model.CodiceFiscale</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-5 text-muted">Ruolo</div>
+                        <div class="col-sm-7">
+                            <span class="bg-info text-dark">@Model.Ruolo</span>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row mb-2">
+                        <div class="col-12 text-muted small uppercase">Titolo di Studio</div>
+                        <div class="col-12 fw-bold">@Model.TitoloStudio</div>
+                        <div class="col-12 text-muted small">Conseguito il: @Model.DataConseguimentoTitoloStudio?.ToString("dd/MM/yyyy")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card h-100 shadow-sm border-primary">
+                <div class="card-header bg-primary text-white fw-bold"><i class="fas fa-certificate me-2"></i>Status MIFID</div>
+                    <div class="card-body"><div class="mb-4 p-2 bg-light border-start border-primary border-4 rounded-end">
+                        <label class="text-muted small d-block fw-bold">Titolo Abilitante MiFID</label>
+                        <span class="h6 mb-0">@Html.Raw(Model.TitoloStudioMifid)</span>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-6 text-muted">Abilitazione Mifid</div>
+                        <div class="col-sm-6 fw-bold text-success">@Model.DataAbilitazioneMifid?.ToString("dd/MM/yyyy")</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-6 text-muted">Assessment Superato</div>
+                        <div class="col-sm-6 fw-bold">
+                            @(Model.DataSuperamentoAssessment?.ToString("dd/MM/yyyy") ?? (Model.NecessarioAssessment == true ? "SI" : "NO"))
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-6 text-muted">Anni Esperienza</div>
+                        <div class="col-sm-6"><span class="badge rounded-pill bg-dark">@Model.AnniEsperienzaAdeguata</span></div>
+                    </div>
+                    <div class="alert alert-warning py-2 small mb-0">
+                        <strong>Sospensione:</strong> 
+                        @(Model.DataSospensione.HasValue ? $"{Model.DataSospensione:dd/MM/yyyy} - {Model.DataTermineSospensione:dd/MM/yyyy}" : "Nessuna")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light fw-bold"><i class="fas fa-users-cog me-2"></i>Supervisione</div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 border-end">
+                            <div class="text-muted small">Periodo</div>
+                            <div class="fw-bold">@Model.MesiPeriodoSupervisione mesi</div>
+                            <div class="small text-muted">@Model.DataInizioSupervisione?.ToString("dd/MM/yyyy") - @Model.DataFineSupervisione?.ToString("dd/MM/yyyy")</div>
+                        </div>
+                        <div class="col-md-4 border-end">
+                            <div class="text-muted small">Supervisore</div>
+                            <div class="fw-bold text-primary">@Model.IntestazioneSupervisore</div>
+                            <div class="small">Matr: @Model.MatricolaSupervisore</div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="text-muted small">Sostituto Supervisore</div>
+                            <div class="fw-bold">@Model.IntestazioneSostitutoSupervisore</div>
+                            <div class="small text-muted">Matr: @Model.MatricolaSostitutoSupervisore</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold">Note e Formazione</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6 border-end">
+                            <label class="text-muted small d-block">Formazione 2024</label>
+                            <p class="@(Model.Formazione2024 == "OK" ? "text-success" : "text-danger") fw-bold">@Model.Formazione2024</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small d-block">Formazione 2025</label>
+                            <p class="fw-bold">@Model.Formazione2025</p>
+                        </div>
+                    </div>
+                    <label class="text-muted small d-block">Note Generali</label>
+                    <p class="fst-italic text-secondary">@(Model.Note ?? "Nessuna nota presente")</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100 bg-light">
+                <div class="card-header fw-bold text-center">Creazione Lettere</div>
+                <div class="card-body d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm"><i class="fas fa-file-pdf me-2"></i>Lettera X (@Model.GeneraLetteraX)</button>
+                    <button class="btn btn-outline-primary btn-sm"><i class="fas fa-file-pdf me-2"></i>Lettera Y (@Model.GeneraLetteraY)</button>
+                    <button class="btn btn-outline-primary btn-sm"><i class="fas fa-file-pdf me-2"></i>Lettera Z (@Model.GeneraLetteraZ)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

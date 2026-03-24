@@ -6,6 +6,12 @@ namespace EbWeb.Models.Services.Application;
 public interface IAbilitazioneMifidService
 {
     Task<ListViewModel<AbilitazioneMifidViewModel>> GetAbilitazioniMifidAsync(AbilitazioneMifidListInputModel model);
-    //Task<string> AssegnaRichiestaAsync(int idRichiesta, int assegnatarioIndex);
-    //Task RevocaRichiestaAsync(int idRichiesta, int assegnatarioIndex);
+    Task<AbilitazioneMifidDetailViewModel> GetAbilitazioneMifidAsync(int matricola);
+    Task<AbilitazioneMifidDetailViewModel> CreateAbilitazioneMifidAsync(AbilitazioneMifidCreateInputModel inputModel);
+    Task<AbilitazioneMifidDetailViewModel> EditAbilitazioneMifidAsync(AbilitazioneMifidEditInputModel inputModel);
+    Task<AbilitazioneMifidEditInputModel> GetAbilitazioneMifidForEditingAsync(int matricola);
+    Task DeleteAbilitazioneMifidAsync(AbilitazioneMifidDeleteInputModel inputModel);
+    Task<List<AnagDipendentiLookupViewModel>> GetAnagDipendentiLookupAsync();
+    Task<IEnumerable<AbilitazioneMifidDetailViewModel>> GetAllAbilitazioniMifidAsync();
+    Task<IEnumerable<SelectOptionsViewModel>> GetTitoliStudioMifidLookupAsync();
 }

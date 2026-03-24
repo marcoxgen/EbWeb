@@ -2,7 +2,6 @@ using EbWeb.Models.Entities;
 using EbWeb.Models.InputModels;
 using EbWeb.Models.Services.Infrastructure;
 using EbWeb.Models.ViewModels;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace EbWeb.Models.Services.Application;

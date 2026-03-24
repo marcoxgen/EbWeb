@@ -1,5 +1,3 @@
-using System;
-
 namespace EbWeb.Models.Exceptions.Application
 {
     public class OptimisticConcurrencyException : Exception

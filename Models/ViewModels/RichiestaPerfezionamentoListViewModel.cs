@@ -1,4 +1,3 @@
-using EbWeb.Models.Entities;
 using EbWeb.Models.InputModels;
 
 namespace EbWeb.Models.ViewModels;

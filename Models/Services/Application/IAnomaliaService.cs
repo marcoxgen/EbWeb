@@ -1,10 +1,9 @@
 using EbWeb.Models.ViewModels;
 
-namespace EbWeb.Models.Services.Application
+namespace EbWeb.Models.Services.Application;
+
+public interface IAnomaliaService
 {
-    public interface IAnomaliaService
-    {
-        Task<List<AnomaliaRegistrazioneViewModel>> GetAnomalieRegistrazioniAsync();
-        Task ForzaAnomaliaAsync(int id);
-    }
+    Task<List<AnomaliaRegistrazioneViewModel>> GetAnomalieRegistrazioniAsync();
+    Task ForzaAnomaliaAsync(int id);
 }

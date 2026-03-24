@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+namespace EbWeb.Models.ViewModels;
 
-namespace EbWeb.Models.ViewModels
+public class ListViewModel<T>
 {
-    public class ListViewModel<T>
-    {
-        public List<T> Results { get; set; } = new();
-        public int TotalCount { get; set; }
-    }
+    public List<T> Results { get; set; } = new();
+    public int TotalCount { get; set; }
 }

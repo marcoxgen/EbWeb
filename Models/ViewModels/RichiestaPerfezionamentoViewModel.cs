@@ -1,5 +1,3 @@
-using EbWeb.Models.Entities;
-
 namespace EbWeb.Models.ViewModels;
 
 public class RichiestaPerfezionamentoViewModel

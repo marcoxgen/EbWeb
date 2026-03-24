@@ -1,3 +1,5 @@
+namespace Models.Options;
+
 public class ConnectionStringsOptions
 {
     public required string Anagrafe { get; set; }

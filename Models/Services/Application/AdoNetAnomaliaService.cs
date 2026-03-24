@@ -4,57 +4,56 @@ using EbWeb.Models.Services.Infrastructrure;
 using EbWeb.Models.ViewModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
-using System.Security.Principal;
+using Models.Options;
 
-namespace EbWeb.Models.Services.Application
+namespace EbWeb.Models.Services.Application;
+
+public class AdoNetAnomaliaService : IAnomaliaService
 {
-    public class AdoNetAnomaliaService : IAnomaliaService
+    private readonly ILogger<AdoNetAnomaliaService> logger;
+    private readonly IDatabaseAccessor db;
+    private readonly IOptionsMonitor<ConnectionStringsOptions> connectionStringOptions;
+    private readonly IHttpContextAccessor httpContextAccessor;
+    
+    public AdoNetAnomaliaService(ILogger<AdoNetAnomaliaService> logger,
+                                    IDatabaseAccessor db,
+                                    IOptionsMonitor<ConnectionStringsOptions> connectionStringOptions,
+                                    IHttpContextAccessor httpContextAccessor)
     {
-        private readonly ILogger<AdoNetAnomaliaService> logger;
-        private readonly IDatabaseAccessor db;
-        private readonly IOptionsMonitor<ConnectionStringsOptions> connectionStringOptions;
-        private readonly IHttpContextAccessor httpContextAccessor;
-        
-        public AdoNetAnomaliaService(ILogger<AdoNetAnomaliaService> logger,
-                                     IDatabaseAccessor db,
-                                     IOptionsMonitor<ConnectionStringsOptions> connectionStringOptions,
-                                     IHttpContextAccessor httpContextAccessor)
-        {
-            this.logger = logger;
-            this.db = db;
-            this.connectionStringOptions = connectionStringOptions;
-            this.httpContextAccessor = httpContextAccessor;
-        }
+        this.logger = logger;
+        this.db = db;
+        this.connectionStringOptions = connectionStringOptions;
+        this.httpContextAccessor = httpContextAccessor;
+    }
 
-        public async Task ForzaAnomaliaAsync(int id)
-        {
-            int nag = id;
-            // string utente = Environment.UserName;
-            string utente = httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Anonimo";
-            DateTime dataForzatura = DateTime.Now;
+    public async Task ForzaAnomaliaAsync(int id)
+    {
+        int nag = id;
+        // string utente = Environment.UserName;
+        string utente = httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "Anonimo";
+        DateTime dataForzatura = DateTime.Now;
 
-            try
-            {
-                FormattableString query = $"INSERT INTO Attr.Anomalie_Registrazione_Forzature (NAG, Utente, Data_Forzatura) VALUES ({nag}, {utente}, {dataForzatura})";
-                DataSet dataSet = await db.QueryAsync("AppXteDb", query);
-            }
-            catch (SqlException exc) when (exc.Number == 2601)
-            {
-                throw new AnomaliaNagDuplicateException(nag, exc);
-            }
-        }
-
-        public async Task<List<AnomaliaRegistrazioneViewModel>> GetAnomalieRegistrazioniAsync()
+        try
         {
-            FormattableString query = $"SELECT NAG, codice_fiscale, INTESTAZIONE, Id_Socio, Anomalia_Des FROM XTE.Anomalie_Registrazione_Forzabili";
+            FormattableString query = $"INSERT INTO Attr.Anomalie_Registrazione_Forzature (NAG, Utente, Data_Forzatura) VALUES ({nag}, {utente}, {dataForzatura})";
             DataSet dataSet = await db.QueryAsync("AppXteDb", query);
-            var dataTable = dataSet.Tables[0];
-            var anomaliaRegistrazioneList = new List<AnomaliaRegistrazioneViewModel>();
-            foreach(DataRow anomaliaRegistrazioneRow in dataTable.Rows) {
-                AnomaliaRegistrazioneViewModel anomaliaRegistrazioneViewModel = AnomaliaRegistrazioneViewModel.FromDataRow(anomaliaRegistrazioneRow);
-                anomaliaRegistrazioneList.Add(anomaliaRegistrazioneViewModel);
-            }
-            return anomaliaRegistrazioneList;
         }
+        catch (SqlException exc) when (exc.Number == 2601)
+        {
+            throw new AnomaliaNagDuplicateException(nag, exc);
+        }
+    }
+
+    public async Task<List<AnomaliaRegistrazioneViewModel>> GetAnomalieRegistrazioniAsync()
+    {
+        FormattableString query = $"SELECT NAG, codice_fiscale, INTESTAZIONE, Id_Socio, Anomalia_Des FROM XTE.Anomalie_Registrazione_Forzabili";
+        DataSet dataSet = await db.QueryAsync("AppXteDb", query);
+        var dataTable = dataSet.Tables[0];
+        var anomaliaRegistrazioneList = new List<AnomaliaRegistrazioneViewModel>();
+        foreach(DataRow anomaliaRegistrazioneRow in dataTable.Rows) {
+            AnomaliaRegistrazioneViewModel anomaliaRegistrazioneViewModel = AnomaliaRegistrazioneViewModel.FromDataRow(anomaliaRegistrazioneRow);
+            anomaliaRegistrazioneList.Add(anomaliaRegistrazioneViewModel);
+        }
+        return anomaliaRegistrazioneList;
     }
 }

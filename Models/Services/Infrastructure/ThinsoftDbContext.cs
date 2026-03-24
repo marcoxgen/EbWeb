@@ -40,6 +40,5 @@ public class ThinsoftDbContext : DbContext
             entity.ToTable("Assegna_Perfezionamento", schema: "INPUT");
             entity.HasKey(e => e.Id_Richiesta);
         });
-
     }
 }

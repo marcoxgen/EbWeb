@@ -1,0 +1,198 @@
+@model AbilitazioneMifidEditInputModel
+<section class="abilitazione-info container py-4">
+    <form method="post">
+        <div class="d-flex align-items-center mb-4 border-bottom pb-3">
+            <div class="d-flex align-items-center">
+                <a asp-action="Detail" asp-route-matricola="@Model.Matricola"
+                    class="btn btn-outline-secondary btn-sm rounded-circle me-3"
+                    title="Annulla e torna all'elenco"
+                    style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h2 class="mb-0 me-3">@ViewData["Title"]</h2>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary shadow-sm">
+                    <i class="fas fa-save me-2"></i>Salva
+                </button>                
+                <button class="btn btn-outline-danger ms-2" type="button" data-bs-toggle="modal" data-bs-target="#delete-modal">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+        <input type="hidden" asp-for="Matricola">
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-light fw-bold">
+                        <i class="fas fa-user me-2"></i>Istruzione e Anagrafica
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="TitoloStudio" class="form-label text-muted small"></label>
+                            <input type="text" class="form-control" asp-for="TitoloStudio" placeholder="Es. Laurea in Economia" >
+                            <span asp-validation-for="TitoloStudio" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DataConseguimentoTitoloStudio" class="form-label text-muted small"></label>
+                            <input type="date" class="form-control" asp-for="DataConseguimentoTitoloStudio">
+                            <span asp-validation-for="DataConseguimentoTitoloStudio" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row mb-3 align-items-end">
+                            <div class="col-md-4">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchAssessment" 
+                                        name="NecessarioAssessment" value="true"
+                                        @(Model.NecessarioAssessment == true ? "checked" : "")>
+                                    <input type="hidden" name="NecessarioAssessment" value="false">
+                                    <label class="form-check-label text-muted small" asp-for="NecessarioAssessment" for="switchAssessment"></label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-8">
+                                <label asp-for="DataSuperamentoAssessment" class="form-label text-muted small"></label>
+                                <input type="date" class="form-control  asp-for="DataSuperamentoAssessment"> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="card h-100 shadow-sm border-primary">
+                    <div class="card-header bg-primary text-white fw-bold">
+                        <i class="fas fa-certificate me-2"></i>Parametri MiFID
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="mb-3">
+                                <label asp-for="TitoloStudioMifidCod" class="form-label fw-bold text-primary"></label>
+                                <select id="select-titoli" asp-for="TitoloStudioMifidCod" placeholder="Inizia a scrivere per cercare..."></select>
+                                <div class="form-text">Questo titolo determina i requisiti di abilitazione.</div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DataAbilitazioneMifid" class="form-label text-muted small"></label>
+                                <input type="date" class="form-control" asp-for="DataAbilitazioneMifid">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DataAbilitazioneTitoli" class="form-label text-muted small"></label>
+                                <input type="date" class="form-control" asp-for="DataAbilitazioneTitoli">
+                            </div>
+                        </div>
+
+                        <div class="row p-2 m-1 bg-warning bg-opacity-10 border border-warning rounded">
+                            <div class="col-md-6 mb-2">
+                                <label asp-for="DataSospensione" class="form-label small fw-bold"></label>
+                                <input type="date" class="form-control form-control-sm" asp-for="DataSospensione">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label asp-for="DataTermineSospensione" class="form-label small fw-bold"></label>
+                                <input type="date" class="form-control form-control-sm" asp-for="DataTermineSospensione">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light fw-bold"><i class="fas fa-users-cog me-2"></i>Supervisione</div>
+                    <div class="card-body form-label small">
+                        <div class="row">
+                            <div class="col-md-2 mb-3">
+                                <label asp-for="DataInizioSupervisione" class="form-label small fw-bold"></label>
+                                <input type="date" class="form-control" asp-for="DataInizioSupervisione">
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label asp-for="DataFineSupervisione" class="form-label small fw-bold"></label>
+                                <input type="date" class="form-control" asp-for="DataFineSupervisione">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="MatricolaSupervisore" class="form-label small fw-bold"></label>
+                                <select id="select-supervisore" asp-for="MatricolaSupervisore"></select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="MatricolaSostitutoSupervisore" class="form-label small fw-bold"></label>
+                                <select id="select-sostituto" asp-for="MatricolaSostitutoSupervisore"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light fw-bold"><i class="fas fa-sticky-note me-2"></i>Note e Integrazioni</div>
+                    <div class="card-body">
+                        <textarea asp-for="Note" class="form-control" rows="3" placeholder="Aggiungi eventuali annotazioni sulla pratica..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+<form method="post" asp-action="Delete" asp-route-id="@Model.Matricola">
+    <input type="hidden" asp-for="Matricola">
+    <div id="delete-modal" class="modal fade" tabindex="-1" aria-labelledby="delete-modal-title" aria-hidden="true">
+        <div class="modal-dialog"> <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="delete-modal-title">Conferma eliminazione</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Stai per eliminare l'abilitazione e tutti i suoi dati andranno persi. Confermi l'eliminazione?</p>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button class="btn btn-light" type="button" data-bs-dismiss="modal">Annulla</button>
+                    
+                    <button type="submit" class="btn btn-danger">Conferma</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function (event) {
+        function initTomSelect(selector, url, initialValue) {
+            const el = document.querySelector(selector);
+            if (!el) return;
+
+            const ts = new TomSelect(selector, {
+                valueField: 'value',
+                labelField: 'text',
+                searchField: 'text',
+                preload: true,
+                placeholder: "Seleziona...",
+                load: function(query, callback) {
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(json => {
+                            callback(json);
+                            if (initialValue && initialValue !== "") {
+                                ts.addItem(initialValue);
+                            }
+                        }).catch(() => callback());
+                }
+            });
+        }
+
+        initTomSelect("#select-titoli", 
+                      '@Url.Action("GetTitoliStudioMifid", "AbilitazioniMifid")', 
+                      "@Model.TitoloStudioMifidCod?.ToString()");
+        initTomSelect("#select-supervisore", 
+                      '@Url.Action("GetAnagDipendenti", "AbilitazioniMifid")', 
+                      "@Model.MatricolaSupervisore?.ToString()");
+        initTomSelect("#select-sostituto", 
+                      '@Url.Action("GetAnagDipendenti", "AbilitazioniMifid")', 
+                      "@Model.MatricolaSostitutoSupervisore?.ToString()");
+    });
+</script>

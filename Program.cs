@@ -1,8 +1,10 @@
+using EbWeb.Models.Entities;
 using EbWeb.Models.Options;
 using EbWeb.Models.Services.Application;
 using EbWeb.Models.Services.Infrastructrure;
 using EbWeb.Models.Services.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Models.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,7 @@ builder.Services.AddTransient<IAgendaStipulaService, EFCoreAgendaStipulaService>
 builder.Services.AddTransient<IRichiestaPerfezionamentoService, EFCoreRichiestaPerfezionamentoService>();
 builder.Services.AddTransient<ISchedaBudgetService, EFCoreSchedaBudgetService>();
 builder.Services.AddTransient<IAbilitazioneMifidService, EFCoreAbilitazioneMifidService>();
+builder.Services.AddTransient<IExcelExportService, ExcelExportService>();
 #pragma warning disable CA1416
 builder.Services.AddScoped<IUserService, UserService>();
 #pragma warning restore CA1416
@@ -42,6 +45,7 @@ builder.Services.Configure<RevisioniOptions>(configuration.GetSection("Revisioni
 builder.Services.Configure<IstruttorieOptions>(configuration.GetSection("Istruttorie"));
 builder.Services.Configure<AgendaStipuleOptions>(configuration.GetSection("AgendaStipule"));
 builder.Services.Configure<RichiestePerfezionamentoOptions>(configuration.GetSection("RichiestaPerfezionamento"));
+builder.Services.Configure<AbilitazioniMifidOptions>(configuration.GetSection("AbilitazioneMifid"));
 
 // --- AUTENTICAZIONE WINDOWS ---
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);

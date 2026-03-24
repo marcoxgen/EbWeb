@@ -1,11 +1,8 @@
-using System;
+namespace EbWeb.Models.Exceptions.Application;
 
-namespace EbWeb.Models.Exceptions.Application
+public class RevisioneNotFoundException : Exception
 {
-    public class RevisioneNotFoundException : Exception
+    public RevisioneNotFoundException(int id) : base($"Revisione {id} non trovata")
     {
-        public RevisioneNotFoundException(int id) : base($"Revisione {id} non trovata")
-        {
-        }
     }
 }
