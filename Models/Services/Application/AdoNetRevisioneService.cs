@@ -2,7 +2,7 @@ using System.Data;
 using EbWeb.Models.Exceptions.Application;
 using EbWeb.Models.InputModels;
 using EbWeb.Models.Options;
-using EbWeb.Models.Services.Infrastructrure;
+using EbWeb.Models.Services.Infrastructure;
 using EbWeb.Models.ValueObjects;
 using EbWeb.Models.ViewModels;
 using Microsoft.Extensions.Options;

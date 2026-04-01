@@ -7,7 +7,7 @@ namespace EbWeb.Models.InputModels;
 [ModelBinder(BinderType = typeof(AbilitazioneMifidListInputModelBinder))]
 public class AbilitazioneMifidListInputModel
 {
-    public AbilitazioneMifidListInputModel(string? search, int page, string orderby, bool ascending, int limit, AbilitazioniMifidOrderOptions orderOptions)
+    public AbilitazioneMifidListInputModel(string? search, int page, string orderby, bool ascending, int limit, bool? escluso, AbilitazioniMifidOrderOptions orderOptions)
     {
         if (!orderOptions.Allow.Contains(orderby))
         {
@@ -21,6 +21,7 @@ public class AbilitazioneMifidListInputModel
         Ascending = ascending;
 
         Offset = (Page - 1) * Limit;
+        Escluso = escluso;
     }
     public string? Search { get; }
     public int Page { get; }
@@ -29,4 +30,6 @@ public class AbilitazioneMifidListInputModel
 
     public int Limit { get; }
     public int Offset { get; }
+
+    public bool? Escluso { get; }
 }

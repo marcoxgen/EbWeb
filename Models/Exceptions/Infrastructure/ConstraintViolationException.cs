@@ -1,4 +1,4 @@
-namespace MyCourse.Models.Exceptions.Infrastructure;
+namespace EbWeb.Models.Exceptions.Infrastructure;
 
 public class ConstraintViolationException : Exception
 {

@@ -8,6 +8,9 @@ public partial class BaseAbilitatoMifid
     {
         Matricola = matricola;
         Titolo_di_studio_Mifid_Cod = 0;
+        Necessario_assessment = false;
+        Abilitato_Finance_WMP = false;
+        Escluso = false;
     }
 
     public int Matricola { get; set; }
@@ -27,6 +30,8 @@ public partial class BaseAbilitatoMifid
     public string? Formazione_2024 { get; set; }
     public string? Formazione_2025 { get; set; }
     public string? Note { get; set; }
+    public bool? Abilitato_Finance_WMP { get; set; }
+    public bool? Escluso { get; set; }
     public DateOnly? Data_Ultimo_Aggiornamento { get; set; }
 
     public void ChangeTitoloDiStudio(string titoloStudio)
@@ -66,7 +71,7 @@ public partial class BaseAbilitatoMifid
 
     public void ChangeDataSuperamentoAssessment(DateOnly? dataSuperamentoAssessment)
     {
-        Data_superamento_assessment = dataSuperamentoAssessment;
+        Data_superamento_assessment = (Necessario_assessment == true) ? dataSuperamentoAssessment : null;
     }
 
     public void ChangeDataAbilitazioneTitoli(DateOnly? dataAbilitazioneTitoli)
@@ -91,6 +96,32 @@ public partial class BaseAbilitatoMifid
     public void ChangeMatricolaSostitutoSupervisore(int? matricolaSostitutoSupervisore)
     {
         Matricola_sostituto_supervisore = matricolaSostitutoSupervisore;
+    }
+
+    public void ChangeFormazione2024(string? formazione2024)
+    {
+        Formazione_2024 = formazione2024;
+    }
+
+
+    public void ChangeFormazione2025(string? formazione2025)
+    {
+        Formazione_2025 = formazione2025;
+    }
+
+    public void ChangeNote(string? note)
+    {
+        Note = note;
+    }
+
+    public void ChangeAbilitatoFinanceWMP(bool? abilitatoFinanceWMP)
+    {
+        Abilitato_Finance_WMP = abilitatoFinanceWMP;
+    }
+
+    public void ChangeEscluso(bool? escluso)
+    {
+        Escluso = escluso;
     }
 
     public void ChangeDataUltimoAggiornamento()

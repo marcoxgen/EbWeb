@@ -1,4 +1,4 @@
-namespace MyCourse.Models.Exceptions;
+namespace EbWeb.Models.Exceptions;
 
 public class AbilitazioneMifidMatricolaUnavailableException : Exception
 {

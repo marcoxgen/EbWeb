@@ -1,8 +1,8 @@
+using EbWeb.Models.Exceptions;
 using EbWeb.Models.InputModels;
 using EbWeb.Models.Services.Application;
 using EbWeb.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using MyCourse.Models.Exceptions;
 
 namespace EbWeb.Controllers;
 
@@ -31,7 +31,7 @@ public class AbilitazioniMifidController : Controller
     public async Task<IActionResult> Detail(int matricola)
     {
         AbilitazioneMifidDetailViewModel viewModel = await abilitazioneMifidService.GetAbilitazioneMifidAsync(matricola);
-        ViewData["Title"] = "Dettaglio Abilitazione MiFID";
+        ViewData["Title"] = "Dettaglio abilitazione MiFID";
         return View(viewModel);
     }
 
@@ -118,6 +118,14 @@ public class AbilitazioniMifidController : Controller
 
         return Json(anagDipendenti);
     }
+
+    public async Task<JsonResult> GetSupervisori()
+    {
+        var supervisori = await abilitazioneMifidService.GetSupervisoriLookupAsync();
+
+        return Json(supervisori);
+    }
+
 
     [HttpGet]
     public async Task<JsonResult> GetTitoliStudioMifid()

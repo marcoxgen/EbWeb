@@ -1,6 +1,6 @@
 using System.Data;
 using EbWeb.Models.Exceptions.Application;
-using EbWeb.Models.Services.Infrastructrure;
+using EbWeb.Models.Services.Infrastructure;
 using EbWeb.Models.ViewModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;

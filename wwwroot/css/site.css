@@ -29,3 +29,35 @@ body {
 .table thead th {
     vertical-align: top !important;
 }
+
+/* 1. Prepariamo il contenitore ts-control */
+.ts-control {
+    position: relative !important;
+    padding-right: 35px !important; /* Spazio vitale per la freccia */
+    min-height: 38px; /* Altezza standard per allinearsi agli altri input */
+    display: flex;
+    align-items: center;
+}
+
+/* 2. Creiamo la freccia (Caret) */
+.ts-wrapper.single .ts-control::after {
+    content: " " !important;
+    display: block !important;
+    position: absolute !important;
+    right: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%); /* Centra perfettamente la freccia verticalmente */
+    width: 0 !important;
+    height: 0 !important;
+    border-left: 5px solid transparent !important;
+    border-right: 5px solid transparent !important;
+    border-top: 5px solid #666 !important; /* Colore della freccia */
+    margin-top: 0 !important;
+    z-index: 5;
+}
+
+/* 3. Effetto al click (opzionale: la freccia punta in su) */
+.ts-wrapper.single.dropdown-active .ts-control::after {
+    border-top: 0 !important;
+    border-bottom: 5px solid #666 !important;
+}

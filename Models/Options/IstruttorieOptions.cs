@@ -3,7 +3,6 @@ namespace EbWeb.Models.Options;
 public class IstruttorieOptions
 {
     public int PerPage { get; set; }
-    public int InHome { get; set; }
     public IstruttorieOrderOptions Order { get; set; } = default!;
 }
 

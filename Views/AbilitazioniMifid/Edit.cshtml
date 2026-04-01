@@ -2,22 +2,29 @@
 <section class="abilitazione-info container py-4">
     <form method="post">
         <div class="d-flex align-items-center mb-4 border-bottom pb-3">
-            <div class="d-flex align-items-center">
-                <a asp-action="Detail" asp-route-matricola="@Model.Matricola"
-                    class="btn btn-outline-secondary btn-sm rounded-circle me-3"
-                    title="Annulla e torna all'elenco"
-                    style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
-                <h2 class="mb-0 me-3">@ViewData["Title"]</h2>
-            </div>
-            <div>
-                <button type="submit" class="btn btn-primary shadow-sm">
-                    <i class="fas fa-save me-2"></i>Salva
-                </button>                
-                <button class="btn btn-outline-danger ms-2" type="button" data-bs-toggle="modal" data-bs-target="#delete-modal">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
+            <a asp-action="Detail" asp-route-matricola="@Model.Matricola"
+            class="btn btn-outline-secondary btn-sm rounded-circle me-3"
+            title="Annulla e torna indietro"
+            style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">
+                <i class="fas fa-arrow-left" style="font-size: 0.8rem;"></i>
+            </a>
+
+            <h3 class="mb-0">
+                @ViewData["Title"]: <span class="text-primary">@Model.Intestazione</span>
+            </h3>
+
+            <button type="submit" class="btn btn-outline-success btn-sm px-3 ms-3">
+                <i class="fas fa-save me-2"></i>Salva
+            </button>
+
+            <div class="form-check form-switch mb-0 ms-auto pe-3">
+                <input class="form-check-input" type="checkbox" role="switch" id="switchEscluso"
+                    name="Escluso" value="true"
+                    @(Model.Escluso == true ? "checked" : "")>
+                <input type="hidden" name="Escluso" value="false">
+                <label class="form-check-label text-muted small" for="switchEscluso">
+                    Escludi
+                </label>
             </div>
         </div>
 
@@ -25,10 +32,10 @@
         <input type="hidden" asp-for="Matricola">
 
         <div class="row g-4">
-            <div class="col-lg-6">
+            <div class="col-lg-5">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-light fw-bold">
-                        <i class="fas fa-user me-2"></i>Istruzione e Anagrafica
+                        <i class="fas fa-user me-2"></i>Dati Generali   
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
@@ -43,59 +50,76 @@
                             <span asp-validation-for="DataConseguimentoTitoloStudio" class="text-danger small"></span>
                         </div>
 
-                        <div class="row mb-3 align-items-end">
-                            <div class="col-md-4">
+                        <div class="row mb-0 align-items-end">
+                            <div class="col-lg-6">
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="switchAssessment" 
-                                        name="NecessarioAssessment" value="true"
-                                        @(Model.NecessarioAssessment == true ? "checked" : "")>
-                                    <input type="hidden" name="NecessarioAssessment" value="false">
-                                    <label class="form-check-label text-muted small" asp-for="NecessarioAssessment" for="switchAssessment"></label>
+                                    <input class="form-check-input" type="checkbox" role="switch" id="switchAbilitatoWMP"
+                                        name="Abilitato_Finance_WMP" value="true"
+                                        @(Model.Abilitato_Finance_WMP == true ? "checked" : "")>
+                                    <input type="hidden" name="Abilitato_Finance_WMP" value="false">
+                                    <label class="form-check-label text-muted small" asp-for="Abilitato_Finance_WMP" for="switchAbilitatoWMP"></label>
                                 </div>
-                            </div>
-
-                            <div class="col-md-8">
-                                <label asp-for="DataSuperamentoAssessment" class="form-label text-muted small"></label>
-                                <input type="date" class="form-control  asp-for="DataSuperamentoAssessment"> 
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-lg-6">
+            <div class="col-lg-7">
                 <div class="card h-100 shadow-sm border-primary">
                     <div class="card-header bg-primary text-white fw-bold">
-                        <i class="fas fa-certificate me-2"></i>Parametri MiFID
+                        <i class="fas fa-balance-scale me-2"></i>Status MiFID
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="mb-3">
-                                <label asp-for="TitoloStudioMifidCod" class="form-label fw-bold text-primary"></label>
-                                <select id="select-titoli" asp-for="TitoloStudioMifidCod" placeholder="Inizia a scrivere per cercare..."></select>
-                                <div class="form-text">Questo titolo determina i requisiti di abilitazione.</div>
-                            </div>
-                        </div>
+                        <div class="row g-0"> <div class="col-lg-9 border-end pe-3"> 
+                                <div class="mb-3">
+                                    <label asp-for="TitoloStudioMifidCod" class="form-label fw-bold text-primary small"></label>
+                                    <select id="select-titoli" asp-for="TitoloStudioMifidCod" autocomplete="off"></select>
+                                </div>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="DataAbilitazioneMifid" class="form-label text-muted small"></label>
-                                <input type="date" class="form-control" asp-for="DataAbilitazioneMifid">
+                                <div class="row g-0 p-2 border border-warning rounded bg-warning bg-opacity-10">
+                                    <div class="col-lg-6 pe-2">
+                                        <label asp-for="DataSospensione" class="form-label small fw-bold"></label>
+                                        <input type="date" class="form-control form-control-sm" asp-for="DataSospensione">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <label asp-for="DataTermineSospensione" class="form-label small fw-bold"></label>
+                                        <input type="date" class="form-control form-control-sm" asp-for="DataTermineSospensione">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label asp-for="DataAbilitazioneTitoli" class="form-label text-muted small"></label>
-                                <input type="date" class="form-control" asp-for="DataAbilitazioneTitoli">
-                            </div>
-                        </div>
 
-                        <div class="row p-2 m-1 bg-warning bg-opacity-10 border border-warning rounded">
-                            <div class="col-md-6 mb-2">
-                                <label asp-for="DataSospensione" class="form-label small fw-bold"></label>
-                                <input type="date" class="form-control form-control-sm" asp-for="DataSospensione">
-                            </div>
-                            <div class="col-md-6 mb-2">
-                                <label asp-for="DataTermineSospensione" class="form-label small fw-bold"></label>
-                                <input type="date" class="form-control form-control-sm" asp-for="DataTermineSospensione">
+                            <div class="col-lg-3 ps-3">
+                                <div class="mb-2">
+                                    <label asp-for="DataAbilitazioneMifid" class="form-label text-muted small mb-0"></label>
+                                    <input type="date" class="form-control form-control-sm" asp-for="DataAbilitazioneMifid">
+                                </div>
+                                <div class="mb-4">
+                                    <label asp-for="DataAbilitazioneTitoli" class="form-label text-muted small mb-0"></label>
+                                    <input type="date" class="form-control form-control-sm" asp-for="DataAbilitazioneTitoli">
+                                </div>
+                                <div class="mb-0">
+                                    <div class="form-check form-switch mb-1">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="switchAssessment"
+                                            name="NecessarioAssessment" value="true"
+                                            @(Model.NecessarioAssessment == true ? "checked" : "")>
+                                        
+                                        <input type="hidden" name="NecessarioAssessment" value="false">
+
+                                        <label class="form-check-label small text-muted" for="switchAssessment">
+                                            Assessment
+                                        </label>
+                                    </div>
+                                    @if (Model.NecessarioAssessment == true)
+                                    {
+                                        <input type="date" class="form-control form-control-sm" 
+                                            id="inputDataAssessment" asp-for="DataSuperamentoAssessment">
+                                    }
+                                    else
+                                    {
+                                        <input type="date" class="form-control form-control-sm" 
+                                            id="inputDataAssessment" asp-for="DataSuperamentoAssessment" disabled>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -107,19 +131,19 @@
                     <div class="card-header bg-light fw-bold"><i class="fas fa-users-cog me-2"></i>Supervisione</div>
                     <div class="card-body form-label small">
                         <div class="row">
-                            <div class="col-md-2 mb-3">
+                            <div class="col-lg-2">
                                 <label asp-for="DataInizioSupervisione" class="form-label small fw-bold"></label>
                                 <input type="date" class="form-control" asp-for="DataInizioSupervisione">
                             </div>
-                            <div class="col-md-2 mb-3">
+                            <div class="col-lg-2">
                                 <label asp-for="DataFineSupervisione" class="form-label small fw-bold"></label>
                                 <input type="date" class="form-control" asp-for="DataFineSupervisione">
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-lg-4">
                                 <label asp-for="MatricolaSupervisore" class="form-label small fw-bold"></label>
                                 <select id="select-supervisore" asp-for="MatricolaSupervisore"></select>
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-lg-4">
                                 <label asp-for="MatricolaSostitutoSupervisore" class="form-label small fw-bold"></label>
                                 <select id="select-sostituto" asp-for="MatricolaSostitutoSupervisore"></select>
                             </div>
@@ -130,35 +154,50 @@
 
             <div class="col-12">
                 <div class="card shadow-sm">
-                    <div class="card-header bg-light fw-bold"><i class="fas fa-sticky-note me-2"></i>Note e Integrazioni</div>
+                    <div class="card-header bg-light fw-bold"><i class="fas fa-sticky-note me-2"></i>Note e Formazione</div>
                     <div class="card-body">
-                        <textarea asp-for="Note" class="form-control" rows="3" placeholder="Aggiungi eventuali annotazioni sulla pratica..."></textarea>
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label asp-for="Formazione2024" class="form-label small fw-bold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                                    <input type="text" class="form-control" asp-for="Formazione2024">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label asp-for="Formazione2025" class="form-label small fw-bold"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                                    <input type="text" class="form-control" asp-for="Formazione2025">
+                                </div>
+                            </div>
+                        </div>
+
+                        <textarea asp-for="Note" class="form-control" rows="3" placeholder="Aggiungi eventuali annotazioni..."></textarea>
                     </div>
                 </div>
             </div>
         </div>
     </form>
 </section>
-<form method="post" asp-action="Delete" asp-route-id="@Model.Matricola">
-    <input type="hidden" asp-for="Matricola">
-    <div id="delete-modal" class="modal fade" tabindex="-1" aria-labelledby="delete-modal-title" aria-hidden="true">
-        <div class="modal-dialog"> <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="delete-modal-title">Conferma eliminazione</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Stai per eliminare l'abilitazione e tutti i suoi dati andranno persi. Confermi l'eliminazione?</p>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button class="btn btn-light" type="button" data-bs-dismiss="modal">Annulla</button>
-                    
-                    <button type="submit" class="btn btn-danger">Conferma</button>
-                </div>
+
+<div class="modal fade" id="modalConfermaEscluso" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Conferma Esclusione</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Sei sicuro di voler escludere questo utente dalle abilitazioni MiFID? 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnAnnullaEsclusione">Annulla</button>
+                <button type="button" class="btn btn-warning" id="btnConfermaEsclusione">Sì, escludi</button>
             </div>
         </div>
     </div>
-</form>
+</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function (event) {
@@ -171,7 +210,7 @@
                 labelField: 'text',
                 searchField: 'text',
                 preload: true,
-                placeholder: "Seleziona...",
+                hideSelected: true,
                 load: function(query, callback) {
                     fetch(url)
                         .then(response => response.json())
@@ -185,14 +224,49 @@
             });
         }
 
-        initTomSelect("#select-titoli", 
-                      '@Url.Action("GetTitoliStudioMifid", "AbilitazioniMifid")', 
+        initTomSelect("#select-titoli",
+                      '@Url.Action("GetTitoliStudioMifid", "AbilitazioniMifid")',
                       "@Model.TitoloStudioMifidCod?.ToString()");
-        initTomSelect("#select-supervisore", 
-                      '@Url.Action("GetAnagDipendenti", "AbilitazioniMifid")', 
+        initTomSelect("#select-supervisore",
+                      '@Url.Action("GetSupervisori", "AbilitazioniMifid")',
                       "@Model.MatricolaSupervisore?.ToString()");
-        initTomSelect("#select-sostituto", 
-                      '@Url.Action("GetAnagDipendenti", "AbilitazioniMifid")', 
+        initTomSelect("#select-sostituto",
+                      '@Url.Action("GetSupervisori", "AbilitazioniMifid")',
                       "@Model.MatricolaSostitutoSupervisore?.ToString()");
+
+        const swEscluso = document.getElementById('switchEscluso');
+        const modalElement = new bootstrap.Modal(document.getElementById('modalConfermaEscluso'));
+        const btnConferma = document.getElementById('btnConfermaEsclusione');
+        const btnAnnulla = document.getElementById('btnAnnullaEsclusione');
+
+        swEscluso.addEventListener('click', function(e) {
+            if (this.checked) {
+                e.preventDefault();
+                modalElement.show();
+            }
+        });
+
+        btnConferma.addEventListener('click', function() {
+            swEscluso.checked = true;
+            modalElement.hide();
+        });
+
+        const chiudiModale = () => {
+            swEscluso.checked = false;
+            modalElement.hide();
+        };
+
+        btnAnnulla.addEventListener('click', chiudiModale);
+        document.getElementById('modalConfermaEscluso').addEventListener('hidden.bs.modal', function() {
+            if (!swEscluso.checked) swEscluso.checked = false; 
+        });
+
+        // Gestione abilitazione/disabilitazione DataSuperamentoAssessment
+        const swAssessment = document.getElementById('switchAssessment');
+        const inputDataAssessment = document.getElementById('inputDataAssessment');
+
+        swAssessment.addEventListener('change', function() {
+            inputDataAssessment.disabled = !this.checked;
+        });
     });
 </script>

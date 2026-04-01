@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace EbWeb.Models.Services.Infrastructrure;
+namespace EbWeb.Models.Services.Infrastructure;
 
 public interface IDatabaseAccessor
 {

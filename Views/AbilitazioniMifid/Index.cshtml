@@ -1,33 +1,65 @@
 @model AbilitazioneMifidListViewModel
 <div class="row align-items-center mb-4">
     <div class="col-md-8 d-flex align-items-center">
-        <h1 class="mb-0 me-3">@ViewData["Title"]</h1>
-        <a class="btn btn-success btn-sm" asp-action="Create">
-            <i class="fa fa-plus"></i> Crea nuovo
+        <h3 class="mb-0 me-3">@ViewData["Title"]</h3>        
+        <a class="btn btn-outline-success btn-sm me-3" 
+            asp-action="Create" 
+            title="Crea una nuova abilitazione">
+            <i class="fa fa-plus me-2"></i> Crea nuova
+        </a>
+        <a asp-action="ExportToExcel"
+            class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover small">
+                <i class="fas fa-file-excel me- 2"></i>Esporta in Excel
         </a>
     </div>
 
     <div class="col-md-4">
         <form asp-action="Index" method="get">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Cerca..." value="@Model.Input.Search">
-                <button class="btn btn-outline-secondary" type="submit">
-                    <i class="fas fa-search"></i>
-                </button>
+            <div class="d-flex align-items-center">
+                <div class="form-check form-switch d-flex align-items-center me-3">
+                    <input class="form-check-input" 
+                        type="checkbox" 
+                        name="escluso" 
+                        id="chkEscluso"
+                        value="true" 
+                        @(Model.Input.Escluso == true ? "checked" : "") 
+                        onchange="this.form.submit()">                    
+                    <label class="form-check-label ms-2" for="chkEscluso" style="font-size: 0.85rem;">
+                        Esclusi
+                    </label>
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Cerca..." value="@Model.Input.Search">
+                    <button class="btn btn-outline-secondary text-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
             </div>
         </form>
     </div>
-</div>
 
-<div class="container bg-light p-4 rounded shadow-sm">
-    <div class="row">
-        <div class="col-md-1"><a asp-route-orderby="Matricola" asp-route-ascending="@(Model.Input.OrderBy == "Matricola" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Matricola @if(Model.Input.OrderBy == "Matricola") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
-        <div class="col-md-2"><a asp-route-orderby="Intestazione" asp-route-ascending="@(Model.Input.OrderBy == "Intestazione" ? !Model.Input.Ascending : true)" asp-route-search="@Model.Input.Search">Intestazione @if(Model.Input.OrderBy == "Intestazione") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }</a></div>
-        <div class="col-md-3">Descrizione UO</div>
-        <div class="col-md-1">Ruolo</div>
-        <div class="col-md-1">Abil. Mifid</div>
-        <div class="col-md-1">Data Abil.</div>
-        <div class="col-md-1">Ult. Agg.</div>
+    <div class="container bg-light p-4 rounded shadow-sm mt-4">
+        <div class="row">
+            <div class="col-md-1">
+                <a asp-route-orderby="Matricola" 
+                    asp-route-ascending="@(Model.Input.OrderBy == "Matricola" ? !Model.Input.Ascending : true)" 
+                    asp-route-search="@Model.Input.Search"
+                    asp-route-escluso="@Model.Input.Escluso"> Matricola @if(Model.Input.OrderBy == "Matricola") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
+                </a>
+            </div>
+            <div class="col-md-2">
+            <a asp-route-orderby="Intestazione" 
+                asp-route-ascending="@(Model.Input.OrderBy == "Intestazione" ? !Model.Input.Ascending : true)" 
+                asp-route-search="@Model.Input.Search"
+                asp-route-escluso="@Model.Input.Escluso"> Intestazione @if(Model.Input.OrderBy == "Intestazione") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
+            </a>
+        </div>
+        <div class="col-md-3 text-primary">Descrizione UO</div>
+        <div class="col-md-2 text-primary">Ruolo</div>
+        <div class="col-md-1 text-primary small">Abilit. MiFID</div>
+        <div class="col-md-1 text-primary small">Data Abilit.</div>
+        <div class="col-md-1 text-primary small">Fine Superv.</div>
     </div>
 
     @foreach (AbilitazioneMifidViewModel abilitazione in Model.AbilitazioniMifid.Results)
@@ -37,12 +69,23 @@
                 <span>@abilitazione.Matricola</span>
             </div>
             <div class="col-md-2">
-                <span>@abilitazione.Intestazione</span>
+                <span class="position-relative d-inline-block">
+                    @abilitazione.Intestazione
+                    
+                    @if (abilitazione.Escluso == true)
+                    {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            style="font-size: 0.5rem; padding: 0.35em 0.65em;">
+                            ESCLUSO
+                            <span class="visually-hidden">Stato disabilitato</span>
+                        </span>
+                    }
+                </span>
             </div>
-           <div class="col-md-3">
+            <div class="col-md-3">
                 <span>@abilitazione.DescrUO</span>
             </div>
-            <div class="col-md-1">
+            <div class="col-md-2">
                 <span>@abilitazione.Ruolo</span>
             </div>
             <div class="col-md-1 text-center">
@@ -51,11 +94,22 @@
             <div class="col-md-1">
                 <span>@abilitazione.DataAbilitazioneMifid</span>
             </div>
+
             <div class="col-md-1">
-                <span>@abilitazione.DataUltimoAggiornamento</span>
+                @if (abilitazione.DataFineSupervisione >= DateOnly.FromDateTime(DateTime.Today))
+                {
+                    <span>@abilitazione.DataFineSupervisione</span>
+                }
             </div>
-            <div class="col-md-2 d-flex align-items-center">
-                <a class="btn btn-outline-primary btn-sm" asp-controller="AbilitazioniMifid" asp-action="Detail" asp-route-matricola="@abilitazione.Matricola"><i class="fas fa-file-alt"></i> Dettaglio</a>
+            
+            <div class="col-md-1 d-flex justify-content-center">
+                <a class="btn btn-outline-primary btn-sm"
+                    asp-controller="AbilitazioniMifid" 
+                    asp-action="Detail" 
+                    asp-route-matricola="@abilitazione.Matricola"
+                    title="Visualizza dettagli">
+                        <i class="fas fa-info-circle"></i>
+                </a>
             </div>
         </div>
     }
@@ -70,7 +124,12 @@
         @if(currentPage > 1)
         {
             <li class="page-item">
-                <a class="page-link" asp-route-page="@(currentPage - 1)" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending"><i class="fas fa-angle-left"></i></a>
+                <a class="page-link"
+                    asp-route-page="@(currentPage - 1)"
+                    asp-route-search="@Model.Input.Search"
+                    asp-route-orderby="@Model.Input.OrderBy"
+                    asp-route-ascending="@Model.Input.Ascending"
+                    asp-route-escluso="@Model.Input.Escluso"><i class="fas fa-angle-left"></i></a>
             </li>   
         }
         @for(int p = Math.Max(1, currentPage - 4); p <= Math.Min(totalPages, currentPage + 4); p++)
@@ -78,20 +137,35 @@
             if (p == currentPage)
             {
                 <li class="page-item active" aria-current="page">
-                    <a class="page-link" asp-route-page="@p" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending">@p <span class="sr-only">(current)</span></a>
+                    <a class="page-link"
+                        asp-route-page="@p"
+                        asp-route-search="@Model.Input.Search"
+                        asp-route-orderby="@Model.Input.OrderBy"
+                        asp-route-ascending="@Model.Input.Ascending"
+                        asp-route-escluso="@Model.Input.Escluso">@p <span class="sr-only">(current)</span></a>
                 </li>
             }
             else
             {
                 <li class="page-item">
-                    <a class="page-link" asp-route-page="@p" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending">@p</a>
+                    <a class="page-link"
+                        asp-route-page="@p"
+                        asp-route-search="@Model.Input.Search"
+                        asp-route-orderby="@Model.Input.OrderBy"
+                        asp-route-ascending="@Model.Input.Ascending"
+                        asp-route-escluso="@Model.Input.Escluso">@p</a>
                 </li>
             }
         }
         @if(currentPage < totalPages)
         {
             <li class="page-item">
-                <a class="page-link" asp-route-page="@(currentPage + 1)" asp-route-search="@Model.Input.Search" asp-route-orderby="@Model.Input.OrderBy" asp-route-ascending="@Model.Input.Ascending"><i class="fas fa-angle-right"></i></a>
+                <a class="page-link"
+                    asp-route-page="@(currentPage + 1)"
+                    asp-route-search="@Model.Input.Search"
+                    asp-route-orderby="@Model.Input.OrderBy"
+                    asp-route-ascending="@Model.Input.Ascending"
+                    asp-route-escluso="@Model.Input.Escluso"><i class="fas fa-angle-right"></i></a>
             </li>   
         }
     </ul>

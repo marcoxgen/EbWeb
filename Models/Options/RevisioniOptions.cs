@@ -3,7 +3,6 @@ namespace EbWeb.Models.Options;
 public class RevisioniOptions
 {
     public int PerPage { get; set; }
-    public int InHome { get; set; }
     public RevisioniOrderOptions Order { get; set; } = default!;
 }
 

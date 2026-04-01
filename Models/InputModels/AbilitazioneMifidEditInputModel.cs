@@ -7,16 +7,18 @@ public class AbilitazioneMifidEditInputModel
     [Required]
     public int Matricola { get; set; }
 
+    public string? Intestazione { get; set; }
+
     [Display(Name = "Titolo di studio")]
     public string? TitoloStudio { get; set; }
     
     [Display(Name = "Titolo di studio MiFID")]
     public byte? TitoloStudioMifidCod { get; set; }
 
-    [Display(Name = "Data conseguimento titolo di studio")]
+    [Display(Name = "Conseguimento titolo di studio")]
     public DateOnly? DataConseguimentoTitoloStudio { get; set; }
 
-    [Display(Name = "Data abilitazione MiFID")]
+    [Display(Name = "Abilitazione MiFID")]
     public DateOnly? DataAbilitazioneMifid { get; set; }
 
     [Display(Name = "Inizio sospensione")]
@@ -28,10 +30,10 @@ public class AbilitazioneMifidEditInputModel
     [Display(Name = "Necessario assessment")]
     public bool? NecessarioAssessment { get; set; }
 
-    [Display(Name = "Data superamento assessment")]
+    [Display(Name = "Superamento assessment")]
     public DateOnly? DataSuperamentoAssessment { get; set; }
 
-    [Display(Name = "Data abilitazione titoli")]
+    [Display(Name = "Abilitazione titoli")]
     public DateOnly? DataAbilitazioneTitoli { get; set; }
 
     [Display(Name = "Inizio supervisione")]
@@ -55,10 +57,17 @@ public class AbilitazioneMifidEditInputModel
     [Display(Name = "Note")]
     public string? Note { get; set; }
 
-    public static AbilitazioneMifidEditInputModel FromEntity(BaseAbilitatoMifid abilitato)
+    [Display(Name = "Abilitazione WMP")]
+    public bool? Abilitato_Finance_WMP { get; set; }
+
+    [Display(Name = "Escludi")]
+    public bool? Escluso { get; set; }
+
+    public static AbilitazioneMifidEditInputModel FromEntity(AnagAbilitatoMifid abilitato)
     {
         return new AbilitazioneMifidEditInputModel {
             Matricola = abilitato.Matricola,
+            Intestazione = abilitato.Intestazione,
             TitoloStudio = abilitato.Titolo_di_studio,
             TitoloStudioMifidCod = abilitato.Titolo_di_studio_Mifid_Cod,
             DataConseguimentoTitoloStudio = abilitato.Data_conseguimento_titolo_di_studio,
@@ -74,7 +83,9 @@ public class AbilitazioneMifidEditInputModel
             MatricolaSostitutoSupervisore = abilitato.Matricola_sostituto_supervisore,
             Formazione2024 = abilitato.Formazione_2024,
             Formazione2025 = abilitato.Formazione_2025,
-            Note = abilitato.Note
+            Note = abilitato.Note,
+            Abilitato_Finance_WMP = abilitato.Abilitato_Finance_WMP,
+            Escluso = abilitato.Escluso
         };
     }
 }

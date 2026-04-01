@@ -3,7 +3,7 @@ namespace EbWeb.Models.Options;
 public class AbilitazioniMifidOptions
 {
     public int PerPage { get; set; }
-    public int InHome { get; set; }
+    public bool Escluso { get; set; }
     public AbilitazioniMifidOrderOptions Order { get; set; } = default!;
 }
 

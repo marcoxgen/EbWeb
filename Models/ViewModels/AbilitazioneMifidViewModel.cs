@@ -10,7 +10,8 @@ public class AbilitazioneMifidViewModel
     public string? Ruolo { get; set; }
     public DateOnly? DataAbilitazioneMifid { get; set; }
     public string? FlagAbilitatoMifid { get; set; }
-    public DateOnly? DataUltimoAggiornamento { get; set; }
+    public DateOnly? DataFineSupervisione { get; set; }
+    public bool? Escluso{ get; set; }
 
     public static AbilitazioneMifidViewModel FromEntity(AnagAbilitatoMifid abilitato)
     {
@@ -18,10 +19,11 @@ public class AbilitazioneMifidViewModel
             Matricola = abilitato.Matricola,
             Intestazione = abilitato.Intestazione,
             DescrUO = abilitato.Descr_UO,
-            Ruolo = abilitato.Ruolo,
+            Ruolo = string.IsNullOrWhiteSpace(abilitato.Ruolo) ? "Addetto" : abilitato.Ruolo,
             DataAbilitazioneMifid = abilitato.Data_abilitazione_Mifid,
             FlagAbilitatoMifid = abilitato.Flag_Abilitato_Mifid,
-            DataUltimoAggiornamento = abilitato.Data_Ultimo_Aggiornamento
+            DataFineSupervisione = abilitato.Data_fine_supervisione,
+            Escluso = abilitato.Escluso
         };
     }
 }

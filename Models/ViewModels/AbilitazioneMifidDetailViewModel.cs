@@ -29,6 +29,8 @@ public class AbilitazioneMifidDetailViewModel
     public string? Formazione2024 { get; set; }
     public string? Formazione2025 { get; set; }
     public string? Note { get; set; }
+    public bool? AbilitatoFinanceWMP { get; set; }
+    public bool? Escluso { get; set; }
     public DateOnly? DataUltimoAggiornamento { get; set; }
     public string? GeneraLetteraX { get; set; }
     public string? GeneraLetteraY { get; set; }
@@ -62,34 +64,12 @@ public class AbilitazioneMifidDetailViewModel
             Formazione2024 = abilitato.Formazione_2024,
             Formazione2025 = abilitato.Formazione_2025,
             Note = abilitato.Note,
+            AbilitatoFinanceWMP = abilitato.Abilitato_Finance_WMP,
+            Escluso = abilitato.Escluso,
             DataUltimoAggiornamento = abilitato.Data_Ultimo_Aggiornamento,
             GeneraLetteraX = abilitato.Genera_Lettera_X,
             GeneraLetteraY = abilitato.Genera_Lettera_Y,
             GeneraLetteraZ = abilitato.Genera_Lettera_Z
-        };
-    }
-
-    public static AbilitazioneMifidDetailViewModel FromEntity(BaseAbilitatoMifid abilitato)
-    {
-        return new AbilitazioneMifidDetailViewModel {
-            Matricola = abilitato.Matricola,
-            TitoloStudio = abilitato.Titolo_di_studio,
-            DataConseguimentoTitoloStudio = abilitato.Data_conseguimento_titolo_di_studio,
-            DataAbilitazioneMifid = abilitato.Data_abilitazione_Mifid,
-            DataSospensione = abilitato.Data_sospensione,
-            DataTermineSospensione = abilitato.Data_termine_sospensione,
-            NecessarioAssessment = abilitato.Necessario_assessment,
-            DataSuperamentoAssessment = abilitato.Data_superamento_assessment,
-            DataAbilitazioneTitoli = abilitato.Data_abilitazione_titoli,
-            AnniEsperienzaAdeguata = 0,
-            DataInizioSupervisione = abilitato.Data_inizio_supervisione,
-            DataFineSupervisione = abilitato.Data_fine_supervisione,
-            MatricolaSupervisore = abilitato.Matricola_supervisore,
-            MatricolaSostitutoSupervisore = abilitato.Matricola_sostituto_supervisore,
-            Formazione2024 = abilitato.Formazione_2024,
-            Formazione2025 = abilitato.Formazione_2025,
-            Note = abilitato.Note,
-            DataUltimoAggiornamento = abilitato.Data_Ultimo_Aggiornamento,
         };
     }
 }

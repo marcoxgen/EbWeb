@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using EbWeb.Models.Exceptions.Application;
 
-namespace MyCourse.Controllers;
+namespace EbWeb.Controllers;
 
 [Route("Error")]
 public class ErrorController : Controller

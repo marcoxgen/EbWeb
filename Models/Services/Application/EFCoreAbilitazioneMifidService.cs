@@ -1,12 +1,11 @@
-
 using EbWeb.Models.Entities;
+using EbWeb.Models.Exceptions;
 using EbWeb.Models.Exceptions.Application;
 using EbWeb.Models.InputModels;
 using EbWeb.Models.Services.Infrastructure;
 using EbWeb.Models.ViewModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using MyCourse.Models.Exceptions;
 
 namespace EbWeb.Models.Services.Application;
 
@@ -25,6 +24,16 @@ public class EFCoreAbilitazioneMifidService : IAbilitazioneMifidService
     {
         IQueryable<AnagAbilitatoMifid> baseQuery = _dbContext.AnagAbilitatiMifid;
 
+        if (model.Escluso == false)
+        {
+            baseQuery = baseQuery.Where(a => a.Escluso == false);
+        }
+
+        if (!string.IsNullOrWhiteSpace(model.Search))
+        {
+            baseQuery = baseQuery.Where(a => a.Intestazione.Contains(model.Search));
+        }
+
         switch(model.OrderBy)
         {
             case "Matricola":
@@ -36,7 +45,6 @@ public class EFCoreAbilitazioneMifidService : IAbilitazioneMifidService
         }
 
         IQueryable<AbilitazioneMifidViewModel> queryLinq = baseQuery
-            .Where(abilitazione => abilitazione.Intestazione.Contains(model.Search))
             .AsNoTracking()
             .Select(abilitazione => AbilitazioneMifidViewModel.FromEntity(abilitazione));
 
@@ -47,13 +55,11 @@ public class EFCoreAbilitazioneMifidService : IAbilitazioneMifidService
 
         int totalCount = await queryLinq.CountAsync();
 
-        ListViewModel<AbilitazioneMifidViewModel> result = new ListViewModel<AbilitazioneMifidViewModel>
+        return new ListViewModel<AbilitazioneMifidViewModel>
         {
             Results = abilitazioni,
             TotalCount = totalCount
         };
-
-        return result;
     }
 
     public async Task<AbilitazioneMifidDetailViewModel> GetAbilitazioneMifidAsync(int matricola)
@@ -86,7 +92,11 @@ public class EFCoreAbilitazioneMifidService : IAbilitazioneMifidService
             throw new AbilitazioneMifidMatricolaUnavailableException(matricola, exc);
         }
 
-        return AbilitazioneMifidDetailViewModel.FromEntity(abilitato);
+        return await _dbContext.AnagAbilitatiMifid
+            .AsNoTracking()
+            .Where(x => x.Matricola == abilitato.Matricola)
+            .Select(x => AbilitazioneMifidDetailViewModel.FromEntity(x))
+            .SingleAsync();
     }
 
     public async Task<AbilitazioneMifidDetailViewModel> EditAbilitazioneMifidAsync(AbilitazioneMifidEditInputModel inputModel)
@@ -102,6 +112,8 @@ public class EFCoreAbilitazioneMifidService : IAbilitazioneMifidService
         abilitato.ChangeTitoloDiStudioMifidCod(inputModel.TitoloStudioMifidCod);
         abilitato.ChangeDataConseguimentoTitoloStudio(inputModel.DataConseguimentoTitoloStudio);
         abilitato.ChangeDatAbilitazioneMifid(inputModel.DataAbilitazioneMifid);
+        abilitato.ChangeDataSospensione(inputModel.DataSospensione);
+        abilitato.ChangeDataTermineSospensione(inputModel.DataTermineSospensione);
         abilitato.ChangeNecessarioAssessment(inputModel.NecessarioAssessment);
         abilitato.ChangeDataSuperamentoAssessment(inputModel.DataSuperamentoAssessment);
         abilitato.ChangeDataAbilitazioneTitoli(inputModel.DataAbilitazioneTitoli);
@@ -109,6 +121,11 @@ public class EFCoreAbilitazioneMifidService : IAbilitazioneMifidService
         abilitato.ChangeDataFineSupervisione(inputModel.DataFineSupervisione);
         abilitato.ChangeMatricolaSupervisore(inputModel.MatricolaSupervisore);
         abilitato.ChangeMatricolaSostitutoSupervisore(inputModel.MatricolaSostitutoSupervisore);
+        abilitato.ChangeFormazione2024(inputModel.Formazione2024);
+        abilitato.ChangeFormazione2025(inputModel.Formazione2025);
+        abilitato.ChangeNote(inputModel.Note);
+        abilitato.ChangeAbilitatoFinanceWMP(inputModel.Abilitato_Finance_WMP);
+        abilitato.ChangeEscluso(inputModel.Escluso);
         abilitato.ChangeDataUltimoAggiornamento();
 
         try
@@ -120,27 +137,29 @@ public class EFCoreAbilitazioneMifidService : IAbilitazioneMifidService
             throw new AbilitazioneMifidMatricolaUnavailableException(inputModel.Matricola, exc);
         }
 
-        return AbilitazioneMifidDetailViewModel.FromEntity(abilitato);
+        return await _dbContext.AnagAbilitatiMifid
+            .AsNoTracking()
+            .Where(x => x.Matricola == inputModel.Matricola)
+            .Select(x => AbilitazioneMifidDetailViewModel.FromEntity(x))
+        .SingleAsync();
     }
 
     public async Task<AbilitazioneMifidEditInputModel> GetAbilitazioneMifidForEditingAsync(int matricola)
     {
-        IQueryable<AbilitazioneMifidEditInputModel> queryLinq = _dbContext.BaseAbilitatiMifid
+        var abilitato = await _dbContext.AnagAbilitatiMifid
             .AsNoTracking()
-            .Where(abilitato => abilitato.Matricola == matricola)
-            .Select(abilitato => AbilitazioneMifidEditInputModel.FromEntity(abilitato));
+            .Where(x => x.Matricola == matricola)
+            .FirstOrDefaultAsync() ?? throw new AbilitazioneMifidNotFoundException(matricola);
 
-        AbilitazioneMifidEditInputModel viewModel = await queryLinq.FirstOrDefaultAsync();
-
-        if (viewModel == null)
+        if (abilitato == null)
         {
             throw new AbilitazioneMifidNotFoundException(matricola);
         }
 
-        return viewModel;
+        return AbilitazioneMifidEditInputModel.FromEntity(abilitato);
     }
 
-        public async Task DeleteAbilitazioneMifidAsync(AbilitazioneMifidDeleteInputModel inputModel)
+    public async Task DeleteAbilitazioneMifidAsync(AbilitazioneMifidDeleteInputModel inputModel)
     {
         BaseAbilitatoMifid abilitato = await _dbContext.BaseAbilitatiMifid.FindAsync(inputModel.Matricola);
         if (abilitato == null)
@@ -165,10 +184,24 @@ public class EFCoreAbilitazioneMifidService : IAbilitazioneMifidService
             .ToListAsync();
     }
 
+    public async Task<List<SupervisoriLookupViewModel>> GetSupervisoriLookupAsync()
+    {
+        return await _dbContext.Supervisori
+            .AsNoTracking()
+            .OrderBy(s => s.Intestazione)
+            .Select(s => new SupervisoriLookupViewModel
+            {
+                Value = s.Matricola,
+                Text = s.Intestazione
+            })
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<AbilitazioneMifidDetailViewModel>> GetAllAbilitazioniMifidAsync()
     {
         return await _dbContext.AnagAbilitatiMifid
             .AsNoTracking()
+            .OrderBy(abilitato => abilitato.Intestazione)
             .Select(abilitato => AbilitazioneMifidDetailViewModel.FromEntity(abilitato))
             .ToListAsync();
     }

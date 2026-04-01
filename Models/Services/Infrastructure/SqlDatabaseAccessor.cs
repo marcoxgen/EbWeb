@@ -1,8 +1,7 @@
 using System.Data;
-using EbWeb.Models.Services.Infrastructrure;
+using EbWeb.Models.Exceptions.Infrastructure;
 using EbWeb.Models.ValueObjects;
 using Microsoft.Data.SqlClient;
-using MyCourse.Models.Exceptions.Infrastructure;
 
 namespace EbWeb.Models.Services.Infrastructure;
 

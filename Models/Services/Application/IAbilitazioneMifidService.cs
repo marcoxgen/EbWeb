@@ -13,5 +13,6 @@ public interface IAbilitazioneMifidService
     Task DeleteAbilitazioneMifidAsync(AbilitazioneMifidDeleteInputModel inputModel);
     Task<List<AnagDipendentiLookupViewModel>> GetAnagDipendentiLookupAsync();
     Task<IEnumerable<AbilitazioneMifidDetailViewModel>> GetAllAbilitazioniMifidAsync();
+    Task<List<SupervisoriLookupViewModel>> GetSupervisoriLookupAsync();
     Task<IEnumerable<SelectOptionsViewModel>> GetTitoliStudioMifidLookupAsync();
 }

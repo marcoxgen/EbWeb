@@ -19,12 +19,12 @@ public class IstruttoriaListInputModelBinder : IModelBinder
         string cluster_pratica = bindingContext.ValueProvider.GetValue("Cluster_Pratica").FirstValue!;
         bool istruttore = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("Istruttore").FirstValue);
         int page = Convert.ToInt32(bindingContext.ValueProvider.GetValue("Page").FirstValue);
-        string OrderBy = bindingContext.ValueProvider.GetValue("OrderBy").FirstValue!;
-        bool Ascending = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("Ascending").FirstValue);
+        string orderBy = bindingContext.ValueProvider.GetValue("OrderBy").FirstValue!;
+        bool ascending = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("Ascending").FirstValue);
 
         //Creo l'istanza del IstruttoriaListInputModel
             IstruttorieOptions options = istruttorieOptions.CurrentValue;
-            var inputModel = new IstruttoriaListInputModel(nag, cluster_pratica, istruttore, page, OrderBy, Ascending, options.PerPage, options.Order);
+            var inputModel = new IstruttoriaListInputModel(nag, cluster_pratica, istruttore, page, orderBy, ascending, options.PerPage, options.Order);
 
         //Imposto il risultato per notificare che la creazione è avvenuta con successo
         bindingContext.Result = ModelBindingResult.Success(inputModel);

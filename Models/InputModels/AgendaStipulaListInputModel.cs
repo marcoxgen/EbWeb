@@ -1,5 +1,4 @@
 using EbWeb.Customizations.ModelBinders;
-using EbWeb.Models.Entities;
 using EbWeb.Models.Options;
 using Microsoft.AspNetCore.Mvc;
 
