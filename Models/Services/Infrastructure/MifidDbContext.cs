@@ -1,4 +1,5 @@
 ﻿using EbWeb.Models.Entities;
+using EbWeb.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace EbWeb.Models.Services.Infrastructure;
@@ -27,6 +28,12 @@ public class MifidDbContext : DbContext
         {
             entity.ToTable("Abilitati_Mifid", schema: "Anag");
             entity.HasNoKey();
+        });
+
+        modelBuilder.Entity<AbilitazioneMifidDetailViewModel>(entity => 
+        {
+            entity.HasNoKey();
+            entity.ToTable((string)null); 
         });
 
         modelBuilder.Entity<AnagDipendenti>(entity =>

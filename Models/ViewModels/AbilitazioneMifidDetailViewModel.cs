@@ -35,6 +35,7 @@ public class AbilitazioneMifidDetailViewModel
     public string? GeneraLetteraX { get; set; }
     public string? GeneraLetteraY { get; set; }
     public string? GeneraLetteraZ { get; set; }
+    public string? NotaLog { get; set; }
 
     public static AbilitazioneMifidDetailViewModel FromEntity(AnagAbilitatoMifid abilitato)
     {
@@ -43,7 +44,7 @@ public class AbilitazioneMifidDetailViewModel
             Intestazione = abilitato.Intestazione,
             DescrUO = abilitato.Descr_UO,
             CodiceFiscale = abilitato.Codice_Fiscale,
-            Ruolo = abilitato.Ruolo,
+            Ruolo = string.IsNullOrWhiteSpace(abilitato.Ruolo) ? "Addetto" : abilitato.Ruolo,
             TitoloStudio = abilitato.Titolo_di_studio,
             TitoloStudioMifid = abilitato.Titolo_di_studio_Mifid,
             MesiPeriodoSupervisione = abilitato.Mesi_periodo_di_supervisione,

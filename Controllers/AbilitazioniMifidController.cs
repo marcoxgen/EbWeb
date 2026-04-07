@@ -101,9 +101,11 @@ public class AbilitazioniMifidController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-    public async Task<IActionResult> ExportToExcel()
+    public async Task<IActionResult> ExportToExcel(DateTime dataRiferimento)
     {
-        IEnumerable<AbilitazioneMifidDetailViewModel> dati = await abilitazioneMifidService.GetAllAbilitazioniMifidAsync();
+        DateTime dataRifStorica = dataRiferimento.Date.AddDays(1).AddTicks(-1);
+
+        IEnumerable<AbilitazioneMifidDetailViewModel> dati = await abilitazioneMifidService.GetAllAbilitazioniMifidAsync(dataRifStorica);
         
         byte[] fileBytes = excelExportService.GenerateAbilitazioniExcel(dati);
         

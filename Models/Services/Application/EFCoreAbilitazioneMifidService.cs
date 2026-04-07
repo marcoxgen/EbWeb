@@ -6,6 +6,7 @@ using EbWeb.Models.Services.Infrastructure;
 using EbWeb.Models.ViewModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Dapper;
 
 namespace EbWeb.Models.Services.Application;
 
@@ -29,11 +30,26 @@ public class EFCoreAbilitazioneMifidService : IAbilitazioneMifidService
             baseQuery = baseQuery.Where(a => a.Escluso == false);
         }
 
-        if (!string.IsNullOrWhiteSpace(model.Search))
+        if (model.Matricola != null)
         {
-            baseQuery = baseQuery.Where(a => a.Intestazione.Contains(model.Search));
+            baseQuery = baseQuery.Where(a => a.Matricola == model.Matricola);
         }
 
+        if (!string.IsNullOrWhiteSpace(model.Intestazione))
+        {
+            baseQuery = baseQuery.Where(a => a.Intestazione.Contains(model.Intestazione));
+        }
+
+        if (!string.IsNullOrWhiteSpace(model.DescrUO))
+        {
+            baseQuery = baseQuery.Where(a => a.Descr_UO.Contains(model.DescrUO));
+        }
+
+        if (model.FlagAbilitatoMifid != null)
+        {
+            baseQuery = baseQuery.Where(a => a.Flag_Abilitato_Mifid == model.FlagAbilitatoMifid);
+        }
+        
         switch(model.OrderBy)
         {
             case "Matricola":
@@ -197,16 +213,19 @@ public class EFCoreAbilitazioneMifidService : IAbilitazioneMifidService
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<AbilitazioneMifidDetailViewModel>> GetAllAbilitazioniMifidAsync()
+    public async Task<IEnumerable<AbilitazioneMifidDetailViewModel>> GetAllAbilitazioniMifidAsync(DateTime? dataRiferimento)
     {
-        return await _dbContext.AnagAbilitatiMifid
-            .AsNoTracking()
-            .OrderBy(abilitato => abilitato.Intestazione)
-            .Select(abilitato => AbilitazioneMifidDetailViewModel.FromEntity(abilitato))
-            .ToListAsync();
+        dataRiferimento ??= DateTime.Now;
+        DateTime dataRifStorica = dataRiferimento.Value.Date.AddDays(1).AddTicks(-1);
+
+        using var connection = new SqlConnection(_dbContext.Database.GetConnectionString());
+        var sql = "SELECT * FROM [Anag].[Storico_Abilitati_Mifid](@dataRif)";
+        var result = await connection.QueryAsync<AbilitazioneMifidDetailViewModel>(sql, new { dataRif = dataRifStorica });
+
+        return result.OrderBy(x => x.Intestazione);
     }
 
-public async Task<IEnumerable<SelectOptionsViewModel>> GetTitoliStudioMifidLookupAsync()
+    public async Task<IEnumerable<SelectOptionsViewModel>> GetTitoliStudioMifidLookupAsync()
     {
         return await _dbContext.TitoliSudioMifid
             .AsNoTracking()

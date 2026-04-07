@@ -12,7 +12,7 @@ public interface IAbilitazioneMifidService
     Task<AbilitazioneMifidEditInputModel> GetAbilitazioneMifidForEditingAsync(int matricola);
     Task DeleteAbilitazioneMifidAsync(AbilitazioneMifidDeleteInputModel inputModel);
     Task<List<AnagDipendentiLookupViewModel>> GetAnagDipendentiLookupAsync();
-    Task<IEnumerable<AbilitazioneMifidDetailViewModel>> GetAllAbilitazioniMifidAsync();
+    Task<IEnumerable<AbilitazioneMifidDetailViewModel>> GetAllAbilitazioniMifidAsync(DateTime? dataRiferimento);
     Task<List<SupervisoriLookupViewModel>> GetSupervisoriLookupAsync();
     Task<IEnumerable<SelectOptionsViewModel>> GetTitoliStudioMifidLookupAsync();
 }

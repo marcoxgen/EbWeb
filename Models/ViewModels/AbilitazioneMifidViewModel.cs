@@ -4,12 +4,12 @@ namespace EbWeb.Models.ViewModels;
 
 public class AbilitazioneMifidViewModel
 {
-    public int Matricola { get; set; }
+    public int? Matricola { get; set; }
     public string? Intestazione { get; set; }
     public string? DescrUO { get; set; }
     public string? Ruolo { get; set; }
     public DateOnly? DataAbilitazioneMifid { get; set; }
-    public string? FlagAbilitatoMifid { get; set; }
+    public bool? FlagAbilitatoMifid { get; set; }
     public DateOnly? DataFineSupervisione { get; set; }
     public bool? Escluso{ get; set; }
 

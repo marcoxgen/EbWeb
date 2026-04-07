@@ -20,14 +20,28 @@ public class AbilitazioneMifidListInputModelBinder : IModelBinder
         var query = httpContext.Request.Query;
         var cookieOptions = new CookieOptions { HttpOnly = true, Secure = true };
         
-        string search = bindingContext.ValueProvider.GetValue("Search").FirstValue;
-        int page = Convert.ToInt32(bindingContext.ValueProvider.GetValue("Page").FirstValue);
-        string orderBy = bindingContext.ValueProvider.GetValue("OrderBy").FirstValue!;
-        bool ascending = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("Ascending").FirstValue);
-        var escluso = bindingContext.ValueProvider.GetValue("Escluso");
+        var matricola = bindingContext.ValueProvider.GetValue("matricola").FirstValue;
+        string intestazione = bindingContext.ValueProvider.GetValue("intestazione").FirstValue;
+        string descrUO = bindingContext.ValueProvider.GetValue("descrUO").FirstValue;
+        var flagAbilitatoMifid = bindingContext.ValueProvider.GetValue("flagAbilitatoMifid");
+        int page = Convert.ToInt32(bindingContext.ValueProvider.GetValue("page").FirstValue);
+        string orderBy = bindingContext.ValueProvider.GetValue("orderBy").FirstValue!;
+        bool ascending = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("ascending").FirstValue);
+        var escluso = bindingContext.ValueProvider.GetValue("escluso");
 
         AbilitazioniMifidOptions options = abilitazioniMifidOptions.CurrentValue;
 
+        int? matricolaResult = int.TryParse(matricola, out var matricolaParsed) ? matricolaParsed : null;
+
+        bool? flagAbilitatoMifidResult = null;
+        if (flagAbilitatoMifid != ValueProviderResult.None && !string.IsNullOrWhiteSpace(flagAbilitatoMifid.FirstValue))
+        {
+            if (bool.TryParse(flagAbilitatoMifid.FirstValue, out bool parsedValue))
+            {
+                flagAbilitatoMifidResult = parsedValue;
+            }
+        }
+        
         bool esclusoResult;
         if (escluso != ValueProviderResult.None)
         {
@@ -51,7 +65,7 @@ public class AbilitazioneMifidListInputModelBinder : IModelBinder
             }
         }
 
-        AbilitazioneMifidListInputModel inputModel = new(search, page, orderBy, ascending, options.PerPage, esclusoResult, options.Order);
+        AbilitazioneMifidListInputModel inputModel = new(matricolaResult, intestazione, descrUO, flagAbilitatoMifidResult, page, orderBy, ascending, options.PerPage, esclusoResult, options.Order);
         bindingContext.Result = ModelBindingResult.Success(inputModel);
 
         return Task.CompletedTask;

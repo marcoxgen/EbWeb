@@ -1,30 +1,34 @@
 @model AbilitazioneMifidEditInputModel
 <section class="abilitazione-info container py-4">
     <form method="post">
-        <div class="d-flex align-items-center mb-4 border-bottom pb-3">
-            <a asp-action="Detail" asp-route-matricola="@Model.Matricola"
-            class="btn btn-outline-secondary btn-sm rounded-circle me-3"
-            title="Annulla e torna indietro"
-            style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">
-                <i class="fas fa-arrow-left" style="font-size: 0.8rem;"></i>
-            </a>
+        <div class="mb-2 pb-0">
+            <div class="d-flex align-items-center">
+                <a asp-action="Detail" asp-route-matricola="@Model.Matricola"
+                class="btn btn-outline-secondary btn-sm rounded-circle me-3"
+                title="Annulla e torna indietro"
+                style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-arrow-left" style="font-size: 0.8rem;"></i>
+                </a>
 
-            <h3 class="mb-0">
-                @ViewData["Title"]: <span class="text-primary">@Model.Intestazione</span>
-            </h3>
+                <h3 class="mb-0">
+                    @ViewData["Title"]: <span class="text-primary">@Model.Intestazione</span>
+                </h3>
 
-            <button type="submit" class="btn btn-outline-success btn-sm px-3 ms-3">
-                <i class="fas fa-save me-2"></i>Salva
-            </button>
+                <button type="submit" class="btn btn-outline-success btn-sm px-3 ms-3">
+                    <i class="fas fa-save me-2"></i>Salva
+                </button>
+            </div>
 
-            <div class="form-check form-switch mb-0 ms-auto pe-3">
-                <input class="form-check-input" type="checkbox" role="switch" id="switchEscluso"
-                    name="Escluso" value="true"
-                    @(Model.Escluso == true ? "checked" : "")>
-                <input type="hidden" name="Escluso" value="false">
-                <label class="form-check-label text-muted small" for="switchEscluso">
-                    Escludi
-                </label>
+            <div class="d-flex justify-content-end mt-2">
+                <div class="form-check form-switch mb-0">
+                    <input class="form-check-input" type="checkbox" role="switch" id="switchEscluso"
+                        name="Escluso" value="true"
+                        @(Model.Escluso == true ? "checked" : "") style="cursor:pointer;">
+                    <input type="hidden" name="Escluso" value="false">
+                    <label class="form-check-label text-primary small fw-semibold" for="switchEscluso" style="cursor:pointer;">
+                        Escludi
+                    </label>
+                </div>
             </div>
         </div>
 

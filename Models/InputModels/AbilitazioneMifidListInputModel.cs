@@ -7,14 +7,18 @@ namespace EbWeb.Models.InputModels;
 [ModelBinder(BinderType = typeof(AbilitazioneMifidListInputModelBinder))]
 public class AbilitazioneMifidListInputModel
 {
-    public AbilitazioneMifidListInputModel(string? search, int page, string orderby, bool ascending, int limit, bool? escluso, AbilitazioniMifidOrderOptions orderOptions)
+    public AbilitazioneMifidListInputModel(int? matricola, string? intestazione, string? descrUO, bool? flagAbilitatoMifid, int page, string orderby, bool ascending, int limit, bool? escluso, AbilitazioniMifidOrderOptions orderOptions)
     {
         if (!orderOptions.Allow.Contains(orderby))
         {
             orderby = orderOptions.By;
             ascending = orderOptions.Ascending;
         }
-        Search = search ?? "";
+        Matricola = matricola;
+        Intestazione = intestazione ?? "";
+        DescrUO = descrUO ?? "";
+        FlagAbilitatoMifid = flagAbilitatoMifid;
+
         Page = Math.Max(1, page);
         Limit = Math.Max(1, limit);
         OrderBy = orderby;
@@ -23,7 +27,12 @@ public class AbilitazioneMifidListInputModel
         Offset = (Page - 1) * Limit;
         Escluso = escluso;
     }
-    public string? Search { get; }
+
+
+    public int? Matricola { get; }
+    public string? Intestazione { get; }
+    public string? DescrUO { get; }
+    public bool? FlagAbilitatoMifid { get; }
     public int Page { get; }
     public string OrderBy { get; }
     public bool Ascending { get; }

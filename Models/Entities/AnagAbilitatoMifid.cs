@@ -28,7 +28,7 @@ public partial class AnagAbilitatoMifid
     public string? Formazione_2024 { get; set; }
     public string? Formazione_2025 { get; set; }
     public string? Note { get; set; }
-    public string? Flag_Abilitato_Mifid { get; set; }
+    public bool? Flag_Abilitato_Mifid { get; set; }
     public bool? Abilitato_Finance_WMP { get; set; }
     public bool? Escluso { get; set; }
     public DateOnly? Data_Ultimo_Aggiornamento { get; set; }

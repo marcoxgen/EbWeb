@@ -1,77 +1,119 @@
 @model AbilitazioneMifidListViewModel
-<div class="row align-items-center mb-4">
-    <div class="col-md-8 d-flex align-items-center">
-        <h3 class="mb-0 me-3">@ViewData["Title"]</h3>        
-        <a class="btn btn-outline-success btn-sm me-3" 
-            asp-action="Create" 
-            title="Crea una nuova abilitazione">
-            <i class="fa fa-plus me-2"></i> Crea nuova
-        </a>
-        <a asp-action="ExportToExcel"
-            class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover small">
-                <i class="fas fa-file-excel me- 2"></i>Esporta in Excel
-        </a>
-    </div>
-
-    <div class="col-md-4">
-        <form asp-action="Index" method="get">
-            <div class="d-flex align-items-center">
-                <div class="form-check form-switch d-flex align-items-center me-3">
-                    <input class="form-check-input" 
-                        type="checkbox" 
-                        name="escluso" 
-                        id="chkEscluso"
-                        value="true" 
-                        @(Model.Input.Escluso == true ? "checked" : "") 
-                        onchange="this.form.submit()">                    
-                    <label class="form-check-label ms-2" for="chkEscluso" style="font-size: 0.85rem;">
-                        Esclusi
-                    </label>
-                </div>
-                
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Cerca..." value="@Model.Input.Search">
-                    <button class="btn btn-outline-secondary text-primary" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <div class="container bg-light p-4 rounded shadow-sm mt-4">
-        <div class="row">
-            <div class="col-md-1">
-                <a asp-route-orderby="Matricola" 
-                    asp-route-ascending="@(Model.Input.OrderBy == "Matricola" ? !Model.Input.Ascending : true)" 
-                    asp-route-search="@Model.Input.Search"
-                    asp-route-escluso="@Model.Input.Escluso"> Matricola @if(Model.Input.OrderBy == "Matricola") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
-                </a>
-            </div>
-            <div class="col-md-2">
-            <a asp-route-orderby="Intestazione" 
-                asp-route-ascending="@(Model.Input.OrderBy == "Intestazione" ? !Model.Input.Ascending : true)" 
-                asp-route-search="@Model.Input.Search"
-                asp-route-escluso="@Model.Input.Escluso"> Intestazione @if(Model.Input.OrderBy == "Intestazione") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
+<div class="mb-2">
+    <div class="row align-items-center">
+        <div class="col-lg-8 d-flex align-items-center">
+            <h3 class="mb-0 me-3">@ViewData["Title"]</h3>
+            <a class="btn btn-outline-success btn-sm me-3"
+                asp-action="Create"
+                title="Crea una nuova abilitazione">
+                <i class="fa fa-plus me-2"></i> Crea nuova
             </a>
+            <a href="javascript:void(0)"
+                class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover small"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exportModal">
+                <i class="fas fa-file-excel me-2"></i>Esporta in Excel
+            </a>
+            @*<a asp-action="ExportToExcel"
+                class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover small">
+                    <i class="fas fa-file-excel me-2"></i>Esporta in Excel
+            </a>*@
         </div>
-        <div class="col-md-3 text-primary">Descrizione UO</div>
-        <div class="col-md-2 text-primary">Ruolo</div>
-        <div class="col-md-1 text-primary small">Abilit. MiFID</div>
-        <div class="col-md-1 text-primary small">Data Abilit.</div>
-        <div class="col-md-1 text-primary small">Fine Superv.</div>
     </div>
 
+    <form asp-action="Index" method="get">
+        <div class="d-flex justify-content-end align-items-center mb-1 bg-white px-0" style="min-height: 32px;">
+            <div class="form-check form-switch d-flex align-items-center mb-0 p-0 me-3">
+                <input class="form-check-input m-0" type="checkbox" name="escluso" id="chkEscluso" value="true"
+                    @(Model.Input.Escluso == true ? "checked" : "") onchange="this.form.submit()"
+                    style="cursor: pointer;">
+                <label class="form-check-label text-primary fw-semibold  small ms-2" for="chkEscluso" style="cursor: pointer; line-height: 1;">
+                    Esclusi
+                </label>
+            </div>
+
+            <div class="border-start border-secondary border-2" style="height: 16px;"></div>
+
+            <button class="btn p-0 border-0 shadow-none text-primary d-flex align-items-center ms-3 btn-search-toggle"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#searchCollapse"
+                aria-expanded="false"
+                style="line-height: 1;">
+                <i class="fas fa-search icon-open"></i>
+                <i class="fas fa-times icon-close" style="display: none;"></i>
+            </button>
+        </div>
+
+        <div class="bg-light border py-2">
+            <div class="row g-0 mx-0 px-2 fw-semibold small">
+                <div class="col-lg-1">
+                    <a asp-route-orderby="Matricola"
+                    asp-route-ascending="@(Model.Input.OrderBy == "Matricola" ? !Model.Input.Ascending : true)"
+                    asp-route-intestazione="@Model.Input.Intestazione"
+                    asp-route-escluso="@Model.Input.Escluso" class="text-decoration-none">
+                    Matricola @if(Model.Input.OrderBy == "Matricola") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
+                    </a>
+                </div>
+                <div class="col-lg-2">
+                    <a asp-route-orderby="Intestazione"
+                    asp-route-ascending="@(Model.Input.OrderBy == "Intestazione" ? !Model.Input.Ascending : true)"
+                    asp-route-intestazione="@Model.Input.Intestazione"
+                    asp-route-escluso="@Model.Input.Escluso" class="text-decoration-none">
+                    Intestazione @if(Model.Input.OrderBy == "Intestazione") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
+                    </a>
+                </div>
+                <div class="col-lg-3">Unità Organizzativa</div>
+                <div class="col-lg-2">Ruolo</div>
+                <div class="col-lg-1 text-center small">Abilit. MiFID</div>
+                <div class="col-lg-1 text-center small">Data Abilit.</div>
+                <div class="col-lg-1 text-center small">Fine Superv.</div>
+                <div class="col-lg-1 text-center small">Azioni</div>
+            </div>
+
+            <div class="collapse" id="searchCollapse">
+                <div class="row g-0 mt-2 mx-0 px-2">
+                    <div class="col-lg-1 pe-2">
+                        <input type="search" class="form-control form-control-sm" asp-for="Input.Matricola" name="matricola">
+                    </div>
+                    <div class="col-lg-2 pe-2">
+                        <input type="search" class="form-control form-control-sm" asp-for="Input.Intestazione" name="intestazione">
+                    </div>
+                    <div class="col-lg-3 pe-2">
+                        <input type="search" class="form-control form-control-sm" asp-for="Input.DescrUO" name = "descrUO">
+                    </div>
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-1">
+                        <select class="form-select form-select-sm"
+                                asp-for="Input.FlagAbilitatoMifid"
+                                name="flagAbilitatoMifid"
+                                onchange="this.form.submit()">
+                            <option value="">Tutti</option>
+                            <option value="true">Si</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-1 text-center justify-content-center d-flex">
+                        <button type="submit" class="btn btn-outline-primary btn-sm" title="Applica filtri">
+                            <i class="fas fa-filter"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+        
     @foreach (AbilitazioneMifidViewModel abilitazione in Model.AbilitazioniMifid.Results)
     {
-        <div class="row border-bottom py-2 align-items-center">
-            <div class="col-md-1">
+        <div class="row g-0 border-bottom py-1 align-items-center mx-0 px-2">
+            <div class="col-lg-1">
                 <span>@abilitazione.Matricola</span>
             </div>
-            <div class="col-md-2">
+            <div class="col-lg-2">
                 <span class="position-relative d-inline-block">
                     @abilitazione.Intestazione
-                    
                     @if (abilitazione.Escluso == true)
                     {
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
@@ -82,29 +124,28 @@
                     }
                 </span>
             </div>
-            <div class="col-md-3">
+            <div class="col-lg-3">
                 <span>@abilitazione.DescrUO</span>
             </div>
-            <div class="col-md-2">
+            <div class="col-lg-2">
                 <span>@abilitazione.Ruolo</span>
             </div>
-            <div class="col-md-1 text-center">
-                <span>@abilitazione.FlagAbilitatoMifid</span>
+            <div class="col-lg-1 text-center">
+                <span>@(abilitazione.FlagAbilitatoMifid == true ? "Si" : "No")</span>
             </div>
-            <div class="col-md-1">
+            <div class="col-lg-1 text-center">
                 <span>@abilitazione.DataAbilitazioneMifid</span>
             </div>
-
-            <div class="col-md-1">
+            <div class="col-lg-1 text-center">
                 @if (abilitazione.DataFineSupervisione >= DateOnly.FromDateTime(DateTime.Today))
                 {
                     <span>@abilitazione.DataFineSupervisione</span>
                 }
             </div>
             
-            <div class="col-md-1 d-flex justify-content-center">
-                <a class="btn btn-outline-primary btn-sm"
-                    asp-controller="AbilitazioniMifid" 
+            <div class="col-lg-1 d-flex text-center justify-content-center">
+                <a class="btn btn-outline-secondary btn-sm"
+                    asp-controller="AbilitazioniMifid"
                     asp-action="Detail" 
                     asp-route-matricola="@abilitazione.Matricola"
                     title="Visualizza dettagli">
@@ -126,7 +167,7 @@
             <li class="page-item">
                 <a class="page-link"
                     asp-route-page="@(currentPage - 1)"
-                    asp-route-search="@Model.Input.Search"
+                    asp-route-intestazione="@Model.Input.Intestazione"
                     asp-route-orderby="@Model.Input.OrderBy"
                     asp-route-ascending="@Model.Input.Ascending"
                     asp-route-escluso="@Model.Input.Escluso"><i class="fas fa-angle-left"></i></a>
@@ -139,7 +180,7 @@
                 <li class="page-item active" aria-current="page">
                     <a class="page-link"
                         asp-route-page="@p"
-                        asp-route-search="@Model.Input.Search"
+                        asp-route-intestazione="@Model.Input.Intestazione"
                         asp-route-orderby="@Model.Input.OrderBy"
                         asp-route-ascending="@Model.Input.Ascending"
                         asp-route-escluso="@Model.Input.Escluso">@p <span class="sr-only">(current)</span></a>
@@ -150,7 +191,7 @@
                 <li class="page-item">
                     <a class="page-link"
                         asp-route-page="@p"
-                        asp-route-search="@Model.Input.Search"
+                        asp-route-intestazione="@Model.Input.Intestazione"
                         asp-route-orderby="@Model.Input.OrderBy"
                         asp-route-ascending="@Model.Input.Ascending"
                         asp-route-escluso="@Model.Input.Escluso">@p</a>
@@ -162,7 +203,7 @@
             <li class="page-item">
                 <a class="page-link"
                     asp-route-page="@(currentPage + 1)"
-                    asp-route-search="@Model.Input.Search"
+                    asp-route-intestazione="@Model.Input.Intestazione"
                     asp-route-orderby="@Model.Input.OrderBy"
                     asp-route-ascending="@Model.Input.Ascending"
                     asp-route-escluso="@Model.Input.Escluso"><i class="fas fa-angle-right"></i></a>
@@ -170,3 +211,30 @@
         }
     </ul>
 </nav>
+
+<div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow">
+            <form asp-action="ExportToExcel" method="get">
+                <div class="modal-header bg-light">
+                    <h6 class="modal-title fw-bold">Esporta in Excel</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-0">
+                        <label for="dataRiferimento" class="form-label small fw-semibold text-secondary">Data di riferimento</label>
+                        <input type="date" class="form-control form-control-sm" 
+                               name="dataRiferimento" id="dataRiferimento" 
+                               value="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 justify-content-between">
+                    <button type="button" class="btn btn-link btn-sm text-muted text-decoration-none" data-bs-dismiss="modal">Annulla</button>
+                    <button type="submit" class="btn btn-success btn-sm px-3">
+                        <i class="fas fa-file-download me-2"></i>Esporta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

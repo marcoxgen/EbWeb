@@ -39,6 +39,9 @@ builder.Services.AddDbContext<MifidDbContext>((serviceProvider, options) =>
            .AddInterceptors(new AuditUserInterceptor(httpContextAccessor));
 });
 
+// Configurazione Dapper per gestire DateOnly
+Dapper.SqlMapper.AddTypeHandler(new EbWeb.Models.Helpers.DateOnlyTypeHandler());
+
 // Carica i parametri di configurazione personalizzati dal file appsettings.json
 builder.Services.Configure<ConnectionStringsOptions>(configuration.GetSection("ConnectionStrings"));
 builder.Services.Configure<RevisioniOptions>(configuration.GetSection("Revisioni"));
