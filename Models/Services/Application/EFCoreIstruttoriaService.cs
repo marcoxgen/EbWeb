@@ -1,5 +1,6 @@
 using EbWeb.Models.Entities;
 using EbWeb.Models.InputModels;
+using EbWeb.Models.Common.Services.Application;
 using EbWeb.Models.Services.Infrastructure;
 using EbWeb.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;

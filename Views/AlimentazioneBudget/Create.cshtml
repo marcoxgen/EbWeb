@@ -1,0 +1,131 @@
+@model PubblicazioneBudgetCreateInputModel
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0"><i class="fas fa-database me-2"></i>Generazione Flusso Budget</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-controller="AlimentazioneBudget" asp-action="Create" method="post" id="formGenerazione">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-4">
+                            <label asp-for="TipoCod" class="form-label fw-bold text-primary small"></label>
+                            <select id="select-tipoPubblicazione" asp-for="TipoCod" autocomplete="off"></select>
+                            <span asp-validation-for="TipoCod" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="DataRiferimento" class="form-label fw-bold text-primary small"></label>
+                            <select id="select-dataRiferimento" asp-for="DataRiferimento" autocomplete="off"></select>
+                            <span asp-validation-for="DataRiferimento" class="text-danger small"></span>
+                            <div class="form-text mt-2">
+                                <i class="fas fa-info-circle me-1"></i> Vengono mostrate solo le date disponibili per il tipo selezionato.
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-chevron-left me-1"></i> Annulla
+                            </a>
+                            <button type="submit" class="btn btn-success px-4" id="btnInvia">
+                                <i class="fas fa-play me-2"></i> Avvia Elaborazione
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tsTipo = new TomSelect("#select-tipoPubblicazione", {
+            valueField: 'value',
+            labelField: 'text',
+            searchField: 'text',
+            placeholder: 'Seleziona un tipo...',
+            preload: true,
+            load: function(query, callback) {
+                fetch('@Url.Action("GetTipiPubblicazione", "AlimentazioneBudget")')
+                    .then(response => response.json())
+                    .then(json => callback(json))
+                    .catch(() => callback());
+            }
+        });
+
+        const tsData = new TomSelect("#select-dataRiferimento", {
+            valueField: 'value',
+            labelField: 'text',
+            searchField: 'text',
+            placeholder: 'Scegli prima un tipo...',
+            create: false
+        });
+
+        tsData.disable();
+        tsTipo.on('change', function(value) {
+            tsData.clear();
+            tsData.clearOptions();
+            if (!value) {
+                tsData.settings.placeholder = 'Scegli prima un tipo...';
+                if (typeof tsData.inputState === 'function') {
+                    tsData.inputState();
+                }
+                tsData.disable();
+
+                const inputEl = tsData.control_input;
+                if (inputEl) {
+                    inputEl.setAttribute('placeholder', 'Scegli prima un tipo...');
+                }
+                return;
+            }
+
+            const url = '@Url.Action("GetCalendariDinamici", "AlimentazioneBudget")' + '?tipoCod=' + encodeURIComponent(value);
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Stato server: " + response.status);
+                    }
+                    return response.json();
+                })
+                .then(json => {
+                    if (json && json.length > 0) {
+                        tsData.settings.placeholder = 'Seleziona una data...';
+                        tsData.addOptions(json);
+                        tsData.enable();
+                        tsData.sync();
+                        tsData.refreshOptions(false);
+
+                        const inputEl = tsData.control_input;
+                        if (inputEl) {
+                            inputEl.setAttribute('placeholder', 'Seleziona una data...');
+                        }
+                    } else {
+                        tsData.settings.placeholder = 'Nessuna data disponibile';
+                        tsData.disable();
+
+                        const inputEl = tsData.control_input;
+                        if (inputEl) {
+                            inputEl.setAttribute('placeholder', 'Nessuna data disponibile');
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.error('Errore fetch:', err);
+                    tsData.settings.placeholder = 'Errore nel caricamento';
+                    tsData.disable();
+
+                    const inputEl = tsData.control_input;
+                    if (inputEl) {
+                        inputEl.setAttribute('placeholder', 'Errore nel caricamento');
+                    }
+                });
+        });
+    });
+</script>

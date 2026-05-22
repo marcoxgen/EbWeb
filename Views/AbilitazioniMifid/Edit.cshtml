@@ -1,42 +1,29 @@
 @model AbilitazioneMifidEditInputModel
-<section class="abilitazione-info container py-4">
+
+<section class="abilitazione-info container py-2">
     <form method="post">
-        <div class="mb-2 pb-0">
-            <div class="d-flex align-items-center">
-                <a asp-action="Detail" asp-route-matricola="@Model.Matricola"
-                class="btn btn-outline-secondary btn-sm rounded-circle me-3"
-                title="Annulla e torna indietro"
-                style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-arrow-left" style="font-size: 0.8rem;"></i>
-                </a>
+        <div class="d-flex align-items-center">
+            <a asp-action="Detail" asp-route-matricola="@Model.Matricola"
+            class="btn btn-outline-secondary btn-sm rounded-circle me-3"
+            title="Annulla e torna indietro"
+            style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">
+                <i class="fas fa-arrow-left" style="font-size: 0.8rem;"></i>
+            </a>
 
-                <h3 class="mb-0">
-                    @ViewData["Title"]: <span class="text-primary">@Model.Intestazione</span>
-                </h3>
+            <h3 class="mb-0">
+                @ViewData["Title"]: <span class="text-primary">@Model.Intestazione</span>
+            </h3>
 
-                <button type="submit" class="btn btn-outline-success btn-sm px-3 ms-3">
-                    <i class="fas fa-save me-2"></i>Salva
-                </button>
-            </div>
-
-            <div class="d-flex justify-content-end mt-2">
-                <div class="form-check form-switch mb-0">
-                    <input class="form-check-input" type="checkbox" role="switch" id="switchEscluso"
-                        name="Escluso" value="true"
-                        @(Model.Escluso == true ? "checked" : "") style="cursor:pointer;">
-                    <input type="hidden" name="Escluso" value="false">
-                    <label class="form-check-label text-primary small fw-semibold" for="switchEscluso" style="cursor:pointer;">
-                        Escludi
-                    </label>
-                </div>
-            </div>
+            <button type="submit" class="btn btn-outline-success btn-sm px-3 ms-3">
+                <i class="fas fa-save me-2"></i>Salva
+            </button>
         </div>
-
+        
         <div asp-validation-summary="All" class="text-danger mb-3"></div>
         <input type="hidden" asp-for="Matricola">
 
         <div class="row g-4">
-            <div class="col-lg-5">
+            <div class="col-lg-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-light fw-bold">
                         <i class="fas fa-user me-2"></i>Dati Generali   
@@ -53,78 +40,100 @@
                             <input type="date" class="form-control" asp-for="DataConseguimentoTitoloStudio">
                             <span asp-validation-for="DataConseguimentoTitoloStudio" class="text-danger small"></span>
                         </div>
-
-                        <div class="row mb-0 align-items-end">
-                            <div class="col-lg-6">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="switchAbilitatoWMP"
-                                        name="Abilitato_Finance_WMP" value="true"
-                                        @(Model.Abilitato_Finance_WMP == true ? "checked" : "")>
-                                    <input type="hidden" name="Abilitato_Finance_WMP" value="false">
-                                    <label class="form-check-label text-muted small" asp-for="Abilitato_Finance_WMP" for="switchAbilitatoWMP"></label>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-7">
+
+            <div class="col-lg-8">
                 <div class="card h-100 shadow-sm border-primary">
                     <div class="card-header bg-primary text-white fw-bold">
                         <i class="fas fa-balance-scale me-2"></i>Status MiFID
                     </div>
                     <div class="card-body">
-                        <div class="row g-0"> <div class="col-lg-9 border-end pe-3"> 
-                                <div class="mb-3">
-                                    <label asp-for="TitoloStudioMifidCod" class="form-label fw-bold text-primary small"></label>
-                                    <select id="select-titoli" asp-for="TitoloStudioMifidCod" autocomplete="off"></select>
-                                </div>
-
-                                <div class="row g-0 p-2 border border-warning rounded bg-warning bg-opacity-10">
-                                    <div class="col-lg-6 pe-2">
-                                        <label asp-for="DataSospensione" class="form-label small fw-bold"></label>
-                                        <input type="date" class="form-control form-control-sm" asp-for="DataSospensione">
+                        <div class="row g-0">
+                            <div class="col-lg-8 pe-3">
+                                <div class="row">
+                                    <div class="col-lg-12 mb-3">
+                                        <label asp-for="TitoloStudioMifidCod" class="form-label fw-bold text-primary small"></label>
+                                        <select id="select-titoli" asp-for="TitoloStudioMifidCod" autocomplete="off"></select>
                                     </div>
-                                    <div class="col-lg-6">
-                                        <label asp-for="DataTermineSospensione" class="form-label small fw-bold"></label>
-                                        <input type="date" class="form-control form-control-sm" asp-for="DataTermineSospensione">
+
+                                    <div class="col-lg-8">
+                                        <div class="row g-0 p-2 border border-warning rounded bg-warning bg-opacity-10">
+                                            <div class="col-lg-6 pe-2">
+                                                <label asp-for="DataSospensione" class="form-label small fw-bold"></label>
+                                                <input type="date" class="form-control form-control-sm" asp-for="DataSospensione">
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <label asp-for="DataTermineSospensione" class="form-label small fw-bold"></label>
+                                                <input type="date" class="form-control form-control-sm" asp-for="DataTermineSospensione">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-0">
+                                        <div class="form-check form-switch mb-1">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="switchAssessment"
+                                                name="NecessarioAssessment" value="true"
+                                                @(Model.NecessarioAssessment == true ? "checked" : "")>
+                                            
+                                            <input type="hidden" name="NecessarioAssessment" value="false">
+
+                                            <label class="form-check-label small text-muted" for="switchAssessment">
+                                                Assessment
+                                            </label>
+                                        </div>
+                                        @if (Model.NecessarioAssessment == true)
+                                        {
+                                            <input type="date" class="form-control form-control-sm" 
+                                                id="inputDataAssessment" asp-for="DataSuperamentoAssessment">
+                                        }
+                                        else
+                                        {
+                                            <input type="date" class="form-control form-control-sm" 
+                                                id="inputDataAssessment" asp-for="DataSuperamentoAssessment" disabled>
+                                        }
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-lg-3 ps-3">
-                                <div class="mb-2">
-                                    <label asp-for="DataAbilitazioneMifid" class="form-label text-muted small mb-0"></label>
-                                    <input type="date" class="form-control form-control-sm" asp-for="DataAbilitazioneMifid">
-                                </div>
-                                <div class="mb-4">
-                                    <label asp-for="DataAbilitazioneTitoli" class="form-label text-muted small mb-0"></label>
-                                    <input type="date" class="form-control form-control-sm" asp-for="DataAbilitazioneTitoli">
-                                </div>
-                                <div class="mb-0">
-                                    <div class="form-check form-switch mb-1">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="switchAssessment"
-                                            name="NecessarioAssessment" value="true"
-                                            @(Model.NecessarioAssessment == true ? "checked" : "")>
-                                        
-                                        <input type="hidden" name="NecessarioAssessment" value="false">
-
-                                        <label class="form-check-label small text-muted" for="switchAssessment">
-                                            Assessment
-                                        </label>
+                            <div class="col-lg-4 border-start ps-3">
+                                <div class="card shadow-sm mb-3">
+                                    <div class="card-header py-0 px-2 bg-light border-bottom-0">
+                                        <span class="fw-bold text-muted" style="font-size: 0.65rem;">Abilitazione MiFID</span>
                                     </div>
-                                    @if (Model.NecessarioAssessment == true)
-                                    {
-                                        <input type="date" class="form-control form-control-sm" 
-                                            id="inputDataAssessment" asp-for="DataSuperamentoAssessment">
-                                    }
-                                    else
-                                    {
-                                        <input type="date" class="form-control form-control-sm" 
-                                            id="inputDataAssessment" asp-for="DataSuperamentoAssessment" disabled>
-                                    }
+                                    <div class="card-body p-1 px-2">
+                                        <div class="row g-1">
+                                            <div class="col-6">
+                                                <label class="text-muted d-block mb-0" style="font-size: 0.65rem;">Inizio</label>
+                                                <input type="date" class="form-control form-control-sm py-0" style="font-size: 0.75rem; height: 24px;" asp-for="DataAbilitazioneMifid">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="text-muted d-block mb-0" style="font-size: 0.65rem;">Fine</label>
+                                                <input type="date" class="form-control form-control-sm py-0" style="font-size: 0.75rem; height: 24px;" asp-for="DataFineAbilitazioneMifid">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+
+                                <div class="card shadow-sm">
+                                    <div class="card-header py-0 px-2 bg-light border-bottom-0">
+                                        <span class="fw-bold text-muted" style="font-size: 0.65rem;">Abilitazione Titoli</span>
+                                    </div>
+                                    <div class="card-body p-1 px-2">
+                                        <div class="row g-1">
+                                            <div class="col-6">
+                                                <label class="text-muted d-block mb-0" style="font-size: 0.65rem;">Inizio</label>
+                                                <input type="date" class="form-control form-control-sm py-0" style="font-size: 0.75rem; height: 24px;" asp-for="DataAbilitazioneTitoli">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="text-muted d-block mb-0" style="font-size: 0.65rem;">Fine</label>
+                                                <input type="date" class="form-control form-control-sm py-0" style="font-size: 0.75rem; height: 24px;" asp-for="DataFineAbilitazioneTitoli">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -184,24 +193,6 @@
         </div>
     </form>
 </section>
-
-<div class="modal fade" id="modalConfermaEscluso" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Conferma Esclusione</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Sei sicuro di voler escludere questo utente dalle abilitazioni MiFID? 
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="btnAnnullaEsclusione">Annulla</button>
-                <button type="button" class="btn btn-warning" id="btnConfermaEsclusione">Sì, escludi</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function (event) {

@@ -1,0 +1,103 @@
+@model AzionePubblicazioneViewModel
+
+<form id="formDettaglio" class="d-flex flex-column h-100">
+    <input type="hidden" id="IdAzione" value="@Model?.IdAzione" />
+    <input type="hidden" id="jsonMessaggioRaw" asp-for="Messaggio" />
+    <input type="hidden" id="jsonRisultatiRaw" asp-for="Risultati" />
+
+    <div class="d-flex justify-content-between align-items-center mb-4 p-3 border rounded bg-white shadow-sm">
+        <div>
+            <span class="badge @(Model?.Esito == true ? "bg-success" : "bg-danger") fs-6 p-2">
+                <i class="fas @Model?.IconaStato me-2"></i>
+                @Model?.StatoTesto
+            </span>
+        </div>
+        <div class="text-end">
+            <small class="text-muted d-block">Eseguito il</small>
+            <span class="fw-bold" id="labelDataEsecuzione">@Model?.DataEsecuzione?.ToString("dd/MM/yyyy HH:mm:ss")</span>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label fw-bold"><i class="fas fa-edit me-2 text-muted"></i>Note Operatore</label>
+        <textarea class="form-control" id="NoteDettaglio" rows="3">@Model?.Note</textarea>
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label fw-bold"><i class="fas fa-database me-2 text-muted"></i>Comando</label>
+
+        <div class="d-flex justify-content-between align-items-center mb-0 bg-light p-2 border rounded-top">
+            <span class="small font-monospace text-secondary fw-bold">
+                <i class="fas fa-plug me-1 text-success"></i> @Model?.NomeDatabase
+            </span>
+            <input type="hidden" id="hiddenDbName" value="@Model?.NomeDatabase" />
+            <input type="hidden" id="hiddenComando" value="@Model?.Comando" />
+
+            <button type="button"
+                    id="btnEseguiComando"
+                    class="btn btn-sm btn-success @(Model?.Abilitato == true ? "" : "disabled")">
+                <i class="fas fa-play me-1 small"></i> Esegui (F5)
+            </button>
+        </div>
+
+        <div class="border-start border-end border-bottom p-0">
+            <textarea class="form-control font-monospace text-info bg-dark border-0 rounded-0 p-3 small"
+                      id="txtComandoSQL" rows="4" style="resize: vertical; font-size: 0.875rem;">@Model?.Comando</textarea>
+        </div>
+
+        <div class="mt-3 border rounded shadow-sm bg-white">
+            <ul class="nav nav-tabs bg-light px-2 pt-2" id="ssmsTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active py-1 px-3 small font-monospace"
+                            id="results-tab" data-bs-toggle="tab" data-bs-target="#tabResults"
+                            type="button" role="tab" aria-controls="tabResults" aria-selected="true">
+                        <i class="fas fa-table me-1 text-primary"></i>Risultati
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link py-1 px-3 small font-monospace"
+                            id="messages-tab" data-bs-toggle="tab" data-bs-target="#tabMessages"
+                            type="button" role="tab" aria-controls="tabMessages" aria-selected="false">
+                        <i class="fas fa-align-left me-1 text-warning"></i>Messaggi
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content p-2" id="ssmsTabContent" style="min-height: 200px; max-height: 340px; overflow-y: auto;">
+                <partial name="_PannelloRisultati" model="Model" />
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4 p-3 border rounded bg-light">
+        <label class="form-label fw-bold d-block mb-3">
+            <i class="fas fa-toggle-on me-2 text-muted"></i>Valutazione Esito
+        </label>
+
+        <div class="form-check form-switch form-check-inline">
+            <input class="form-check-input" type="checkbox" role="switch" id="SwitchEsito"
+                   @(Model?.Esito == true ? "checked" : "") style="width: 3em; height: 1.5em; cursor: pointer;">
+
+            <label class="form-check-label ms-3 fw-bold fs-5 @Model?.ClasseColore"
+                   id="labelEsito" for="SwitchEsito" style="line-height: 1.5em;">
+                @(Model?.Esito == true ? "Successo" : "Fallito")
+            </label>
+        </div>
+        <div class="mt-2">
+            <small class="text-muted">Trascina lo switch per cambiare l'esito in base all'output tecnico.</small>
+        </div>
+    </div>
+
+    <div class="sticky-bottom bg-white py-3 border-top mt-auto">
+        <div class="row g-2">
+            <div class="col-8">
+                <button type="button" onclick="salvaNote()" class="btn btn-primary w-100">
+                    <i class="fas fa-save me-2"></i>Salva Modifiche
+                </button>
+            </div>
+            <div class="col-4">
+                <button type="button" class="btn btn-outline-secondary w-100" data-bs-dismiss="offcanvas">Chiudi</button>
+            </div>
+        </div>
+    </div>
+</form>

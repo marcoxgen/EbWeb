@@ -1,7 +1,7 @@
-using EbWeb.Models.InputModels;
-using EbWeb.Models.Options;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
+using EbWeb.Models.AbilitazioniMifid.InputModels;
+using EbWeb.Models.AbilitazioniMifid.Options;
 
 namespace EbWeb.Customizations.ModelBinders;
 
@@ -23,11 +23,12 @@ public class AbilitazioneMifidListInputModelBinder : IModelBinder
         var matricola = bindingContext.ValueProvider.GetValue("matricola").FirstValue;
         string intestazione = bindingContext.ValueProvider.GetValue("intestazione").FirstValue;
         string descrUO = bindingContext.ValueProvider.GetValue("descrUO").FirstValue;
+        string ruolo = bindingContext.ValueProvider.GetValue("ruolo").FirstValue;
         var flagAbilitatoMifid = bindingContext.ValueProvider.GetValue("flagAbilitatoMifid");
+        var abilitatoFinanceWMP = bindingContext.ValueProvider.GetValue("abilitatoFinanceWMP");
         int page = Convert.ToInt32(bindingContext.ValueProvider.GetValue("page").FirstValue);
         string orderBy = bindingContext.ValueProvider.GetValue("orderBy").FirstValue!;
         bool ascending = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("ascending").FirstValue);
-        var escluso = bindingContext.ValueProvider.GetValue("escluso");
 
         AbilitazioniMifidOptions options = abilitazioniMifidOptions.CurrentValue;
 
@@ -41,31 +42,17 @@ public class AbilitazioneMifidListInputModelBinder : IModelBinder
                 flagAbilitatoMifidResult = parsedValue;
             }
         }
-        
-        bool esclusoResult;
-        if (escluso != ValueProviderResult.None)
+
+        bool? abilitatoFinanceWMPResult = null;
+        if (abilitatoFinanceWMP != ValueProviderResult.None && !string.IsNullOrWhiteSpace(abilitatoFinanceWMP.FirstValue))
         {
-            esclusoResult = Convert.ToBoolean(escluso.FirstValue);
-            httpContext.Response.Cookies.Append("Mifid_Escluso_Cookie", escluso.ToString().ToLower(), cookieOptions);
-        }
-        else if (query.Count > 0)
-        {
-            esclusoResult = false;
-            httpContext.Response.Cookies.Append("Mifid_Escluso_Cookie", "false", cookieOptions);
-        }
-        else
-        {
-            if (httpContext.Request.Cookies.TryGetValue("Mifid_Escluso_Cookie", out string savedValue))
+            if (bool.TryParse(abilitatoFinanceWMP.FirstValue, out bool parsedValue))
             {
-                esclusoResult = Convert.ToBoolean(savedValue);
-            }
-            else
-            {
-                esclusoResult = options.Escluso;
-            }
+                abilitatoFinanceWMPResult = parsedValue;
+            } 
         }
 
-        AbilitazioneMifidListInputModel inputModel = new(matricolaResult, intestazione, descrUO, flagAbilitatoMifidResult, page, orderBy, ascending, options.PerPage, esclusoResult, options.Order);
+        AbilitazioneMifidListInputModel inputModel = new(matricolaResult, intestazione, descrUO, ruolo, flagAbilitatoMifidResult, abilitatoFinanceWMPResult, page, orderBy, ascending, options.PerPage, options.Order);
         bindingContext.Result = ModelBindingResult.Success(inputModel);
 
         return Task.CompletedTask;

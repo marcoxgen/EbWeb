@@ -2,6 +2,7 @@ using EbWeb.Models.InputModels;
 using EbWeb.Models.Services.Infrastructure;
 using EbWeb.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using EbWeb.Models.Common.Services.Application;
 
 namespace EbWeb.Models.Services.Application;
 

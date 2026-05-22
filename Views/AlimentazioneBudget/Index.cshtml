@@ -1,0 +1,51 @@
+@model PubblicazioneBudgetListViewModel
+
+<div class="mb-2">
+    <div class="row align-items-center mb-3">
+        <div class="col-lg-8 d-flex align-items-center">
+            <h3 class="mb-0 me-3">@ViewData["Title"]</h3>
+            <a asp-action="Create" asp-controller="AlimentazioneBudget" class="btn btn-outline-success">
+                <i class="fas fa-plus"></i> Crea nuova
+            </a>
+        </div>
+    </div>
+
+    <form asp-action="Index" method="get">
+        <div class="bg-light border py-2">
+            <div class="row text-center g-0 mx-0 px-2 fw-semibold" style="font-size: 0.75rem;">
+                <div class="col-lg-2">Tipo</div>
+                <div class="col-lg-1">Data Riferimento</div>
+                <div class="col-lg-1">Stato</div>
+                <div class="col-lg-2">Data Ultima Lavorazione</div>
+                <div class="col-lg-1">Azione</div>
+            </div>
+        </div>
+    </form>
+
+    @foreach (PubblicazioneBudgetViewModel pubblicazione in Model.PubblicazioniBudget.Results)
+    {
+        <div class="row g-0 border-bottom py-1 align-items-center mx-0 px-2">
+            <div class="col-lg-2">
+                <span>@pubblicazione.TipoPubblicazioneDes</span>
+            </div>
+            <div class="col-lg-1 text-center">
+                <span>@pubblicazione.DataRiferimento</span>
+            </div>
+            <div class="col-lg-1 text-center">
+                <span>@pubblicazione.FlagStato</span>
+            </div>
+            <div class="col-lg-2 text-center">
+                <span>@pubblicazione.DataUltimaLavorazione</span>
+            </div>
+            <div class="col-lg-1 d-flex text-center justify-content-center">
+                <a class="btn btn-outline-secondary btn-sm"
+                    asp-controller="AlimentazioneBudget"
+                    asp-action="Azioni"
+                    asp-route-id="@pubblicazione.IdPubblicazione"
+                    title="Visualizza azioni e dettagli della pubblicazione">
+                        <i class="fas fa-cogs"></i>
+                </a>
+            </div>
+        </div>
+    }
+</div>

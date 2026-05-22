@@ -1,5 +1,9 @@
+@using EbWeb.Models.AbilitazioniMifid.InputModels
+
 @model AbilitazioneMifidCreateInputModel
+
 <h3>@ViewData["Title"]</h3>
+
 <form method="post" class="mt-4">
     <div class="row">
         <div class="col-md-10 col-lg-8"> 
@@ -10,10 +14,10 @@
                 </a>
                 <div class="flex-grow-1">
                     <select id="select-dipendente" 
-                            name="Matricola" 
-                            placeholder="Inizia a scrivere nome o matricola..." 
-                            autocomplete="off" 
-                            required>
+                        name="Matricola" 
+                        placeholder="Inizia a scrivere nome o matricola..." 
+                        autocomplete="off" 
+                        required>
                         <option value=""></option>
                     </select>
                 </div>

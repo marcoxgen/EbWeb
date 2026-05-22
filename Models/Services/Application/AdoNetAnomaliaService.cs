@@ -1,10 +1,12 @@
 using System.Data;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Options;
+
 using EbWeb.Models.Exceptions.Application;
 using EbWeb.Models.Services.Infrastructure;
 using EbWeb.Models.ViewModels;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Options;
-using Models.Options;
+using EbWeb.Models.Options;
+
 
 namespace EbWeb.Models.Services.Application;
 
@@ -16,9 +18,9 @@ public class AdoNetAnomaliaService : IAnomaliaService
     private readonly IHttpContextAccessor httpContextAccessor;
     
     public AdoNetAnomaliaService(ILogger<AdoNetAnomaliaService> logger,
-                                    IDatabaseAccessor db,
-                                    IOptionsMonitor<ConnectionStringsOptions> connectionStringOptions,
-                                    IHttpContextAccessor httpContextAccessor)
+        IDatabaseAccessor db,
+        IOptionsMonitor<ConnectionStringsOptions> connectionStringOptions,
+        IHttpContextAccessor httpContextAccessor)
     {
         this.logger = logger;
         this.db = db;

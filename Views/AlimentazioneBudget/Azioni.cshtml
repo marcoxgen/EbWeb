@@ -1,0 +1,223 @@
+@using System.Text.Json
+
+@model AzionePubblicazioneListViewModel
+
+<div class="container">
+    <h3>Azioni Pubblicazione #@Model.IdPubblicazione</h3>
+    <p>Totale task trovati: @Model.Azioni.TotalCount</p>
+
+    <div class="list-group">
+        @foreach (var item in Model.Azioni.Results)
+        {
+            <div class="list-group-item"
+                onclick="apriDettaglio(@item.IdAzione, this)" 
+                style="padding-left: @(item.PaddingLivello + 15)px; cursor: pointer;">
+
+                <div class="row align-items-start">
+                    <div class="col-lg-6">
+                        <h6 class="mb-1 text-body fs-6 fw-normal d-flex align-items-center">
+                            <i id="icona-stato-@item.IdAzione" class="fas @item.IconaStato @item.ClasseColore fa-lg me-2"></i>
+                            @{
+                                var isJson = item.Descrizione != null && item.Descrizione.Trim().StartsWith("{");
+                                if (isJson)
+                                {
+                                    try
+                                    {
+                                        var dati = JsonSerializer.Deserialize<Dictionary<string, string>>(item.Descrizione);
+                                        <span>@(dati.ContainsKey("Dettaglio") ? dati["Dettaglio"] : "Azione senza titolo")</span>
+                                    }
+                                    catch 
+                                    { 
+                                        <span>@item.Descrizione</span> 
+                                    }
+                                }
+                                else
+                                {
+                                    <span>@item.Descrizione</span>
+                                }
+                            }
+                        </h6>
+
+                        @if (isJson)
+                        {
+                            <div class="d-flex flex-wrap gap-2 mt-2 mb-2">
+                                @{
+                                    try 
+                                    {
+                                        var datiExtra = JsonSerializer.Deserialize<Dictionary<string, string>>(item.Descrizione);
+                                        foreach (var entry in datiExtra.Where(x => x.Key != "Dettaglio"))
+                                        {
+                                            @* Aumentata la dimensione del font e il padding *@
+                                            <span class="badge bg-light text-dark border fw-normal shadow-sm" style="font-size: 0.85rem; padding: 0.4em 0.7em;">
+                                                <span class="text-muted">@entry.Key:</span> @entry.Value
+                                            </span>
+                                        }
+                                    }
+                                    catch { /* Gestione silenziosa dell'errore di parsing */ }
+                                }
+                            </div>
+                        }
+
+                        <small class="text-muted" style="font-size: 0.7rem;">
+                            Ordine: @item.Ordine - <strong>@item.StatoTesto</strong>
+                        </small>
+                        <br/>
+                    </div>
+
+                    <div class="col-lg-4">
+                        @* La card ha un ID per poter essere mostrata/nascosta *@
+                        <div id="card-nota-@item.IdAzione" class="card shadow-sm @(string.IsNullOrEmpty(item.Note) ? "d-none" : "")">
+                            @* Il corpo della card ha l'ID che la tua funzione cerca *@
+                            <div class="card-body" id="nota-anteprima-@item.IdAzione">
+                                @item.Note
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-1 d-flex align-items-center justify-content-center">
+                        <small id="data-friendly-@item.IdAzione" class="text-muted" title="@item.DataEsecuzione?.ToString("dd/MM/yyyy HH:mm:ss")">
+                            @item.DataEsecuzioneFriendly
+                        </small>
+                    </div>
+                    
+                    <div class="col-lg-1 d-flex text-center justify-content-center">
+                        @if (!string.IsNullOrWhiteSpace(item.Comando))
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="apriDettaglio(@item.IdAzione)">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                        }
+                        else
+                        {
+                            <i class="fas fa-play text-white"></i>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="offcanvas offcanvas-end w-50" tabindex="-1" id="cassettoAzione" aria-labelledby="titoloCassetto">
+    <div class="offcanvas-header border-bottom bg-light">
+        <h5 id="titoloCassetto" class="mb-0 text-primary">Dettaglio Azione</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body" id="corpoCassetto">
+        <div class="text-center p-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Caricamento dati...</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // 1. APERTURA CASSETTO OFFCANVAS (Al click sulla riga/bottone)
+        function apriDettaglio(id, elementoClick) {
+            if (window.event) window.event.stopPropagation();
+
+            // Gestione grafica della selezione riga
+            $('.list-group-item').removeClass('riga-selezionata');
+            $(elementoClick || '#card-nota-' + id).closest('.list-group-item').addClass('riga-selezionata');
+
+            // Mostra l'Offcanvas di Bootstrap
+            bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('cassettoAzione')).show();
+
+            // Carica l'HTML dentro il cassetto
+            $.get('@Url.Action("GetDettaglio", "AlimentazioneBudget")/' + id, function(html) {
+                $('#corpoCassetto').html(html);
+                // C# renderizza direttamente la tabella iniziale partendo dal JSON del DB!
+            });
+        }
+
+        // 2. GESTORE ESECUZIONE COMANDO SQL (F5)
+        $(document).on('click', '#btnEseguiComando', function () {
+            var $target = $('#ssmsTabContent'), $btn = $('#btnEseguiComando');
+            $('#hiddenComando').val($('#txtComandoSQL').val());
+
+            $btn.addClass('disabled').html('<i class="fas fa-spinner fa-spin me-1 small"></i> In corso...');
+
+            $.post('/AlimentazioneBudget/EseguiAzione', { dbName: $('#hiddenDbName').val(), sqlComando: $('#hiddenComando').val() })
+            .done(function (rispostaHtml) {
+                $target.html(rispostaHtml); // Inietta la parziale aggiornata da C#
+
+                // Prende i dati stringa puliti dai due hidden field "Technical" della parziale
+                var jsonLive = $target.find('#jsonRisultatiTechnical').val();
+                var messaggioLive = $target.find('#jsonMessaggioTechnical').val();
+
+                // Li copia negli hidden field di persistenza globali per il salvataggio
+                $('#jsonMessaggioRaw').val(messaggioLive);
+                $('#jsonRisultatiRaw').val(jsonLive);
+
+                // Switch automatico del Tab (SSMS Style)
+                var idTab = $target.find('.table-responsive').length > 0 ? 'results-tab' : 'messages-tab';
+                bootstrap.Tab.getOrCreateInstance(document.getElementById(idTab)).show();
+            })
+            .fail(function (xhr) {
+                $target.html('<div class="p-3 font-monospace text-danger small">[ERRORE] Esecuzione fallita.</div>');
+            })
+            .always(function () {
+                $btn.removeClass('disabled').html('<i class="fas fa-play me-1 small"></i> Esegui (F5)');
+            });
+        });
+
+        // 3. SALVATAGGIO STATO AZIONE (Aggiornamento UI in tempo reale)
+        function salvaNote() {
+            var id = $('#IdAzione').val();
+            var esitoChecked = $('#SwitchEsito').is(':checked');
+
+            var dataInviare = {
+                idAzione: id,
+                note: $('#NoteDettaglio').val(),
+                esito: esitoChecked,
+                messaggio: $('#jsonMessaggioRaw').val(),
+                risultati: $('#jsonRisultatiRaw').val()
+            };
+
+            $.post('@Url.Action("SaveActionState", "AlimentazioneBudget")', dataInviare, function(res) {
+                if (!res.success) { alert(res.message || "Errore nel salvataggio"); return; }
+
+                // 1. Aggiorna il testo e la visibilità della card Note
+                $('#nota-anteprima-' + id).text(dataInviare.note);
+                $('#card-nota-' + id).toggleClass('d-none', dataInviare.note.trim() === "");
+
+                // 2. Aggiorna l'icona di stato principale (Cambia le classi in base all'esito)
+                var $icona = $('#icona-stato-' + id);
+                if ($icona.length) {
+                    if (esitoChecked) {
+                        // Se successo: metti l'icona di check (es. fa-check-circle) e il colore verde (text-success)
+                        $icona.attr('class', 'fas fa-check-circle text-success fa-lg me-2');
+                    } else {
+                        // Se fallito: metti l'icona di errore (es. fa-exclamation-circle) e il colore rosso (text-danger)
+                        $icona.attr('class', 'fas fa-exclamation-circle text-danger fa-lg me-2');
+                    }
+                }
+
+                // 3. Aggiorna il testo del Tempo di Esecuzione ( Friendly )
+                var $tempo = $('#data-friendly-  ' + id);
+                if ($tempo.length) {
+                    // Genera una stringa "ora" al volo (es. "09:41:02") come fallback friendly immediato
+                    var oraAttuale = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    $tempo.text(oraAttuale);
+                }   
+
+                // Chiude il cassetto offcanvas
+                bootstrap.Offcanvas.getInstance(document.getElementById('cassettoAzione')).hide();
+            });
+        }
+
+        // 4. UTILITY DI INTERFACCIA (F5 da tastiera e Switch Esito)
+        $(document).on('keydown', function (e) {
+            if (e.which === 116 && $('#txtComandoSQL').is(':focus')) { e.preventDefault(); $('#btnEseguiComando').click(); }
+        });
+        $(document).on('change', '#SwitchEsito', function() {
+            var chk = $(this).is(':checked');
+            $('#labelEsito').text(chk ? "Successo" : "Fallito").toggleClass('text-success', chk).toggleClass('text-danger', !chk);
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            var el = document.getElementById('cassettoAzione');
+            if (el) el.addEventListener('hide.bs.offcanvas', () => $('.list-group-item').removeClass('riga-selezionata'));
+        });
+    </script>
+}

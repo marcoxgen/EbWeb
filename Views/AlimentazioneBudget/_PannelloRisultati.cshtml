@@ -1,0 +1,72 @@
+﻿@model AzionePubblicazioneViewModel
+
+<input type="hidden" id="jsonMessaggioTechnical" value="@Model?.Messaggio" />
+<input type="hidden" id="jsonRisultatiTechnical" value="@Model?.Risultati" />
+<input type="hidden" id="dataFriendlyTechnical" value="@Model?.DataEsecuzioneFriendly" />
+
+<div class="tab-pane fade show active" id="tabResults" role="tabpanel" aria-labelledby="results-tab">
+    @if (Model?.TabellaRisultati?.Righe != null && Model.TabellaRisultati.Righe.Any())
+    {
+        int contatoreRighe = 1;
+        <div class="table-responsive rounded border" style="max-height: 280px; overflow-y: auto;">
+            <table class="table table-sm table-bordered table-hover font-monospace small mb-0 bg-white">
+                <thead class="table-light sticky-top" style="z-index: 5; box-shadow: 0 1px 0 #dee2e6;">
+                    <tr>
+                        <th style="width: 50px; background-color: #f8f9fa;" class="text-center text-muted border-end fw-bold">#</th>
+                        @foreach (var colonna in Model.TabellaRisultati.Colonne)
+                        {
+                            <th class="px-2 text-dark fw-bold" style="background-color: #f8f9fa;">@colonna</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var record in Model.TabellaRisultati.Righe)
+                    {
+                        if (record != null)
+                        {
+                            <tr>
+                                <td class="text-center text-muted bg-light table-active fw-bold border-end">@contatoreRighe</td>
+                                @foreach (var colonna in Model.TabellaRisultati.Colonne)
+                                {
+                                    object valoreRaw = record.ContainsKey(colonna) ? record[colonna] : null;
+                                    string valoreCella = valoreRaw?.ToString();
+                                    <td class="px-2 text-truncate" style="max-width: 350px;" title="@valoreCella">
+                                        @if (valoreRaw == null)
+                                        {
+                                            <span class="text-warning fst-italic">NULL</span>
+                                        }
+                                        else if (string.IsNullOrEmpty(valoreCella))
+                                        {
+                                            <span class="text-muted fst-italic">empty</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@valoreCella</span>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                            contatoreRighe++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(Model?.Risultati))
+    {
+        <div class="p-1 bg-white text-dark font-monospace small" style="white-space: pre-wrap;">@Model.Risultati</div>
+    }
+    else
+    {
+        <div class="text-muted font-monospace small p-4 text-center">
+            <i class="fas fa-info-circle me-1"></i> (0 righe interessate)
+        </div>
+    }
+</div>
+
+<div class="tab-pane fade" id="tabMessages" role="tabpanel" aria-labelledby="messages-tab">
+    <pre id="outputTecnico"
+         class="mb-0 p-2 @(Model?.Esito == false ? "text-danger" : "text-dark")"
+         style="white-space: pre-wrap; font-family: Consolas, Monaco, monospace; max-height: 280px; overflow-y: auto; background-color: #fff;">@Model?.Messaggio</pre>
+</div>

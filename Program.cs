@@ -1,8 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+
 using EbWeb.Models.Options;
 using EbWeb.Models.Services.Application;
 using EbWeb.Models.Services.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using Models.Options;
+using EbWeb.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -15,11 +16,10 @@ builder.Services.AddTransient<IIstruttoriaService, EFCoreIstruttoriaService>();
 builder.Services.AddTransient<IAgendaStipulaService, EFCoreAgendaStipulaService>();
 builder.Services.AddTransient<IRichiestaPerfezionamentoService, EFCoreRichiestaPerfezionamentoService>();
 builder.Services.AddTransient<ISchedaBudgetService, EFCoreSchedaBudgetService>();
-builder.Services.AddTransient<IAbilitazioneMifidService, EFCoreAbilitazioneMifidService>();
-builder.Services.AddTransient<IExcelExportService, ExcelExportService>();
-#pragma warning disable CA1416
-builder.Services.AddScoped<IUserService, UserService>();
-#pragma warning restore CA1416
+
+// Registra i servizi, le configurazioni e i DbContext
+builder.Services.AddAbilitazioniMifid(configuration);
+builder.Services.AddAlimentazioneBudget(configuration);
 
 // Contiene tutto ciò che riguarda una singola richiesta HTTP in corso
 builder.Services.AddHttpContextAccessor();
@@ -31,13 +31,6 @@ builder.Services.AddDbContext<ThinsoftDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Thinsoft")));
 builder.Services.AddDbContext<BudgetDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Budget")));
-builder.Services.AddDbContext<MifidDbContext>((serviceProvider, options) =>
-{
-    var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-    
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Abilitazioni_Mifid"))
-           .AddInterceptors(new AuditUserInterceptor(httpContextAccessor));
-});
 
 // Configurazione Dapper per gestire DateOnly
 Dapper.SqlMapper.AddTypeHandler(new EbWeb.Models.Helpers.DateOnlyTypeHandler());
@@ -48,7 +41,6 @@ builder.Services.Configure<RevisioniOptions>(configuration.GetSection("Revisioni
 builder.Services.Configure<IstruttorieOptions>(configuration.GetSection("Istruttorie"));
 builder.Services.Configure<AgendaStipuleOptions>(configuration.GetSection("AgendaStipule"));
 builder.Services.Configure<RichiestePerfezionamentoOptions>(configuration.GetSection("RichiestaPerfezionamento"));
-builder.Services.Configure<AbilitazioniMifidOptions>(configuration.GetSection("AbilitazioneMifid"));
 
 // Configura l'app per accettare l'identità dell'utente passata da IIS.
 // Questo permette di recuperare automaticamente l'utente AD (Dominio\Utente)

@@ -1,4 +1,5 @@
 @model AbilitazioneMifidListViewModel
+
 <div class="mb-2">
     <div class="row align-items-center">
         <div class="col-lg-8 d-flex align-items-center">
@@ -14,26 +15,11 @@
                     data-bs-target="#exportModal">
                 <i class="fas fa-file-excel me-2"></i>Esporta in Excel
             </a>
-            @*<a asp-action="ExportToExcel"
-                class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover small">
-                    <i class="fas fa-file-excel me-2"></i>Esporta in Excel
-            </a>*@
         </div>
     </div>
 
     <form asp-action="Index" method="get">
         <div class="d-flex justify-content-end align-items-center mb-1 bg-white px-0" style="min-height: 32px;">
-            <div class="form-check form-switch d-flex align-items-center mb-0 p-0 me-3">
-                <input class="form-check-input m-0" type="checkbox" name="escluso" id="chkEscluso" value="true"
-                    @(Model.Input.Escluso == true ? "checked" : "") onchange="this.form.submit()"
-                    style="cursor: pointer;">
-                <label class="form-check-label text-primary fw-semibold  small ms-2" for="chkEscluso" style="cursor: pointer; line-height: 1;">
-                    Esclusi
-                </label>
-            </div>
-
-            <div class="border-start border-secondary border-2" style="height: 16px;"></div>
-
             <button class="btn p-0 border-0 shadow-none text-primary d-flex align-items-center ms-3 btn-search-toggle"
                 type="button"
                 data-bs-toggle="collapse"
@@ -46,29 +32,72 @@
         </div>
 
         <div class="bg-light border py-2">
-            <div class="row g-0 mx-0 px-2 fw-semibold small">
+            <div class="row g-0 mx-0 px-2 align-items-center fw-semibold small">
                 <div class="col-lg-1">
                     <a asp-route-orderby="Matricola"
-                    asp-route-ascending="@(Model.Input.OrderBy == "Matricola" ? !Model.Input.Ascending : true)"
-                    asp-route-intestazione="@Model.Input.Intestazione"
-                    asp-route-escluso="@Model.Input.Escluso" class="text-decoration-none">
-                    Matricola @if(Model.Input.OrderBy == "Matricola") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
+                        asp-route-ascending="@(Model.Input.OrderBy == "Matricola" ? !Model.Input.Ascending : true)"
+                        asp-route-intestazione="@Model.Input.Intestazione"
+                        asp-route-descrUO="@Model.Input.DescrUO"
+                        asp-route-ruolo="@Model.Input.Ruolo"
+                        class="text-decoration-none">
+                            Matricola @if(Model.Input.OrderBy == "Matricola") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
                     </a>
                 </div>
                 <div class="col-lg-2">
                     <a asp-route-orderby="Intestazione"
-                    asp-route-ascending="@(Model.Input.OrderBy == "Intestazione" ? !Model.Input.Ascending : true)"
-                    asp-route-intestazione="@Model.Input.Intestazione"
-                    asp-route-escluso="@Model.Input.Escluso" class="text-decoration-none">
-                    Intestazione @if(Model.Input.OrderBy == "Intestazione") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
+                        asp-route-ascending="@(Model.Input.OrderBy == "Intestazione" ? !Model.Input.Ascending : true)"
+                        asp-route-intestazione="@Model.Input.Intestazione"
+                        asp-route-descrUO="@Model.Input.DescrUO"
+                        asp-route-ruolo="@Model.Input.Ruolo"
+                        class="text-decoration-none">
+                            Intestazione @if(Model.Input.OrderBy == "Intestazione") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
                     </a>
                 </div>
-                <div class="col-lg-3">Unità Organizzativa</div>
-                <div class="col-lg-2">Ruolo</div>
-                <div class="col-lg-1 text-center small">Abilit. MiFID</div>
-                <div class="col-lg-1 text-center small">Data Abilit.</div>
-                <div class="col-lg-1 text-center small">Fine Superv.</div>
-                <div class="col-lg-1 text-center small">Azioni</div>
+               <div class="col-lg-2">
+                    <a asp-route-orderby="DescrUO"
+                        asp-route-ascending="@(Model.Input.OrderBy == "DescrUO" ? !Model.Input.Ascending : true)"
+                        asp-route-matricola="@Model.Input.Matricola"
+                        asp-route-intestazione="@Model.Input.Intestazione"
+                        asp-route-descrUO="@Model.Input.DescrUO"
+                        asp-route-ruolo="@Model.Input.Ruolo"
+                        class="text-decoration-none">
+                            Unità Organizzativa @if(Model.Input.OrderBy == "DescrUO") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
+                    </a>
+                </div>
+                <div class="col-lg-2">
+                    <a asp-route-orderby="Ruolo"
+                        asp-route-ascending="@(Model.Input.OrderBy == "Ruolo" ? !Model.Input.Ascending : true)"
+                        asp-route-matricola="@Model.Input.Matricola"
+                        asp-route-intestazione="@Model.Input.Intestazione"
+                        asp-route-descrUO="@Model.Input.DescrUO"
+                        asp-route-ruolo="@Model.Input.Ruolo"
+                        class="text-decoration-none">
+                            Ruolo @if(Model.Input.OrderBy == "Ruolo") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
+                    </a>
+                </div>
+                <div class="col-lg-1 text-center">Abilitato MiFID</div>
+                <div class="col-lg-1 text-center">Abilitato Titoli</div>
+                <div class="col-lg-1 text-center">
+                    <a asp-route-orderby="DataSospensione"
+                        asp-route-ascending="@(Model.Input.OrderBy == "DataSospensione" ? !Model.Input.Ascending : true)"
+                        asp-route-matricola="@Model.Input.Matricola"
+                        asp-route-intestazione="@Model.Input.Intestazione"
+                        asp-route-descrUO="@Model.Input.DescrUO"
+                        class="text-decoration-none">
+                            Data Inizio Sospensione @if(Model.Input.OrderBy == "DataSospensione") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
+                    </a>
+                </div>
+                <div class="col-lg-1 text-center">
+                    <a asp-route-orderby="FineSupervisione"
+                        asp-route-ascending="@(Model.Input.OrderBy == "FineSupervisione" ? !Model.Input.Ascending : true)"
+                        asp-route-matricola="@Model.Input.Matricola"
+                        asp-route-intestazione="@Model.Input.Intestazione"
+                        asp-route-descrUO="@Model.Input.DescrUO"
+                        class="text-decoration-none">
+                            Data Fine Supervisione @if(Model.Input.OrderBy == "FineSupervisione") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
+                    </a>
+                </div>
+                <div class="col-lg-1 text-center">Azioni</div>
             </div>
 
             <div class="collapse" id="searchCollapse">
@@ -79,15 +108,27 @@
                     <div class="col-lg-2 pe-2">
                         <input type="search" class="form-control form-control-sm" asp-for="Input.Intestazione" name="intestazione">
                     </div>
-                    <div class="col-lg-3 pe-2">
+                    <div class="col-lg-2 pe-2">
                         <input type="search" class="form-control form-control-sm" asp-for="Input.DescrUO" name = "descrUO">
                     </div>
-                    <div class="col-lg-2"></div>
-                    <div class="col-lg-1">
+                    <div class="col-lg-2 pe-2">
+                        <input type="search" class="form-control form-control-sm" asp-for="Input.Ruolo" name = "ruolo">
+                    </div>
+                    <div class="col-lg-1 pe-2">
                         <select class="form-select form-select-sm"
-                                asp-for="Input.FlagAbilitatoMifid"
-                                name="flagAbilitatoMifid"
-                                onchange="this.form.submit()">
+                            asp-for="Input.FlagAbilitatoMifid"
+                            name="flagAbilitatoMifid"
+                            onchange="this.form.submit()">
+                            <option value="">Tutti</option>
+                            <option value="true">Si</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-1 pe-2">
+                        <select class="form-select form-select-sm"
+                            asp-for="Input.AbilitatoFinanceWMP"
+                            name="abilitatoFinanceWMP"
+                            onchange="this.form.submit()">
                             <option value="">Tutti</option>
                             <option value="true">Si</option>
                             <option value="false">No</option>
@@ -107,24 +148,16 @@
         
     @foreach (AbilitazioneMifidViewModel abilitazione in Model.AbilitazioniMifid.Results)
     {
-        <div class="row g-0 border-bottom py-1 align-items-center mx-0 px-2">
+        <div class="row g-0 border-bottom py-1 align-items-center small mx-0 px-2">
             <div class="col-lg-1">
                 <span>@abilitazione.Matricola</span>
             </div>
             <div class="col-lg-2">
                 <span class="position-relative d-inline-block">
                     @abilitazione.Intestazione
-                    @if (abilitazione.Escluso == true)
-                    {
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                            style="font-size: 0.5rem; padding: 0.35em 0.65em;">
-                            ESCLUSO
-                            <span class="visually-hidden">Stato disabilitato</span>
-                        </span>
-                    }
                 </span>
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-2">
                 <span>@abilitazione.DescrUO</span>
             </div>
             <div class="col-lg-2">
@@ -134,7 +167,10 @@
                 <span>@(abilitazione.FlagAbilitatoMifid == true ? "Si" : "No")</span>
             </div>
             <div class="col-lg-1 text-center">
-                <span>@abilitazione.DataAbilitazioneMifid</span>
+                <span>@(abilitazione.AbilitatoFinanceWMP == true ? "Si" : "No")</span>
+            </div>
+            <div class="col-lg-1 text-center">
+                <span>@abilitazione.DataSospensione</span>
             </div>
             <div class="col-lg-1 text-center">
                 @if (abilitazione.DataFineSupervisione >= DateOnly.FromDateTime(DateTime.Today))
@@ -169,9 +205,8 @@
                     asp-route-page="@(currentPage - 1)"
                     asp-route-intestazione="@Model.Input.Intestazione"
                     asp-route-orderby="@Model.Input.OrderBy"
-                    asp-route-ascending="@Model.Input.Ascending"
-                    asp-route-escluso="@Model.Input.Escluso"><i class="fas fa-angle-left"></i></a>
-            </li>   
+                    asp-route-ascending="@Model.Input.Ascending"><i class="fas fa-angle-left"></i></a>
+            </li>
         }
         @for(int p = Math.Max(1, currentPage - 4); p <= Math.Min(totalPages, currentPage + 4); p++)
         {
@@ -182,8 +217,7 @@
                         asp-route-page="@p"
                         asp-route-intestazione="@Model.Input.Intestazione"
                         asp-route-orderby="@Model.Input.OrderBy"
-                        asp-route-ascending="@Model.Input.Ascending"
-                        asp-route-escluso="@Model.Input.Escluso">@p <span class="sr-only">(current)</span></a>
+                        asp-route-ascending="@Model.Input.Ascending">@p <span class="sr-only">(current)</span></a>
                 </li>
             }
             else
@@ -193,8 +227,7 @@
                         asp-route-page="@p"
                         asp-route-intestazione="@Model.Input.Intestazione"
                         asp-route-orderby="@Model.Input.OrderBy"
-                        asp-route-ascending="@Model.Input.Ascending"
-                        asp-route-escluso="@Model.Input.Escluso">@p</a>
+                        asp-route-ascending="@Model.Input.Ascending">@p</a>
                 </li>
             }
         }
@@ -205,8 +238,7 @@
                     asp-route-page="@(currentPage + 1)"
                     asp-route-intestazione="@Model.Input.Intestazione"
                     asp-route-orderby="@Model.Input.OrderBy"
-                    asp-route-ascending="@Model.Input.Ascending"
-                    asp-route-escluso="@Model.Input.Escluso"><i class="fas fa-angle-right"></i></a>
+                    asp-route-ascending="@Model.Input.Ascending"><i class="fas fa-angle-right"></i></a>
             </li>   
         }
     </ul>

@@ -1,37 +1,43 @@
+@using EbWeb.Models.AbilitazioniMifid.ViewModels
+
 @model AbilitazioneMifidDetailViewModel
-<div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4 pb-0">
+
+<div class="container py-1">
+    <div class="d-flex justify-content-between align-items-center mb-1">
         <div class="d-flex align-items-center">
             <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle me-3" title="Torna all'elenco" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
                 <i class="fas fa-arrow-left"></i>
             </a>
-            <h3 class=mb-0>
+            <h3 class="mb-0">
                 @ViewData["Title"]:
-                <span class="text-primary position-relative">
-                    @Model.Intestazione
-
-                    @if (@Model.Escluso == true)
-                    {
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                            style="font-size: 0.5rem; padding: 0.35em 0.65em;">
-                            ESCLUSO
-                            <span class="visually-hidden">Stato disabilitato</span>
-                        </span>
-                    }
-                </span>
+                <span class="text-primary">@Model.Intestazione</span>
             </h3>
 
             <a class="btn btn-outline-primary btn-sm ms-3" asp-action="Edit" asp-route-matricola="@Model.Matricola">
                 <i class="fas fa-pencil-alt me-2"></i>Modifica
             </a>
         </div>
-        <span class="badge bg-secondary">
-            Ultimo aggiornamento: @Model.DataUltimoAggiornamento?.ToString("dd/MM/yyyy")
-        </span>
+
+        <div class="text-end" style="position: relative;">
+            <span class="badge bg-secondary">
+                Ultimo aggiornamento: @Model.DataUltimoAggiornamento?.ToString("dd/MM/yyyy")
+            </span>
+        </div>
     </div>
 
+    <div class="row mb-2">
+        <div class="col-12 text-end">
+            <button type="button"
+                class="btn btn-link text-danger text-decoration-none p-0 btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#modalConfermaCancella">
+                <i class="fas fa-trash-alt me-1"></i>Cancella
+            </button>
+        </div>
+    </div>
+    
     <div class="row g-4">
-        <div class="col-lg-5 mb-4">
+        <div class="col-lg-5 mb-1">
             <div class="card h-100 shadow-sm">
                 <div class="card-header bg-light fw-bold"><i class="fas fa-user me-2"></i>Dati Generali</div>
                 <div class="card-body">
@@ -53,80 +59,124 @@
                     <div class="row mb-3">
                         <div class="col-12 text-muted small uppercase">Titolo di studio</div>
                         <div class="col-12 fw-bold">@Model.TitoloStudio</div>
-                        <div class="col-12 text-muted small">Conseguito il: @Model.DataConseguimentoTitoloStudio?.ToString("dd/MM/yyyy")</div>
+                        <div class="col-12 text-muted small mt-2">Conseguito il: @Model.DataConseguimentoTitoloStudio?.ToString("dd/MM/yyyy")</div>
                     </div>
-                    <div class="mb-1 text-center">
-                        @if (Model.AbilitatoFinanceWMP == true)
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-7 mb-1">
+            <div class="card h-100 shadow-sm border-primary">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-scale-balanced me-2"></i>
+                        <h5 class="mb-0">Status MiFID</h5>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        @if (Model.FlagAbilitatoMifid == true)
                         {
-                            <span class="badge bg-success">
-                                <i class="bi bi-check-circle me-1"></i> WMP abilitato
+                            <span class="badge rounded-pill bg-success border border-light">
+                                <i class="fa-solid fa-check-circle me-1"></i> Abilitato MiFID
                             </span>
                         }
                         else
                         {
-                            <span class="badge bg-secondary">
-                                <i class="bi bi-x-circle me-1"></i> WMP non abilitato
+                            <span class="badge rounded-pill bg-danger border border-light">
+                                <i class="fa-solid fa-circle-xmark me-1"></i> Non abilitato MiFID
+                            </span>
+                        }
+
+                        @if (Model.AbilitatoFinanceWMP == true)
+                        {
+                            <span class="badge rounded-pill bg-success border border-light">
+                                <i class="fa-solid fa-check-circle me-1"></i> Abilitato titoli
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge rounded-pill bg-danger border border-light">
+                                <i class="fa-solid fa-circle-xmark me-1"></i> Non abilitato titoli
                             </span>
                         }
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-lg-7 mb-4">
-            <div class="card h-100 shadow-sm border-primary">
-                <div class="card-header bg-primary text-white fw-bold"><i class="fas fa-balance-scale me-2"></i>Status MIFID</div>
-                    <div class="card-body">
-                        <div class="mb-4 p-2 bg-light border-start border-primary border-4 rounded-end">
-                            <label class="text-muted small d-block fw-bold">Titolo di studio MiFID</label>
-                            <span class="h6 mb-0">@Html.Raw(Model.TitoloStudioMifid)</span>
+                
+                <div class="card-body">
+                    <div class="mb-2 p-2 bg-light border-start border-primary border-4 rounded-end">
+                        <label class="text-muted small d-block fw-bold">Titolo di studio MiFID</label>
+                        <span class="h6 mb-0">@Html.Raw(Model.TitoloStudioMifid)</span>
+                    </div>
+                    
+                    <div class="row g-0 lh-lg">                        
+                        <div class="col-md-6 border-end pe-md-3">
+                            <div class="row g-0 align-items-center">
+                                <div class="col-6 text-muted small">Abilitazione MiFID</div>
+                                <div class="col-6 fw-bold text-end text-md-start">
+                                    @Model.DataAbilitazioneMifid?.ToString("dd/MM/yyyy")&nbsp;
+                                </div>
+                            </div>
+                            <div class="row g-0 align-items-center">
+                                <div class="col-6 text-muted small"><small>Fine abilitazione MiFID</small></div>
+                                <div class="col-6 text-danger small text-end text-md-start">
+                                    @Model.DataFineAbilitazioneMifid?.ToString("dd/MM/yyyy")&nbsp;
+                                </div>
+                            </div>
+                            <div class="row g-0 align-items-center">
+                                <div class="col-6 text-muted small">Assessment</div>
+                                <div class="col-6 text-end text-md-start">
+                                    @if (Model.NecessarioAssessment != true)
+                                    {
+                                        <span class="text-muted">Non necessario</span>
+                                    }
+                                    else if (Model.DataSuperamentoAssessment.HasValue)
+                                    {
+                                        <span class="text-success fw-bold">
+                                            @Model.DataSuperamentoAssessment.Value.ToString("dd/MM/yyyy")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-danger fw-bold">Da superare</span>
+                                    }
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="row g-0">
-                            <div class="col-md-3 text-muted small">
-                                <div style="height: 40px;">Abilitazione Mifid</div>
-                                <div style="height: 40px;">Assessment</div>
-                            </div>
-
-                            <div class="col-md-3 border-end pe-4">
-                                <div style="height: 40px;" class="fw-bold">
-                                    @Model.DataAbilitazioneMifid?.ToString("dd/MM/yyyy")
-                                </div>
-                                <div style="height: 40px;">
-                                    @if (Model.NecessarioAssessment == false) { <span class="text-muted">Non necessario</span> }
-                                    else if (Model.DataSuperamentoAssessment.HasValue) { <span class="text-success fw-bold">@Model.DataSuperamentoAssessment.Value.ToString("dd/MM/yyyy")</span> }
-                                    else { <span class="text-danger fw-bold">Da superare</span> }
+                        <div class="col-md-6 ps-md-3">
+                            <div class="row g-0 align-items-center">
+                                <div class="col-6 text-muted small">Abilitazione titoli</div>
+                                <div class="col-6 fw-bold text-end text-md-start">
+                                    @Model.DataAbilitazioneTitoli?.ToString("dd/MM/yyyy")&nbsp;
                                 </div>
                             </div>
-
-                            <div class="col-md-3 text-muted small ps-4">
-                                <div style="height: 40px;">Abilitazione titoli</div>
-                                <div style="height: 40px;">Anni esperienza</div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div style="height: 40px;" class="fw-bold">
-                                    @Model.DataAbilitazioneTitoli?.ToString("dd/MM/yyyy")
+                            <div class="row g-0 align-items-center">
+                                <div class="col-6 text-muted small"><small>Fine abilitazione titoli</small></div>
+                                <div class="col-6 text-danger small text-end text-md-start">
+                                    @Model.DataFineAbilitazioneTitoli?.ToString("dd/MM/yyyy")&nbsp;
                                 </div>
-                                <div style="height: 40px;">
+                            </div>
+                            <div class="row g-0 align-items-center">
+                                <div class="col-6 text-muted small">Anni esperienza</div>
+                                <div class="col-6 text-end text-md-start">
                                     <span class="badge rounded-pill bg-dark">@Model.AnniEsperienzaAdeguata</span>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="alert alert-warning py-2 small mt-2 mb-0">
-                            <strong>Sospensione: </strong> 
-                            @(Model.DataSospensione.HasValue ? $"{Model.DataSospensione:dd/MM/yyyy} - {Model.DataTermineSospensione:dd/MM/yyyy}" : "Nessuna")
-                        </div>
+                    <div class="alert alert-warning py-2 small mt-1 mb-0">
+                        <strong>Sospensione: </strong> 
+                        @(Model.DataSospensione.HasValue ? $"{Model.DataSospensione:dd/MM/yyyy} - {Model.DataTermineSospensione:dd/MM/yyyy}" : "Nessuna")
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-12 mb-4">
+        <div class="col-12 mb-1">   
             <div class="card shadow-sm">
                 <div class="card-header bg-light fw-bold"><i class="fas fa-users-cog me-2"></i>Supervisione</div>
-                <div class="card-body">
+                <div class="card-body py-2">
                     <div class="row text-center">
                         <div class="col-md-3 border-end">
                             <div class="text-muted small">Periodo</div>
@@ -154,36 +204,134 @@
             </div>
         </div>
 
-        <div class="row g-4">
-            <div class="col-md-8 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header bg-light fw-bold"><i class="fas fa-sticky-note me-2"></i>Note e Formazione</div>
-                    <div class="card-body">
-                        <div class="row mb-3">
-                            <div class="col-md-6 border-end">
-                                <label class="text-muted small d-block">Formazione 2024</label>
-                                <p class="fw-bold">@Model.Formazione2024</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="text-muted small d-block">Formazione 2025</label>
-                                <p class="fw-bold">@Model.Formazione2025</p>
-                            </div>
+        <div class="col-md-5 mb-2">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold"><i class="fas fa-sticky-note me-2"></i>Note e Formazione</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6 border-end">
+                            <label class="text-muted small d-block">Formazione 2024</label>
+                            <p class="fw-bold">@Model.Formazione2024</p>
                         </div>
-                        <label class="text-muted small d-block">Note generali</label>
-                        <p class="fst-italic text-secondary">@(Model.Note ?? "Nessuna nota presente")</p>
+                        <div class="col-md-6">
+                            <label class="text-muted small d-block">Formazione 2025</label>
+                            <p class="fw-bold">@Model.Formazione2025</p>
+                        </div>
+                    </div>
+                    <label class="text-muted small d-block">Note generali</label>
+                    <p class="fst-italic text-secondary mb-0">@(Model.Note ?? "Nessuna nota presente")</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7 small mb-2">
+            <div class="card">
+                <div class="card-header fw-bold text-center">Creazione Lettere</div>
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-4">
+                            <a href="@(string.IsNullOrEmpty(Model.LetteraAbilitazioneSupervisione) ? "javascript:void(0)" : Model.LetteraAbilitazioneSupervisione)" 
+                                target="_blank"
+                                class="btn btn-sm w-100 @(string.IsNullOrEmpty(Model.LetteraAbilitazioneSupervisione) ? "btn-secondary disabled" : "btn-outline-primary")">
+                                    <i class="fas fa-external-link-alt me-1"></i> Abilitazione Supervisione
+                            </a>
+                        </div>
+                        <div class="col-2">
+                            @Model.DataInvioLetteraAbilitazioneSupervisione?.ToString("dd/MM/yyyy")&nbsp;
+                        </div>
+
+                        <div class="col-4">
+                            <a href="@(string.IsNullOrEmpty(Model.LetteraCessazioneSupervisione) ? "javascript:void(0)" : Model.LetteraCessazioneSupervisione)"
+                                target="_blank"
+                                class="btn btn-sm w-100 @(string.IsNullOrEmpty(Model.LetteraCessazioneSupervisione) ? "btn-secondary disabled" : "btn-outline-primary")">
+                                <i class="fas fa-external-link-alt me-1"></i> Cessazione supervisione
+                            </a>
+                        </div>
+                        <div class="col-2">
+                            @Model.DataInvioLetteraCessazioneSupervisione?.ToString("dd/MM/yyyy")&nbsp;
+                        </div>
+                    </div>
+                            
+                    <div class="row mb-2">
+                        <div class="col-4">
+                            <a href="@(string.IsNullOrEmpty(Model.LetteraAbilitazioneTemporanea) ? "javascript:void(0)" : Model.LetteraAbilitazioneTemporanea)" 
+                                target="_blank"
+                                class="btn btn-sm w-100 @(string.IsNullOrEmpty(Model.LetteraAbilitazioneTemporanea) ? "btn-secondary disabled" : "btn-outline-primary")">
+                                    <i class="fas fa-external-link-alt me-1"></i> Abilitazione temporanea
+                            </a>
+                        </div>
+                        <div class="col-2">
+                            @Model.DataInvioLetteraAbilitazioneTemporanea?.ToString("dd/MM/yyyy")&nbsp;
+                        </div>
+                    </div>
+                            
+                    <div class="row mb-2">
+                        <div class="col-4">
+                            <a href="@(string.IsNullOrEmpty(Model.LetteraSupervisione) ? "javascript:void(0)" : Model.LetteraSupervisione)" 
+                                target="_blank"
+                                class="btn btn-sm w-100 @(string.IsNullOrEmpty(Model.LetteraSupervisione) ? "btn-secondary disabled" : "btn-outline-primary")">
+                                <i class="fas fa-external-link-alt me-1"></i> Nomina supervisore
+                            </a>
+                        </div>
+                        <div class="col-2">
+                            @Model.DataInvioLetteraSupervisione?.ToString("dd/MM/yyyy")&nbsp;
+                        </div>
+
+                        <div class="col-4">
+                            <a href="@(string.IsNullOrEmpty(Model.LetteraCessazioneSupervisore) ? "javascript:void(0)" : Model.LetteraCessazioneSupervisore)"
+                                target="_blank"
+                                class="btn btn-sm w-100 @(string.IsNullOrEmpty(Model.LetteraCessazioneSupervisore) ? "btn-secondary disabled" : "btn-outline-primary")">
+                                <i class="fas fa-external-link-alt me-1"></i> Cessazione supervisore
+                            </a>
+                        </div>
+                        <div class="col-2">
+                            @Model.DataInvioLetteraCessazioneSupervisore?.ToString("dd/MM/yyyy")&nbsp;
+                        </div>
+                    </div>
+                            
+                    <div class="row mb-2">
+                        <div class="col-4">
+                            <a href="@(string.IsNullOrEmpty(Model.LetteraSostitutoSupervisore) ? "javascript:void(0)" : Model.LetteraSostitutoSupervisore)" 
+                                target="_blank"
+                                class="btn btn-sm w-100 @(string.IsNullOrEmpty(Model.LetteraSostitutoSupervisore) ? "btn-secondary disabled" : "btn-outline-primary")">
+                                <i class="fas fa-external-link-alt me-1"></i> Nomina sost. supervisore
+                            </a>
+                        </div>
+                        <div class="col-2">
+                            @Model.DataInvioLetteraSostitutoSupervisore?.ToString("dd/MM/yyyy")&nbsp;
+                        </div>
+                        <div class="col-4">
+                            <a href="@(string.IsNullOrEmpty(Model.LetteraCessazioneSostitutoSupervisore) ? "javascript:void(0)" : Model.LetteraCessazioneSostitutoSupervisore)"
+                                target="_blank"
+                                class="btn btn-sm w-100 @(string.IsNullOrEmpty(Model.LetteraCessazioneSostitutoSupervisore) ? "btn-secondary disabled" : "btn-outline-primary")">
+                                <i class="fas fa-external-link-alt me-1"></i> Cessazione sost. supervisore
+                            </a>
+                        </div>
+                        <div class="col-2">
+                            @Model.DataInvioLetteraCessazioneSostitutoSupervisore?.ToString("dd/MM/yyyy")&nbsp;
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm h-100 bg-light">
-                    <div class="card-header fw-bold text-center">Creazione Lettere</div>
-                    <div class="card-body d-grid gap-2">
-                        <button class="btn btn-outline-primary btn-sm"><i class="fas fa-file-pdf me-2"></i>Lettera X @Model.GeneraLetteraX</button>
-                        <button class="btn btn-outline-primary btn-sm"><i class="fas fa-file-pdf me-2"></i>Lettera Y @Model.GeneraLetteraY</button>
-                        <button class="btn btn-outline-primary btn-sm"><i class="fas fa-file-pdf me-2"></i>Lettera Z @Model.GeneraLetteraZ</button>
-                    </div>
-                </div>
+<div class="modal fade" id="modalConfermaCancella" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Conferma cancellazione</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Confermi la cancellazione di questa matricola dalle abilitazioni MiFID? 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <form asp-action="Delete" asp-route-matricola="@Model.Matricola" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-warning">Sì, cancella</button>
+                </form>
             </div>
         </div>
     </div>
