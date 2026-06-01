@@ -2,7 +2,7 @@
 
 <input type="hidden" id="jsonMessaggioTechnical" value="@Model?.Messaggio" />
 <input type="hidden" id="jsonRisultatiTechnical" value="@Model?.Risultati" />
-<input type="hidden" id="dataFriendlyTechnical" value="@Model?.DataEsecuzioneFriendly" />
+<input type="hidden" id="dataEsecuzioneTechnical" value="@Model?.DataEsecuzione?.ToString("dd/MM/yyyy HH:mm:ss")" />
 
 <div class="tab-pane fade show active" id="tabResults" role="tabpanel" aria-labelledby="results-tab">
     @if (Model?.TabellaRisultati?.Righe != null && Model.TabellaRisultati.Righe.Any())

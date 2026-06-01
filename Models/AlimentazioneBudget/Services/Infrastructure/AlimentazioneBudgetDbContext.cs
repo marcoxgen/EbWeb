@@ -17,6 +17,8 @@ public class AlimentazioneBudgetDbContext : DbContext
     public virtual DbSet<AzionePubblicazione> AzioniPubblicazione { get; set; }
     public virtual DbSet<TaskPubblicazione> TasksPubblicazione { get; set; }
     public virtual DbSet<TemplateTask> TemplateTasks { get; set; }
+    public virtual DbSet<DipendenzeTask> DipendenzeTasks { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Pubblicazione>(entity =>
@@ -58,6 +60,12 @@ public class AlimentazioneBudgetDbContext : DbContext
         modelBuilder.Entity<TemplateTask>(entity =>
         {
             entity.ToTable("Task", schema: "dbo");
+            entity.HasNoKey();
+        });
+
+        modelBuilder.Entity<DipendenzeTask>(entity =>
+        {
+            entity.ToTable("Dipendenze_Task", schema: "dbo");
             entity.HasNoKey();
         });
     }

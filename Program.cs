@@ -1,14 +1,18 @@
+using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
-
+using EbWeb.Configuration;
 using EbWeb.Models.Options;
 using EbWeb.Models.Services.Application;
 using EbWeb.Models.Services.Infrastructure;
-using EbWeb.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
-// Registra i servizi Dependency Injection (DI)
+// Configura l'autenticazione Windows integrata (Kerberos/NTLM) tramite protocollo Negotiate
+builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+    .AddNegotiate();
+
+// Registra i servizi Dependency Injection (DI) globali
 builder.Services.AddTransient<IAnomaliaService, AdoNetAnomaliaService>();
 builder.Services.AddTransient<IDatabaseAccessor, SqlDatabaseAccessor>();
 builder.Services.AddTransient<IRevisioneService, AdoNetRevisioneService>();
@@ -17,8 +21,8 @@ builder.Services.AddTransient<IAgendaStipulaService, EFCoreAgendaStipulaService>
 builder.Services.AddTransient<IRichiestaPerfezionamentoService, EFCoreRichiestaPerfezionamentoService>();
 builder.Services.AddTransient<ISchedaBudgetService, EFCoreSchedaBudgetService>();
 
-// Registra i servizi, le configurazioni e i DbContext
-builder.Services.AddAbilitazioniMifid(configuration);
+// Registrazione dei moduli funzionali dell'applicazione con le rispettive configurazioni e policy
+builder.Services.AddAbilitazioniMifid(configuration, "AbilitazioneMifid", "MifidAccess");
 builder.Services.AddAlimentazioneBudget(configuration);
 
 // Contiene tutto ciò che riguarda una singola richiesta HTTP in corso
@@ -42,19 +46,10 @@ builder.Services.Configure<IstruttorieOptions>(configuration.GetSection("Istrutt
 builder.Services.Configure<AgendaStipuleOptions>(configuration.GetSection("AgendaStipule"));
 builder.Services.Configure<RichiestePerfezionamentoOptions>(configuration.GetSection("RichiestaPerfezionamento"));
 
-// Configura l'app per accettare l'identità dell'utente passata da IIS.
-// Questo permette di recuperare automaticamente l'utente AD (Dominio\Utente)
-// senza richiedere una maschera di login manuale.
-builder.Services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
-
 // Abilita il supporto per i Controller e le View (Razor).
-// Include il 'Model Binding' (conversione automatica dei dati da Web a C#)
-// e il 'Fluent Validation' se configurato, per gestire le interfacce utente.
 builder.Services.AddControllersWithViews();
 
 // Finalizza la configurazione del contenitore dei servizi (Dependency Injection)
-// e inizializza l'istanza dell'applicazione (Web Host).
-// Dopo questa riga non è più possibile registrare nuovi servizi.
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -73,16 +68,13 @@ else
 // Abilita il servizio dei file fisici (CSS, JS, Immagini) contenuti nella cartella 'wwwroot'
 app.UseStaticFiles();
 // Analizza l'URL della richiesta in arrivo e individua il Controller/Action corrispondente.
-// Definisce 'dove' la richiesta deve andare, permettendo ai successivi Middleware 
-// (come Autenticazione e Autorizzazione) di applicare le regole specifiche per quella destinazione.
 app.UseRouting();
 
+// I Middleware di sicurezza rimangono nella posizione corretta: prima l'autenticazione, poi l'autorizzazione
 app.UseAuthentication();
 app.UseAuthorization();
 
 // Stabilisce la convenzione per interpretare gli URL del browser
-// Se l'utente non specifica nulla, il sistema carica automaticamente 
-// la Action 'Index' del 'HomeController'
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -3,19 +3,23 @@
 @model AzionePubblicazioneListViewModel
 
 <div class="container">
-    <h3>Azioni Pubblicazione #@Model.IdPubblicazione</h3>
-    <p>Totale task trovati: @Model.Azioni.TotalCount</p>
+    <div class="d-flex align-items-center mb-4">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle me-3" title="Torna indietro" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
+            <i class="fas fa-arrow-left"></i>
+       </a>
+        <h3 class="mb-0">@ViewData["Title"]: @Model.TipoPubblicazioneDes - @Model.DataRiferimento</h3>
+    </div>
 
     <div class="list-group">
         @foreach (var item in Model.Azioni.Results)
         {
             <div class="list-group-item"
                 onclick="apriDettaglio(@item.IdAzione, this)" 
-                style="padding-left: @(item.PaddingLivello + 15)px; cursor: pointer;">
+                style="padding-left: @(item.PaddingLivello + 10)px; cursor: pointer;">
 
                 <div class="row align-items-start">
                     <div class="col-lg-6">
-                        <h6 class="mb-1 text-body fs-6 fw-normal d-flex align-items-center">
+                        <h6 class="mb-1 text-body fs-6 d-flex align-items-center @item.ClasseGrassetto">
                             <i id="icona-stato-@item.IdAzione" class="fas @item.IconaStato @item.ClasseColore fa-lg me-2"></i>
                             @{
                                 var isJson = item.Descrizione != null && item.Descrizione.Trim().StartsWith("{");
@@ -24,16 +28,16 @@
                                     try
                                     {
                                         var dati = JsonSerializer.Deserialize<Dictionary<string, string>>(item.Descrizione);
-                                        <span>@(dati.ContainsKey("Dettaglio") ? dati["Dettaglio"] : "Azione senza titolo")</span>
+                                        <span title="Task: @item.IdTask">@dati["Dettaglio"]</span>
                                     }
-                                    catch 
-                                    { 
-                                        <span>@item.Descrizione</span> 
+                                    catch
+                                    {
+                                        <span title="Task: @item.IdTask">@item.Descrizione</span>
                                     }
                                 }
                                 else
                                 {
-                                    <span>@item.Descrizione</span>
+                                    <span title="Task: @item.IdTask">@item.Descrizione</span>
                                 }
                             }
                         </h6>
@@ -47,27 +51,19 @@
                                         var datiExtra = JsonSerializer.Deserialize<Dictionary<string, string>>(item.Descrizione);
                                         foreach (var entry in datiExtra.Where(x => x.Key != "Dettaglio"))
                                         {
-                                            @* Aumentata la dimensione del font e il padding *@
                                             <span class="badge bg-light text-dark border fw-normal shadow-sm" style="font-size: 0.85rem; padding: 0.4em 0.7em;">
                                                 <span class="text-muted">@entry.Key:</span> @entry.Value
                                             </span>
                                         }
                                     }
-                                    catch { /* Gestione silenziosa dell'errore di parsing */ }
+                                    catch {}
                                 }
                             </div>
                         }
-
-                        <small class="text-muted" style="font-size: 0.7rem;">
-                            Ordine: @item.Ordine - <strong>@item.StatoTesto</strong>
-                        </small>
-                        <br/>
                     </div>
 
                     <div class="col-lg-4">
-                        @* La card ha un ID per poter essere mostrata/nascosta *@
                         <div id="card-nota-@item.IdAzione" class="card shadow-sm @(string.IsNullOrEmpty(item.Note) ? "d-none" : "")">
-                            @* Il corpo della card ha l'ID che la tua funzione cerca *@
                             <div class="card-body" id="nota-anteprima-@item.IdAzione">
                                 @item.Note
                             </div>
@@ -75,7 +71,10 @@
                     </div>
 
                     <div class="col-lg-1 d-flex align-items-center justify-content-center">
-                        <small id="data-friendly-@item.IdAzione" class="text-muted" title="@item.DataEsecuzione?.ToString("dd/MM/yyyy HH:mm:ss")">
+                        <small id="data-friendly-@item.IdAzione"
+                            class="text-muted"
+                            data-timestamp="@item.DataEsecuzione?.ToString("yyyy-MM-ddTHH:mm:ss")"
+                            title="@item.DataEsecuzione?.ToString("dd/MM/yyyy HH:mm:ss")">
                             @item.DataEsecuzioneFriendly
                         </small>
                     </div>
@@ -113,7 +112,6 @@
 
 @section Scripts {
     <script>
-        // 1. APERTURA CASSETTO OFFCANVAS (Al click sulla riga/bottone)
         function apriDettaglio(id, elementoClick) {
             if (window.event) window.event.stopPropagation();
 
@@ -126,31 +124,47 @@
 
             // Carica l'HTML dentro il cassetto
             $.get('@Url.Action("GetDettaglio", "AlimentazioneBudget")/' + id, function(html) {
-                $('#corpoCassetto').html(html);
-                // C# renderizza direttamente la tabella iniziale partendo dal JSON del DB!
+                var $corpo = $('#corpoCassetto');
+                $corpo.html(html);
+
+                // Verifica la presenza della classe '.table-responsive' o della tabella all'interno del cassetto
+                var idTab = $corpo.find('.table-responsive').length > 0 ? 'results-tab' : 'messages-tab';
+
+                // Recupera l'elemento del tab e lo attiva
+                var tabElement = document.getElementById(idTab);
+                if (tabElement) {
+                    bootstrap.Tab.getOrCreateInstance(tabElement).show();
+                }
             });
         }
 
-        // 2. GESTORE ESECUZIONE COMANDO SQL (F5)
         $(document).on('click', '#btnEseguiComando', function () {
             var $target = $('#ssmsTabContent'), $btn = $('#btnEseguiComando');
-            $('#hiddenComando').val($('#txtComandoSQL').val());
+
+            var idAzione = $('#idAzione').val();
 
             $btn.addClass('disabled').html('<i class="fas fa-spinner fa-spin me-1 small"></i> In corso...');
 
-            $.post('/AlimentazioneBudget/EseguiAzione', { dbName: $('#hiddenDbName').val(), sqlComando: $('#hiddenComando').val() })
+            $.post('@Url.Action("EseguiAzione", "AlimentazioneBudget")', { idAzione })
             .done(function (rispostaHtml) {
-                $target.html(rispostaHtml); // Inietta la parziale aggiornata da C#
+                $target.html(rispostaHtml);
 
                 // Prende i dati stringa puliti dai due hidden field "Technical" della parziale
                 var jsonLive = $target.find('#jsonRisultatiTechnical').val();
                 var messaggioLive = $target.find('#jsonMessaggioTechnical').val();
+                var dataLive = $target.find('#dataEsecuzioneTechnical').val();
 
                 // Li copia negli hidden field di persistenza globali per il salvataggio
                 $('#jsonMessaggioRaw').val(messaggioLive);
                 $('#jsonRisultatiRaw').val(jsonLive);
 
-                // Switch automatico del Tab (SSMS Style)
+                // Aggiorna la label della data nella vista padre _Dettaglio
+                if (dataLive) {
+                    $('#labelDataEsecuzione').text(dataLive);
+                    $('#dataEsecuzioneRaw').val(dataLive);
+                }
+
+                // Switch automatico del Tab
                 var idTab = $target.find('.table-responsive').length > 0 ? 'results-tab' : 'messages-tab';
                 bootstrap.Tab.getOrCreateInstance(document.getElementById(idTab)).show();
             })
@@ -162,55 +176,38 @@
             });
         });
 
-        // 3. SALVATAGGIO STATO AZIONE (Aggiornamento UI in tempo reale)
         function salvaNote() {
-            var id = $('#IdAzione').val();
+            var id = $('#idAzione').val();
             var esitoChecked = $('#SwitchEsito').is(':checked');
 
             var dataInviare = {
-                idAzione: id,
-                note: $('#NoteDettaglio').val(),
-                esito: esitoChecked,
-                messaggio: $('#jsonMessaggioRaw').val(),
-                risultati: $('#jsonRisultatiRaw').val()
+                IdAzione: id,
+                Note: $('#NoteDettaglio').val(),
+                Esito: esitoChecked
             };
 
             $.post('@Url.Action("SaveActionState", "AlimentazioneBudget")', dataInviare, function(res) {
                 if (!res.success) { alert(res.message || "Errore nel salvataggio"); return; }
 
-                // 1. Aggiorna il testo e la visibilità della card Note
-                $('#nota-anteprima-' + id).text(dataInviare.note);
-                $('#card-nota-' + id).toggleClass('d-none', dataInviare.note.trim() === "");
+                // Aggiorna solo il testo della nota nella lista principale
+                $('#nota-anteprima-' + id).text(dataInviare.Note);
+                $('#card-nota-' + id).toggleClass('d-none', dataInviare.Note.trim() === "");
 
-                // 2. Aggiorna l'icona di stato principale (Cambia le classi in base all'esito)
+                // Aggiorna solo l'icona di stato (Verde o Rosso)
                 var $icona = $('#icona-stato-' + id);
                 if ($icona.length) {
                     if (esitoChecked) {
-                        // Se successo: metti l'icona di check (es. fa-check-circle) e il colore verde (text-success)
                         $icona.attr('class', 'fas fa-check-circle text-success fa-lg me-2');
                     } else {
-                        // Se fallito: metti l'icona di errore (es. fa-exclamation-circle) e il colore rosso (text-danger)
                         $icona.attr('class', 'fas fa-exclamation-circle text-danger fa-lg me-2');
                     }
                 }
 
-                // 3. Aggiorna il testo del Tempo di Esecuzione ( Friendly )
-                var $tempo = $('#data-friendly-  ' + id);
-                if ($tempo.length) {
-                    // Genera una stringa "ora" al volo (es. "09:41:02") come fallback friendly immediato
-                    var oraAttuale = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                    $tempo.text(oraAttuale);
-                }   
-
-                // Chiude il cassetto offcanvas
+                // Chiude il cassetto lasciando intatta la data dell'esecuzione
                 bootstrap.Offcanvas.getInstance(document.getElementById('cassettoAzione')).hide();
             });
         }
 
-        // 4. UTILITY DI INTERFACCIA (F5 da tastiera e Switch Esito)
-        $(document).on('keydown', function (e) {
-            if (e.which === 116 && $('#txtComandoSQL').is(':focus')) { e.preventDefault(); $('#btnEseguiComando').click(); }
-        });
         $(document).on('change', '#SwitchEsito', function() {
             var chk = $(this).is(':checked');
             $('#labelEsito').text(chk ? "Successo" : "Fallito").toggleClass('text-success', chk).toggleClass('text-danger', !chk);

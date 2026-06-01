@@ -8,19 +8,17 @@ namespace EbWeb.Controllers;
 
 public class AlimentazioneBudgetController : Controller
 {
-    private readonly IAlimentazioneBudgetService alimentazioneBudgetService;
-    private readonly IEsecutoreComandiService esecutoreComandiService;
-    public AlimentazioneBudgetController(IAlimentazioneBudgetService alimentazioneBudgetService, IEsecutoreComandiService esecutoreComandiService)
+    private readonly IAlimentazioneBudgetService _alimentazioneBudgetService;
+    public AlimentazioneBudgetController(IAlimentazioneBudgetService alimentazioneBudgetService)
     {
-        this.alimentazioneBudgetService = alimentazioneBudgetService;
-        this.esecutoreComandiService = esecutoreComandiService;
+        _alimentazioneBudgetService = alimentazioneBudgetService;
     }
 
     public async Task<IActionResult> Index(PubblicazioneBudgetListInputModel input)
     {
         ViewData["Title"] = "Pubblicazioni Budget";
 
-        var pubblicazioniBudget = await alimentazioneBudgetService.GetPubblicazioniBudgetAsync(input);
+        var pubblicazioniBudget = await _alimentazioneBudgetService.GetPubblicazioniBudgetAsync(input);
         
         var viewModel = new PubblicazioneBudgetListViewModel {
             PubblicazioniBudget = pubblicazioniBudget,
@@ -47,7 +45,7 @@ public class AlimentazioneBudgetController : Controller
 
         try
         {
-            bool creataNuova = await alimentazioneBudgetService.ElaboraNuovaPubblicazioneAsync(model.TipoCod, model.DataRiferimento);
+            bool creataNuova = await _alimentazioneBudgetService.CreatePubblicazioneAsync(model.TipoCod, model.DataRiferimento);
 
             if (creataNuova)
             {
@@ -68,9 +66,9 @@ public class AlimentazioneBudgetController : Controller
     }
     public async Task<IActionResult> Azioni(int id)
     {
-        ViewData["Title"] = "Azioni Pubblicazione Budget";
+        ViewData["Title"] = "Azioni Pubblicazione";
 
-        var azioniPubblicazione = await alimentazioneBudgetService.GetAzioniPubblicazioneIdAsync(id);
+        var azioniPubblicazione = await _alimentazioneBudgetService.GetAzioniPubblicazioneIdAsync(id);
         
         if (azioniPubblicazione == null) return NotFound();
 
@@ -81,18 +79,15 @@ public class AlimentazioneBudgetController : Controller
     public async Task<IActionResult> GetDettaglio(int id)
     {
         // Recupera l'azione dal service
-        var azione = await alimentazioneBudgetService.GetAzionePubblicazioneAsync(id);
+        var azione = await _alimentazioneBudgetService.GetAzionePubblicazioneAsync(id);
 
         if (azione == null) return NotFound();
 
-        // =========================================================================
-        // RIPRISTINO DATI PER LA TABELLA (Se ci sono risultati salvati in formato JSON)
-        // =========================================================================
         if (!string.IsNullOrWhiteSpace(azione.Risultati))
         {
             try
             {
-                // Tentiamo di deserializzare la stringa JSON in una lista di Dizionari
+                // Deserializza la stringa JSON in una lista di Dizionari
                 var righeSalvate = System.Text.Json.JsonSerializer
                     .Deserialize<List<Dictionary<string, object>>>(azione.Risultati);
 
@@ -100,7 +95,7 @@ public class AlimentazioneBudgetController : Controller
                 {
                     azione.TabellaRisultati = new JsonTabellaResult
                     {
-                        // Estraiamo i nomi delle colonne prendendo le chiavi del primo record
+                        // Memorizza i nomi delle colonne prendendo le chiavi del primo record
                         Colonne = righeSalvate.First().Keys.ToList(),
                         Righe = righeSalvate
                     };
@@ -108,66 +103,39 @@ public class AlimentazioneBudgetController : Controller
             }
             catch (System.Text.Json.JsonException)
             {
-                // Se la stringa dentro 'Risultati' non è un JSON valido (magari è un errore di testo),
-                // non facciamo nulla. La View andrà in fallback mostrando il testo grezzo senza rompersi.
             }
         }
 
-        // Restituisce la Partial View passandogli il modello finalmente completo
+        // Restituisce la PartialView passandogli il modello completo
         return PartialView("_DettaglioAzione", azione);
     }
 
     [HttpPost]
-    public async Task<IActionResult> EseguiAzione(string dbName, string sqlComando)
+    public async Task<IActionResult> EseguiAzione(int idAzione)
     {
-        // Usiamo il ViewModel definitivo che hai condiviso tu
         var viewModel = new AzionePubblicazioneViewModel
         {
-            NomeDatabase = dbName,
-            Comando = sqlComando,
+            IdAzione = idAzione,
             DataEsecuzione = DateTime.Now
         };
 
         try
         {
-            // 1. Il servizio esegue la SELECT normale e restituisce le DataTable
-            var sqlResult = await esecutoreComandiService.EseguiComandoDinamicoAsync(dbName, sqlComando);
+            var risultato = await _alimentazioneBudgetService.EseguiAzioneAsync(idAzione);
 
-            viewModel.Esito = true;
+            viewModel.Esito = risultato.Esito;
+            viewModel.Messaggio = risultato.Messaggio;
 
-            // 2. Gestione dei messaggi di testo (PRINT)
-            if (sqlResult.HasMessages)
+            if (risultato.Righe != null && risultato.Righe.Any())
             {
-                viewModel.Messaggio = string.Join(Environment.NewLine, sqlResult.Messages);
-            }
-
-            // 3. Gestione dei dati della query
-            if (sqlResult.HasResults)
-            {
-                var dataTable = sqlResult.ResultSets.First();
-
-                // Trasformiamo la DataTable in una lista di Dizionari in memoria
-                var listaRighe = new List<Dictionary<string, object>>();
-                foreach (System.Data.DataRow row in dataTable.Rows)
-                {
-                    var riga = new Dictionary<string, object>();
-                    foreach (System.Data.DataColumn col in dataTable.Columns)
-                    {
-                        riga[col.ColumnName] = row[col] == DBNull.Value ? null : row[col];
-                    }
-                    listaRighe.Add(riga);
-                }
-
-                // A) Generiamo il JSON dai dati reali. 
-                // Questa stringa va inserita nella proprietà 'Risultati' (che poi salverai in SQL)
-                viewModel.Risultati = System.Text.Json.JsonSerializer.Serialize(listaRighe);
-
-                // B) Popoliamo direttamente l'oggetto TabellaRisultati per il rendering immediato della View
                 viewModel.TabellaRisultati = new JsonTabellaResult
                 {
-                    Colonne = dataTable.Columns.Cast<System.Data.DataColumn>().Select(c => c.ColumnName).ToList(),
-                    Righe = listaRighe
+                    Colonne = risultato.Colonne,
+                    Righe = risultato.Righe
                 };
+
+                // Genera la stringa JSON per il campo hidden tecnico richiesto dallo script
+                viewModel.Risultati = System.Text.Json.JsonSerializer.Serialize(risultato.Righe);
             }
         }
         catch (Exception ex)
@@ -176,13 +144,13 @@ public class AlimentazioneBudgetController : Controller
             viewModel.Messaggio = ex.Message;
         }
 
+        // Restituisce la PartialView
         return PartialView("_PannelloRisultati", viewModel);
     }
 
     [HttpPost]
     public async Task<IActionResult> SaveActionState(ActionSaveInputModel input)
     {
-        // Validazione base dell'input (competenza del Controller)
         if (input == null || input.IdAzione <= 0)
         {
             return Json(new { success = false, message = "Dati della richiesta non validi." });
@@ -190,27 +158,18 @@ public class AlimentazioneBudgetController : Controller
 
         try
         {
-            // Deleghiamo tutta la logica al servizio dedicato
-            await alimentazioneBudgetService.SalvaStatoAzioneAsync(input);
+            // Delega al servizio che salva Note ed Esito
+            await _alimentazioneBudgetService.SalvaStatoAzioneAsync(input);
 
-            // Istanziamo al volo il ViewModel impostando DateTime.Now (l'istante del salvataggio)
-            // per fargli sputare la stringa formattata (es. "0 min") tramite la tua proprietà get {}
-            var vm = new AzionePubblicazioneViewModel
-            {
-                DataEsecuzione = DateTime.Now
-            };
-
-            // Restituiamo il successo insieme alla stringa calcolata in C#
-            return Json(new { success = true, dataFriendly = vm.DataEsecuzioneFriendly });
+            // Restituisce solo il successo
+            return Json(new { success = true });
         }
         catch (KeyNotFoundException ex)
         {
-            // Gestione specifica se l'azione non esiste nel DB
             return Json(new { success = false, message = ex.Message });
         }
         catch (Exception ex)
         {
-            // Logga l'eccezione a sistema qui (es. _logger.LogError...)
             return Json(new { success = false, message = $"Errore interno durante il salvataggio: {ex.Message}" });
         }
     }
@@ -218,16 +177,35 @@ public class AlimentazioneBudgetController : Controller
     [HttpGet]
     public async Task<JsonResult> GetTipiPubblicazione()
     {
-        var tipiPubblicazione = await alimentazioneBudgetService.GetTipiPubblicazioneLookupAsync();
+        var tipiPubblicazione = await _alimentazioneBudgetService.GetTipiPubblicazioneLookupAsync();
         
         return Json(tipiPubblicazione);
     }
 
     [HttpGet]
-    public async Task<JsonResult> GetCalendariDinamici(string tipoCod)
+    public async Task<JsonResult> GetCalendariDinamici(char tipoCod)
     {
-        var calendariDinamici = await alimentazioneBudgetService.GetCalendariDinamiciLookupAsync(tipoCod);
+        var calendariDinamici = await _alimentazioneBudgetService.GetCalendariDinamiciLookupAsync(tipoCod);
         
         return Json(calendariDinamici);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeletePubblicazione(int idPubblicazione)
+    {
+        // Recupera il risultato del metodo
+        bool esito = await _alimentazioneBudgetService.DeletePubblicazioneAsync(idPubblicazione);
+
+        if (!esito)
+        {
+            TempData["MessaggioErrore"] = "La pubblicazione selezionata è inesistente o è già stata eliminata.";
+        }
+        else
+        {
+            TempData["MessaggioSuccesso"] = "Pubblicazione ed elenco azioni eliminate correttamente.";
+        }
+
+        return RedirectToAction(nameof(Index));
     }
 }
