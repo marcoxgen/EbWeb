@@ -16,8 +16,9 @@
                 <div class="col-lg-2">Tipo</div>
                 <div class="col-lg-1">Data Riferimento</div>
                 <div class="col-lg-1">Stato</div>
-                <div class="col-lg-2">Data Ultima Lavorazione</div>
-                <div class="col-lg-1">Azione</div>
+                <div class="col-lg-2">Ultima Lavorazione</div>
+                <div class="col-lg-3">Note Pubblicazione</div>
+                <div class="col-lg-1"></div>
             </div>
         </div>
     </form>
@@ -37,15 +38,66 @@
             <div class="col-lg-2 text-center">
                 <span>@pubblicazione.DataUltimaLavorazione</span>
             </div>
-            <div class="col-lg-1 d-flex text-center justify-content-center">
-                <a class="btn btn-outline-secondary btn-sm"
-                    asp-controller="AlimentazioneBudget"
-                    asp-action="Azioni"
-                    asp-route-id="@pubblicazione.IdPubblicazione"
-                    title="Visualizza azioni e dettagli della pubblicazione">
-                        <i class="fas fa-cogs"></i>
-                </a>
+            <div class="col-lg-3 text-center">
+                <div class="note-inline-container" data-id="@pubblicazione.IdPubblicazione" style="position: relative; cursor: pointer; min-height: 30px;">
+                    <span class="note-text">@pubblicazione.Note</span>
+                    <i class="fas fa-pencil-alt text-muted edit-icon d-none" style="margin-left: 8px; font-size: 0.8rem;"></i>
+                </div>
+            </div>
+            <div class="col-lg-1 d-flex justify-content-center align-items-center">
+                <div class="dropdown">
+                    <button class="btn btn-light btn-sm text-secondary rounded-pill px-3 border"
+                        type="button"
+                        id="dropdown-@pubblicazione.IdPubblicazione"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        style="height: 26px; padding-top: 0; padding-bottom: 0; line-height: 1; display: inline-flex; align-items: center;">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+
+                    <div class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="dropdown-@pubblicazione.IdPubblicazione">
+                        <a class="dropdown-item py-2" asp-action="Azioni" asp-route-id="@pubblicazione.IdPubblicazione">
+                            <i class="fas fa-cogs text-muted me-2 small"></i> Gestisci   Azioni
+                        </a>
+
+                        <div class="dropdown-divider my-1"></div>
+
+                        <a class="dropdown-item text-danger py-2" href="#"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalConfermaElimina"
+                            onclick="$('#idPubblicazioneInput').val('@pubblicazione.IdPubblicazione')">
+                            <i class="fas fa-trash-alt me-2 small"></i> Elimina Pubblicazione
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     }
+</div>
+
+<div class="modal fade" id="modalConfermaElimina" tabindex="-1" aria-labelledby="modalEliminaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="modalEliminaLabel"><i class="fas fa-exclamation-triangle me-2"></i>Conferma Eliminazione</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form asp-action="DeletePubblicazione" method="post">
+                <div class="modal-body text-center p-4">
+                    <p class="fs-5 mb-1 fw-bold text-dark">Sei sicuro di voler procedere?</p>
+                    <p class="text-muted small">L'eliminazione della pubblicazione e di tutte le azioni collegate è irreversibile.</p>
+
+                    <input type="hidden" name="idPubblicazione" id="idPubblicazioneInput" />
+                </div>
+                <div class="modal-footer justify-content-center border-top-0">
+                    <button type="button" class="btn btn-light border px-4" data-bs-dismiss="modal">Annulla</button>
+                    <button type="submit" class="btn btn-danger px-4">
+                        <i class="fas fa-trash-alt me-1"></i> Elimina
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
 </div>

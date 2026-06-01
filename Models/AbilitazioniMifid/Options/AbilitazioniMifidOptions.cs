@@ -1,6 +1,8 @@
+using EbWeb.Models.Common.Options;
+
 namespace EbWeb.Models.AbilitazioniMifid.Options;
 
-public class AbilitazioniMifidOptions
+public class AbilitazioniMifidOptions : SecurityOptions
 {
     public int PerPage { get; set; }
     public bool Escluso { get; set; }

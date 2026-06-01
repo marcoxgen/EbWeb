@@ -1,0 +1,1 @@
+global using EbWeb.Models.Common.ViewModels;

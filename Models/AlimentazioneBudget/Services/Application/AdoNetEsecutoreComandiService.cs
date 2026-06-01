@@ -1,7 +1,8 @@
+using System.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using EbWeb.Models.Options;
-using System.Data;
+using EbWeb.Models.AlimentazioneBudget.Services.Infrastructure;
 
 namespace EbWeb.Models.AlimentazioneBudget.Services.Application;
 
@@ -59,13 +60,5 @@ public class AdoNetEsecutoreComandiService : IEsecutoreComandiService
         }
 
         return risultato;
-    }
-
-    public class SqlExecutionResult
-    {
-        public List<DataTable> ResultSets { get; set; } = new();
-        public List<string> Messages { get; set; } = new();
-        public bool HasResults => ResultSets.Any(t => t.Rows.Count > 0);
-        public bool HasMessages => Messages.Any();
     }
 }
