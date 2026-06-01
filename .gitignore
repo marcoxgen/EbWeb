@@ -8,3 +8,4 @@ publish/
 # Altri file o cartelle comuni da escludere:
 *.log
 .vscode/
+.vs/
