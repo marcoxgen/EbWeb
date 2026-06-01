@@ -1,4 +1,4 @@
-using static EbWeb.Models.AlimentazioneBudget.Services.Application.AdoNetEsecutoreComandiService;
+using EbWeb.Models.AlimentazioneBudget.Services.Infrastructure;
 
 namespace EbWeb.Models.AlimentazioneBudget.Services.Application
 {

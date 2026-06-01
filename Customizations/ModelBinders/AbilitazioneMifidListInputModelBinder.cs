@@ -7,11 +7,11 @@ namespace EbWeb.Customizations.ModelBinders;
 
 public class AbilitazioneMifidListInputModelBinder : IModelBinder
 {
-    private readonly IOptionsMonitor<AbilitazioniMifidOptions> abilitazioniMifidOptions;
+    private readonly IOptionsMonitor<AbilitazioniMifidOptions> _abilitazioniMifidOptions;
     
     public AbilitazioneMifidListInputModelBinder(IOptionsMonitor<AbilitazioniMifidOptions> abilitazioniMifidOptions)
     {
-        this.abilitazioniMifidOptions = abilitazioniMifidOptions;
+        _abilitazioniMifidOptions = abilitazioniMifidOptions;
     }
 
     public Task BindModelAsync(ModelBindingContext bindingContext)
@@ -30,7 +30,8 @@ public class AbilitazioneMifidListInputModelBinder : IModelBinder
         string orderBy = bindingContext.ValueProvider.GetValue("orderBy").FirstValue!;
         bool ascending = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("ascending").FirstValue);
 
-        AbilitazioniMifidOptions options = abilitazioniMifidOptions.CurrentValue;
+        //AbilitazioniMifidOptions options = abilitazioniMifidOptions.CurrentValue;
+        AbilitazioniMifidOptions options = _abilitazioniMifidOptions.Get("AbilitazioneMifid");
 
         int? matricolaResult = int.TryParse(matricola, out var matricolaParsed) ? matricolaParsed : null;
 

@@ -9,4 +9,6 @@ public class Azione
 	public DateTime? Data_Esecuzione { get; set; }
 	public string? Messaggio { get; set; }
 	public string? Note { get; set; }
+	public string? Risultati { get; set; }
+	public bool Flag_Esecuzione { get; set; }
 }

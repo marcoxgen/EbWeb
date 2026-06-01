@@ -1,26 +1,24 @@
 @model AzionePubblicazioneViewModel
 
 <form id="formDettaglio" class="d-flex flex-column h-100">
-    <input type="hidden" id="IdAzione" value="@Model?.IdAzione" />
-    <input type="hidden" id="jsonMessaggioRaw" asp-for="Messaggio" />
-    <input type="hidden" id="jsonRisultatiRaw" asp-for="Risultati" />
+    <input type="hidden" id="idAzione" value="@Model?.IdAzione" />
 
-    <div class="d-flex justify-content-between align-items-center mb-4 p-3 border rounded bg-white shadow-sm">
-        <div>
-            <span class="badge @(Model?.Esito == true ? "bg-success" : "bg-danger") fs-6 p-2">
-                <i class="fas @Model?.IconaStato me-2"></i>
-                @Model?.StatoTesto
+    <div class="d-flex justify-content-between align-items-center mb-4 p-3 border rounded bg-white shadow-sm gap-4">
+        <div class="d-flex align-items-center">
+            <div class="bg-light text-primary border rounded p-2 me-3">
+                <i class="fas fa-info-circle fa-lg"></i>
+            </div>
+            <div>
+                <span class="fw-semibold text-dark">@Model?.Istruzioni</span>
+            </div>
+        </div>
+
+        <div class="text-end border-start ps-4 pe-2 flex-shrink-0">
+            <div class="text-muted text-uppercase fw-bold small">Eseguito il</div>
+            <span class="font-monospace text-secondary" id="labelDataEsecuzione">
+                @Model?.DataEsecuzione?.ToString("dd/MM/yyyy HH:mm:ss")
             </span>
         </div>
-        <div class="text-end">
-            <small class="text-muted d-block">Eseguito il</small>
-            <span class="fw-bold" id="labelDataEsecuzione">@Model?.DataEsecuzione?.ToString("dd/MM/yyyy HH:mm:ss")</span>
-        </div>
-    </div>
-
-    <div class="mb-4">
-        <label class="form-label fw-bold"><i class="fas fa-edit me-2 text-muted"></i>Note Operatore</label>
-        <textarea class="form-control" id="NoteDettaglio" rows="3">@Model?.Note</textarea>
     </div>
 
     <div class="mb-4">
@@ -34,30 +32,30 @@
             <input type="hidden" id="hiddenComando" value="@Model?.Comando" />
 
             <button type="button"
-                    id="btnEseguiComando"
-                    class="btn btn-sm btn-success @(Model?.Abilitato == true ? "" : "disabled")">
-                <i class="fas fa-play me-1 small"></i> Esegui (F5)
+                id="btnEseguiComando"
+                class="btn btn-sm btn-success @(Model?.Abilitato != true || Model?.FlagEsecuzione != true ? "disabled" : "")">
+                <i class="fas fa-play me-1 small"></i> Esegui
             </button>
         </div>
 
         <div class="border-start border-end border-bottom p-0">
             <textarea class="form-control font-monospace text-info bg-dark border-0 rounded-0 p-3 small"
-                      id="txtComandoSQL" rows="4" style="resize: vertical; font-size: 0.875rem;">@Model?.Comando</textarea>
+                id="txtComandoSQL" rows="4" style="resize: vertical; font-size: 0.875rem;">@Model?.Comando</textarea>
         </div>
 
         <div class="mt-3 border rounded shadow-sm bg-white">
             <ul class="nav nav-tabs bg-light px-2 pt-2" id="ssmsTab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active py-1 px-3 small font-monospace"
-                            id="results-tab" data-bs-toggle="tab" data-bs-target="#tabResults"
-                            type="button" role="tab" aria-controls="tabResults" aria-selected="true">
+                        id="results-tab" data-bs-toggle="tab" data-bs-target="#tabResults"
+                        type="button" role="tab" aria-controls="tabResults" aria-selected="true">
                         <i class="fas fa-table me-1 text-primary"></i>Risultati
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link py-1 px-3 small font-monospace"
-                            id="messages-tab" data-bs-toggle="tab" data-bs-target="#tabMessages"
-                            type="button" role="tab" aria-controls="tabMessages" aria-selected="false">
+                        id="messages-tab" data-bs-toggle="tab" data-bs-target="#tabMessages"
+                        type="button" role="tab" aria-controls="tabMessages" aria-selected="false">
                         <i class="fas fa-align-left me-1 text-warning"></i>Messaggi
                     </button>
                 </li>
@@ -86,6 +84,11 @@
         <div class="mt-2">
             <small class="text-muted">Trascina lo switch per cambiare l'esito in base all'output tecnico.</small>
         </div>
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label fw-bold"><i class="fas fa-edit me-2 text-muted"></i>Note Operatore</label>
+        <textarea class="form-control" id="NoteDettaglio" rows="3">@Model?.Note</textarea>
     </div>
 
     <div class="sticky-bottom bg-white py-3 border-top mt-auto">
