@@ -4,6 +4,7 @@ using EbWeb.Models.AlimentazioneBudget.Entities;
 using EbWeb.Models.AlimentazioneBudget.InputModels;
 using EbWeb.Models.AlimentazioneBudget.Services.Infrastructure;
 using EbWeb.Models.AlimentazioneBudget.ViewModels;
+using EbWeb.Models.Common.Services.Application;
 
 namespace EbWeb.Models.AlimentazioneBudget.Services.Application;
 
@@ -11,10 +12,13 @@ public class EFCoreAlimentazioneBudgetService : IAlimentazioneBudgetService
 {
     private readonly AlimentazioneBudgetDbContext _dbContext;
     private readonly IEsecutoreComandiService _esecutoreComandiService;
-    public EFCoreAlimentazioneBudgetService(AlimentazioneBudgetDbContext dbContext, IEsecutoreComandiService esecutoreComandiService)
+    private readonly IUserService _userService;
+
+    public EFCoreAlimentazioneBudgetService(AlimentazioneBudgetDbContext dbContext, IEsecutoreComandiService esecutoreComandiService, IUserService userService)
     {
         _dbContext = dbContext;
         _esecutoreComandiService = esecutoreComandiService;
+        _userService = userService;
     }
 
     public async Task<ListViewModel<PubblicazioneBudgetViewModel>> GetPubblicazioniBudgetAsync(PubblicazioneBudgetListInputModel model)
@@ -153,76 +157,85 @@ public class EFCoreAlimentazioneBudgetService : IAlimentazioneBudgetService
     {
         var risultato = new SqlExecutionResult();
 
+        // Leggo i dati dell'azione dalla vista
         var datiVista = await _dbContext.AzioniPubblicazione
             .AsNoTracking()
             .FirstOrDefaultAsync(a => a.Id_Azione == idAzione);
 
-        if (datiVista == null)
-        {
-            throw new KeyNotFoundException($"Dati dell'azione con ID {idAzione} non trovata nella vista.");
-        }
+        if (datiVista == null) throw new KeyNotFoundException("Azione non trovata nella vista.");
 
-        var azioneTabella = await _dbContext.Azioni
-            .FirstOrDefaultAsync(a => a.Id_Azione == idAzione);
-
-        if (azioneTabella == null)
-        {
-            throw new KeyNotFoundException($"Impossibile aggiornare lo stato: record non trovato nella tabella Azioni.");
-        }
+        // Preparo i dati per il salvataggio finale nella tabella
+        string? messaggioFinale = null;
+        string? risultatiJson = null;
 
         try
         {
+            // Formattazione comando con i parametri estratti dalla vista
             string comandoFormattato = datiVista.Comando;
             if (!string.IsNullOrWhiteSpace(comandoFormattato))
             {
-                string dataRifFormattata = datiVista.DataRif.ToString("yyyy-MM-dd") ?? "NULL";
-                string tipoPubFormattata = datiVista.TipoPub.ToString() ?? "";
-
                 comandoFormattato = comandoFormattato
-                    .Replace("@DataRif", $"'{dataRifFormattata}'")
-                    .Replace("@TipoPub", $"'{tipoPubFormattata}'");
+                    .Replace("@DataRif", $"'{datiVista.DataRif:yyyy-MM-dd}'")
+                    .Replace("@TipoPub", $"'{datiVista.TipoPub}'");
             }
 
+            // Esecuzione SQL
             var sqlResult = await _esecutoreComandiService.EseguiComandoDinamicoAsync(datiVista.Nome_Database, comandoFormattato);
 
-            azioneTabella.Messaggio = sqlResult.HasMessages ? sqlResult.MessagesText : null;
-            azioneTabella.Data_Esecuzione = DateTime.Now;
-
+            messaggioFinale = sqlResult.MessagesText;
             risultato.Messaggio = sqlResult.MessagesText;
 
             if (sqlResult.HasResults)
             {
-                var primaTabella = sqlResult.ResultSets[0];
+                // Se risultati di più query prende solo ultima
+                var ultimaTabella = sqlResult.ResultSets[^1];
+                var righeConvertite = ConvertiDataTableInLista(ultimaTabella);
 
-                var righeConvertite = ConvertiDataTableInLista(primaTabella);
-
-                azioneTabella.Risultati = System.Text.Json.JsonSerializer.Serialize(righeConvertite);
-
-                risultato.Colonne = primaTabella.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+                risultatiJson = System.Text.Json.JsonSerializer.Serialize(righeConvertite);
+                risultato.Colonne = ultimaTabella.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
                 risultato.Righe = righeConvertite;
             }
             else
             {
-                azioneTabella.Risultati = null;
-
                 risultato.Colonne = new List<string>();
                 risultato.Righe = new List<Dictionary<string, object>>();
             }
-
-            await _dbContext.SaveChangesAsync();
         }
         catch (Exception ex)
         {
-            azioneTabella.Esito = false;
-            azioneTabella.Messaggio = $"[ERRORE SERVIZIO] {ex.Message}";
-            azioneTabella.Data_Esecuzione = DateTime.Now;
+            messaggioFinale = $"[ERRORE SERVIZIO] {ex.Message}";
 
-            await _dbContext.SaveChangesAsync();
-
-            risultato.Esito = false;
-            risultato.Messaggio = $"[ERRORE SERVIZIO] {ex.Message}";
+            risultato.Messaggio = messaggioFinale;
             risultato.Colonne = new List<string>();
             risultato.Righe = new List<Dictionary<string, object>>();
+        }
+
+        // Salvo nella tabella Azioni
+        await _dbContext.Azioni
+            .Where(a => a.Id_Azione == idAzione)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(a => a.Messaggio, messaggioFinale)
+                .SetProperty(a => a.Data_Esecuzione, DateTime.Now)
+                .SetProperty(a => a.Risultati, risultatiJson)
+                .SetProperty(a => a.Utente, _userService.GetUserName())
+            );
+
+        // Modifica esito nelle azioni dipendenti
+        var idTaskSuccessori = await _dbContext.DipendenzeTasks
+            .Where(dt => dt.Id_Task_Predecessore == datiVista.Id_Task && dt.Tipo_Pubblicazione_Cod == datiVista.TipoPub)
+            .Select(dt => dt.Id_Task_Successore)
+            .ToListAsync();
+
+        if (idTaskSuccessori.Any())
+        {
+            await _dbContext.Azioni
+                .Where(a => idTaskSuccessori.Contains(a.Id_Task) && a.Id_Pubblicazione == datiVista.Id_Pubblicazione)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(a => a.Esito, false));
+
+            risultato.IdAzioniSuccessori = await _dbContext.Azioni
+                .Where(a => idTaskSuccessori.Contains(a.Id_Task) && a.Id_Pubblicazione == datiVista.Id_Pubblicazione)
+                .Select(a => a.Id_Azione)
+                .ToListAsync();
         }
 
         return risultato;
@@ -230,7 +243,8 @@ public class EFCoreAlimentazioneBudgetService : IAlimentazioneBudgetService
 
     public async Task SalvaStatoAzioneAsync(ActionSaveInputModel input)
     {
-        var azione = await _dbContext.AzioniPubblicazione
+        var azione = await _dbContext.Azioni
+            .Include(a => a.Pubblicazione)
             .FirstOrDefaultAsync(a => a.Id_Azione == input.IdAzione);
 
         if (azione == null)
@@ -246,19 +260,39 @@ public class EFCoreAlimentazioneBudgetService : IAlimentazioneBudgetService
         {
             azione.Risultati = input.Risultati;
         }
-
-        if (input.Esito && azione.Data_Esecuzione == null)
-        {
-            azione.Data_Esecuzione = DateTime.Now;
-        }
-        else if (!input.Esito)
+        if (!input.Esito || azione.Data_Esecuzione == null)
         {
             azione.Data_Esecuzione = DateTime.Now;
         }
 
         await _dbContext.SaveChangesAsync();
-    }
 
+        int idPubblicazioneCorrente = azione.Id_Pubblicazione;
+        char tipoCod = azione.Pubblicazione.Tipo_Pubblicazione_Cod;
+
+        // Cerca tutti i Task uccessori dell'Azione oggetto di salvataggio
+        var idTaskSuccessori = await _dbContext.DipendenzeTasks
+            .Where(dt => dt.Id_Task_Predecessore == azione.Id_Task && dt.Tipo_Pubblicazione_Cod == tipoCod)
+            .Select(dt => dt.Id_Task_Successore)
+            .ToListAsync();
+
+        foreach (var idSuccessore in idTaskSuccessori)
+        {
+            // Verifica Esito di tutte le Azioni da cui dipendono i Task successori trovati
+            bool allPredecessoriTrue = await _dbContext.DipendenzeTasks
+                .Where(dt => dt.Id_Task_Successore == idSuccessore && dt.Tipo_Pubblicazione_Cod == tipoCod)
+                .Join(_dbContext.Azioni.Where(a => a.Id_Pubblicazione == idPubblicazioneCorrente),
+                    dt => dt.Id_Task_Predecessore,
+                    a => a.Id_Task,
+                    (dt, a) => a)
+                .AllAsync(a => a.Esito); // Restituisce true se sono tutti true, false se anche solo uno è false
+
+            // Aggiorna il Flag esecuzione con risulato di tuttiPredecessoriOk
+            await _dbContext.Azioni
+                .Where(a => a.Id_Task == idSuccessore && a.Id_Pubblicazione == idPubblicazioneCorrente)
+                .ExecuteUpdateAsync(setters => setters.SetProperty(a => a.Flag_Esecuzione, allPredecessoriTrue));
+        }
+    }
 
     private List<Dictionary<string, object>> ConvertiDataTableInLista(DataTable dt)
     {

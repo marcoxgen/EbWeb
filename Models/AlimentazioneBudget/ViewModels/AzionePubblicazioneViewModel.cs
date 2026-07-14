@@ -23,6 +23,7 @@ public class AzionePubblicazioneViewModel
     public string? Note { get; set; }
     public bool FlagEsecuzione { get; set; }
     public string? Risultati { get; set; }
+    public List<int> IdAzioniSuccessori { get; set; } = new();
     public JsonTabellaResult? TabellaRisultati { get; set; }
     public string ClasseColore => Esito ? "text-success" : "text-danger";
     public string IconaStato => Esito ? "fa-check-circle" : "fa-times-circle";

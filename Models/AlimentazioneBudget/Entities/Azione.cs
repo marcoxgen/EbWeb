@@ -11,4 +11,6 @@ public class Azione
 	public string? Note { get; set; }
 	public string? Risultati { get; set; }
 	public bool Flag_Esecuzione { get; set; }
+	public string? Utente { get; set; }
+    public virtual Pubblicazione Pubblicazione { get; set; }
 }

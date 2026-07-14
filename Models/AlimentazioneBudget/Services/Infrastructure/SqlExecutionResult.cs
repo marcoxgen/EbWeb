@@ -1,6 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Collections.Generic;
+﻿using System.Data;
 
 namespace EbWeb.Models.AlimentazioneBudget.Services.Infrastructure;
 
@@ -11,6 +9,8 @@ public class SqlExecutionResult
     public string Messaggio { get; set; }
     public List<string> Colonne { get; set; } = new();
     public List<Dictionary<string, object>> Righe { get; set; } = new();
+    public List<int> IdAzioniSuccessori { get; set; } = new();
+
 
     // Proprietà usate dal servizio ADO.NET
     public List<string> Messages { get; set; } = new();

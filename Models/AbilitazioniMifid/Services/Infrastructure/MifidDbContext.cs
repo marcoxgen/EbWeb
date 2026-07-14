@@ -30,12 +30,6 @@ public class MifidDbContext : DbContext
             entity.HasNoKey();
         });
 
-        modelBuilder.Entity<AbilitazioneMifidDetailViewModel>(entity => 
-        {
-            entity.HasNoKey();
-            entity.ToTable((string)null); 
-        });
-
         modelBuilder.Entity<AnagDipendenti>(entity =>
         {
             entity.ToTable("AnagDipendenti", schema: "Anag");

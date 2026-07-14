@@ -125,6 +125,7 @@ public class AlimentazioneBudgetController : Controller
 
             viewModel.Esito = risultato.Esito;
             viewModel.Messaggio = risultato.Messaggio;
+            viewModel.IdAzioniSuccessori = risultato.IdAzioniSuccessori;
 
             if (risultato.Righe != null && risultato.Righe.Any())
             {

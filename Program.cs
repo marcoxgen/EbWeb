@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
+using Hangfire;
+using Hangfire.SqlServer;
 using EbWeb.Configuration;
 using EbWeb.Models.Options;
 using EbWeb.Models.Services.Application;
@@ -20,10 +22,13 @@ builder.Services.AddTransient<IIstruttoriaService, EFCoreIstruttoriaService>();
 builder.Services.AddTransient<IAgendaStipulaService, EFCoreAgendaStipulaService>();
 builder.Services.AddTransient<IRichiestaPerfezionamentoService, EFCoreRichiestaPerfezionamentoService>();
 builder.Services.AddTransient<ISchedaBudgetService, EFCoreSchedaBudgetService>();
+//builder.Services.AddScoped<IStatisticheService, StatisticheService>();
 
 // Registrazione dei moduli funzionali dell'applicazione con le rispettive configurazioni e policy
-builder.Services.AddAbilitazioniMifid(configuration, "AbilitazioneMifid", "MifidAccess");
+builder.Services.AddAbilitazioniMifid(configuration, "AbilitazioniMifid", "MifidAccess");
+builder.Services.AddAbilitazioniIvass(configuration, "AbilitazioniIvass", "IvassAccess");
 builder.Services.AddAlimentazioneBudget(configuration);
+builder.Services.AddControlliThanos2(configuration);
 
 // Contiene tutto ciò che riguarda una singola richiesta HTTP in corso
 builder.Services.AddHttpContextAccessor();
@@ -49,6 +54,14 @@ builder.Services.Configure<RichiestePerfezionamentoOptions>(configuration.GetSec
 // Abilita il supporto per i Controller e le View (Razor).
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddHangfire(config =>
+{
+    config.UseSqlServerStorage(
+        builder.Configuration.GetConnectionString("Controlli_DWH"));
+});
+
+builder.Services.AddHangfireServer();
+
 // Finalizza la configurazione del contenitore dei servizi (Dependency Injection)
 var app = builder.Build();
 
@@ -73,6 +86,8 @@ app.UseRouting();
 // I Middleware di sicurezza rimangono nella posizione corretta: prima l'autenticazione, poi l'autorizzazione
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseHangfireDashboard("/hangfire");
 
 // Stabilisce la convenzione per interpretare gli URL del browser
 app.MapControllerRoute(

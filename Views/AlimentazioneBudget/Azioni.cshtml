@@ -71,7 +71,7 @@
                     </div>
 
                     <div class="col-lg-1 d-flex align-items-center justify-content-center">
-                        <small id="data-friendly-@item.IdAzione"
+                        <small id="data-lista-@item.IdAzione"
                             class="text-muted"
                             data-timestamp="@item.DataEsecuzione?.ToString("yyyy-MM-ddTHH:mm:ss")"
                             title="@item.DataEsecuzione?.ToString("dd/MM/yyyy HH:mm:ss")">
@@ -140,7 +140,6 @@
 
         $(document).on('click', '#btnEseguiComando', function () {
             var $target = $('#ssmsTabContent'), $btn = $('#btnEseguiComando');
-
             var idAzione = $('#idAzione').val();
 
             $btn.addClass('disabled').html('<i class="fas fa-spinner fa-spin me-1 small"></i> In corso...');
@@ -154,14 +153,26 @@
                 var messaggioLive = $target.find('#jsonMessaggioTechnical').val();
                 var dataLive = $target.find('#dataEsecuzioneTechnical').val();
 
+
                 // Li copia negli hidden field di persistenza globali per il salvataggio
                 $('#jsonMessaggioRaw').val(messaggioLive);
                 $('#jsonRisultatiRaw').val(jsonLive);
 
-                // Aggiorna la label della data nella vista padre _Dettaglio
+                // Aggiorna la label della data nella vista padre _Dettaglio e nella lista principale
                 if (dataLive) {
                     $('#labelDataEsecuzione').text(dataLive);
                     $('#dataEsecuzioneRaw').val(dataLive);
+                    $('#data-lista-' + idAzione).text('0 m');
+                }
+
+                var successoriRaw = $target.find('#idAzioniSuccessoriTechnical').val();
+                if (successoriRaw) {
+                    successoriRaw.split(',').forEach(function(idAzione) {
+                        idAzione = $.trim(idAzione);
+
+                        $('#icona-stato-' + idAzione)
+                            .attr('class', 'fas fa-times-circle text-danger fa-lg me-2');
+                    });
                 }
 
                 // Switch automatico del Tab
@@ -170,9 +181,15 @@
             })
             .fail(function (xhr) {
                 $target.html('<div class="p-3 font-monospace text-danger small">[ERRORE] Esecuzione fallita.</div>');
+
+                // In caso di errore di rete/timeout, mostra comunque il pallino rosso sulla lista
+                var $icona = $('#icona-stato-' + idAzione);
+                if ($icona.length) {
+                    $icona.attr('class', 'fas fa-times-circle text-danger fa-lg me-2');
+                }
             })
             .always(function () {
-                $btn.removeClass('disabled').html('<i class="fas fa-play me-1 small"></i> Esegui (F5)');
+                $btn.removeClass('disabled').html('<i class="fas fa-play me-1 small"></i> Esegui');
             });
         });
 
@@ -189,24 +206,52 @@
             $.post('@Url.Action("SaveActionState", "AlimentazioneBudget")', dataInviare, function(res) {
                 if (!res.success) { alert(res.message || "Errore nel salvataggio"); return; }
 
-                // Aggiorna solo il testo della nota nella lista principale
                 $('#nota-anteprima-' + id).text(dataInviare.Note);
                 $('#card-nota-' + id).toggleClass('d-none', dataInviare.Note.trim() === "");
 
-                // Aggiorna solo l'icona di stato (Verde o Rosso)
                 var $icona = $('#icona-stato-' + id);
                 if ($icona.length) {
                     if (esitoChecked) {
                         $icona.attr('class', 'fas fa-check-circle text-success fa-lg me-2');
                     } else {
-                        $icona.attr('class', 'fas fa-exclamation-circle text-danger fa-lg me-2');
+                        $icona.attr('class', 'fas fa-times-circle text-danger fa-lg me-2');
                     }
                 }
 
-                // Chiude il cassetto lasciando intatta la data dell'esecuzione
                 bootstrap.Offcanvas.getInstance(document.getElementById('cassettoAzione')).hide();
             });
         }
+
+        $(document).on('click', '#btnCopiaComando', function () {
+            var $btn = $(this);
+
+            var comandoPuro = $btn.attr('data-comando');
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(comandoPuro).then(function () {
+                    mostraFeedbackCopiato($btn);
+                });
+            } else {
+                var $temp = $("<input>");
+                $("body").append($temp);
+                $temp.val(comandoPuro).select();
+                document.execCommand("copy");
+                $temp.remove();
+                mostraFeedbackCopiato($btn);
+            }
+        });
+
+        function mostraFeedbackCopiato($btn) {
+            var $icona = $btn.find('i');
+            $btn.removeClass('btn-outline-dark').addClass('btn-success');
+            $icona.removeClass('far fa-copy').addClass('fas fa-check');
+
+            setTimeout(function () {
+                $btn.removeClass('btn-success').addClass('btn-outline-dark');
+                $icona.removeClass('fas fa-check').addClass('far fa-copy');
+            }, 1500);
+        }
+
 
         $(document).on('change', '#SwitchEsito', function() {
             var chk = $(this).is(':checked');

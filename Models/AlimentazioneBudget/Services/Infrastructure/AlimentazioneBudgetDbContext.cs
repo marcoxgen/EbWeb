@@ -49,6 +49,9 @@ public class AlimentazioneBudgetDbContext : DbContext
         {
             entity.ToTable("Azioni", schema: "dbo");
             entity.HasKey(e => e.Id_Azione);
+            entity.HasOne(a => a.Pubblicazione)
+                .WithMany()
+                .HasForeignKey(a => a.Id_Pubblicazione);
         });
 
         modelBuilder.Entity<TaskPubblicazione>(entity =>

@@ -17,25 +17,35 @@ public class AdGroupHandler<TOptions> : AuthorizationHandler<AdGroupRequirement>
 
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AdGroupRequirement requirement)
     {
-        if (context.User?.Identity == null || !context.User.Identity.IsAuthenticated)
+        var optionName = typeof(TOptions).Name.Replace("Options", "");
+
+        if (!string.Equals(
+                optionName,
+                requirement.NomeModulo,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            return Task.CompletedTask;
+        }
+
+        if (context.User?.Identity == null ||
+            !context.User.Identity.IsAuthenticated)
         {
             context.Fail();
             return Task.CompletedTask;
         }
 
-        // Legge la classe specifica dal suo cassetto nominale
         var config = _optionsMonitor.Get(requirement.NomeModulo);
         var allowedGroups = config?.AllowedGroups ?? Array.Empty<string>();
 
         if (allowedGroups.Length == 0)
         {
-            context.Fail();
             return Task.CompletedTask;
         }
 
         if (context.User.Identity is WindowsIdentity winIdentity)
         {
             var winPrincipal = new WindowsPrincipal(winIdentity);
+
             foreach (var rawGroup in allowedGroups)
             {
                 if (winPrincipal.IsInRole(rawGroup.Trim()))
@@ -46,7 +56,6 @@ public class AdGroupHandler<TOptions> : AuthorizationHandler<AdGroupRequirement>
             }
         }
 
-        context.Fail();
         return Task.CompletedTask;
     }
 }

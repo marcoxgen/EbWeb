@@ -1,0 +1,221 @@
+@model AbilitazioneIvassDetailViewModel
+
+<div class="container py-1">
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <div class="d-flex align-items-center">
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle me-3" title="Torna all'elenco" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h3 class="mb-0">
+                @ViewData["Title"]:
+                <span class="text-primary">@Model.Intestazione</span>
+            </h3>
+
+            <a class="btn btn-outline-primary btn-sm ms-3" asp-action="Edit" asp-route-id="@Model.Id">
+                <i class="fas fa-pencil-alt me-2"></i>Modifica
+            </a>
+        </div>
+
+        <div class="text-end" style="position: relative;">
+            <span class="badge bg-secondary">
+                Ultimo aggiornamento: @Model.DataUltimoAggiornamento?.ToString("dd/MM/yyyy")
+            </span>
+        </div>
+    </div>
+
+    <div class="row mb-2">
+        <div class="col-12 text-end">
+            <button type="button"
+                class="btn btn-link text-danger text-decoration-none p-0 btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#modalConfermaCancella">
+                <i class="fas fa-trash-alt me-1"></i>Cancella
+            </button>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-lg-5 mb-1">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-light fw-bold"><i class="fas fa-user me-2"></i>Dati Generali</div>
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-sm-4 text-muted small">Unità Organizzativa</div>
+                        <div class="col-sm-8 fw-bold">@Model.DescrUO</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-4 text-muted small">Codice Fiscale</div>
+                        <div class="col-sm-8 font-monospace">@Model.CodiceFiscale</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-4 text-muted small">Ruolo</div>
+                        <div class="col-sm-8">
+                            <span class="text-dark">@Model.Ruolo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7 mb-1">
+            <div class="card h-100 shadow-sm border-primary">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-scale-balanced me-2"></i>
+                        <h5 class="mb-0">Status IVASS</h5>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        @if (Model.FlagFormatoMifid == true)
+                        {
+                            <span class="badge rounded-pill bg-success border border-light">
+                                <i class="fa-solid fa-check-circle me-1"></i> Formato MiFID
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge rounded-pill bg-danger border border-light">
+                                <i class="fa-solid fa-circle-xmark me-1"></i> Non formato MiFID
+                            </span>
+                        }
+
+                        @if (Model.FlagAbilitatoFinanza == true)
+                        {
+                            <span class="badge rounded-pill bg-success border border-light">
+                                <i class="fa-solid fa-check-circle me-1"></i> Abilitato finanza
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge rounded-pill bg-danger border border-light">
+                                <i class="fa-solid fa-circle-xmark me-1"></i> Non abilitato finanza
+                            </span>
+                        }
+
+                        @if (Model.AbilitatoOperativitaIvass == true)
+                        {
+                            <span class="badge rounded-pill bg-success border border-light">
+                                <i class="fa-solid fa-check-circle me-1"></i> Abilitato IVASS
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge rounded-pill bg-danger border border-light">
+                                <i class="fa-solid fa-circle-xmark me-1"></i> Non abilitato IVASS
+                            </span>
+                        }
+
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="mb-2 p-2 bg-light border-start border-primary border-4 rounded-end">
+                        <label class="text-muted small d-block fw-bold">Esame IVASS</label>
+                        <span class="h6 mb-0">@Model.DataEsame?.ToString("dd/MM/yyyy")</span>
+                    </div>
+
+                    <div class="row g-0 lh-lg">
+                        <div class="col-md-6 border-end pe-md-3">
+                            <div class="row g-0 align-items-center">
+                                <div class="col-6 text-muted small">Abilitazione IVASS</div>
+                                <div class="col-6 fw-bold text-end text-md-start">
+                                    @Model.DataAbilitazioneIvass?.ToString("dd/MM/yyyy")&nbsp;
+                                </div>
+                            </div>
+                            <div class="row g-0 align-items-center">
+                                <div class="col-6 text-muted small"><small>Fine abilitazione IVASS</small></div>
+                                <div class="col-6 text-danger small text-end text-md-start">
+                                    @Model.DataFineAbilitazioneIvass?.ToString("dd/MM/yyyy")&nbsp;
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 ps-md-3">
+                            <div class="row g-0 align-items-center">
+                                <div class="col-6 text-muted small">Abilitazione operativa</div>
+                                <div class="col-6 fw-bold text-end text-md-start">
+                                    @Model.DataAbilitazioneOperativa?.ToString("dd/MM/yyyy")&nbsp;
+                                </div>
+                            </div>
+                            <div class="row g-0 align-items-center">
+                                <div class="col-6 text-muted small"><small>Fine abilitazione operativa</small></div>
+                                <div class="col-6 text-danger small text-end text-md-start">
+                                    @Model.DataFineAbilitazioneOperativa?.ToString("dd/MM/yyyy")&nbsp;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning py-2 small mt-1 mb-0">
+                        <strong>Sospensione: </strong>
+                        @(Model.DataSospensione.HasValue ? $"{Model.DataSospensione:dd/MM/yyyy} - {Model.DataTermineSospensione:dd/MM/yyyy}" : "Nessuna")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 mb-2">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold"><i class="fas fa-graduation-cap me-2"></i>Formazione</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-2 border-end">
+                            <label class="text-muted small d-block">Formazione 2021</label>
+                            <p class="fw-bold">@Model.Formazione2021</p>
+                        </div>
+                        <div class="col-md-2 border-end">
+                            <label class="text-muted small d-block">Formazione 2022</label>
+                            <p class="fw-bold">@Model.Formazione2022</p>
+                        </div>
+                        <div class="col-md-2 border-end">
+                            <label class="text-muted small d-block">Formazione 2023</label>
+                            <p class="fw-bold">@Model.Formazione2023</p>
+                        </div>
+                        <div class="col-md-2 border-end">
+                            <label class="text-muted small d-block">Formazione 2024</label>
+                            <p class="fw-bold">@Model.Formazione2024</p>
+                        </div>
+                        <div class="col-md-2 border-end">
+                            <label class="text-muted small d-block">Formazione 2025</label>
+                            <p class="fw-bold">@Model.Formazione2025</p>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="text-muted small d-block">Formazione 2026</label>
+                            <p class="fw-bold">@Model.Formazione2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 mb-2">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold"><i class="fas fa-sticky-note me-2"></i>Note</div>
+                <div class="card-body">
+<p class="fst-italic text-secondary mb-0">
+    @(string.IsNullOrWhiteSpace(Model.Note) ? "Nessuna nota presente" : Model.Note)
+</p>                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfermaCancella" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Conferma cancellazione</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Confermi la cancellazione di questa matricola dalle abilitazioni IVASS? 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-warning">Sì, cancella</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

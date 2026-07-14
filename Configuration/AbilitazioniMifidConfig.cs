@@ -1,7 +1,6 @@
-using EbWeb.Models.AbilitazioniMifid.Options;
 using EbWeb.Models.AbilitazioniMifid.Services.Application;
+using EbWeb.Models.AbilitazioniMifid.Options;
 using EbWeb.Models.AbilitazioniMifid.Services.Infrastructure;
-using EbWeb.Models.Common.Options;
 using EbWeb.Models.Common.Security;
 using EbWeb.Models.Common.Services.Application;
 using EbWeb.Models.Services.Application;
@@ -12,7 +11,7 @@ namespace EbWeb.Configuration;
 
 public static class AbilitazioniMifidConfig
 {
-    public static IServiceCollection AddAbilitazioniMifid(this IServiceCollection services, IConfiguration configuration, string sectionName = "AbilitazioneMifid", string policyName = "MifidAccess")
+    public static IServiceCollection AddAbilitazioniMifid(this IServiceCollection services, IConfiguration configuration, string sectionName = "AbilitazioniMifid", string policyName = "MifidAccess")
     {
         services.Configure<AbilitazioniMifidOptions>(sectionName, configuration.GetSection(sectionName));
 

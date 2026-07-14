@@ -1,6 +1,4 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-
-namespace EbWeb.Models.AbilitazioniMifid.Entities;
+﻿namespace EbWeb.Models.AbilitazioniMifid.Entities;
 
 public class BaseAbilitatoMifid
 {

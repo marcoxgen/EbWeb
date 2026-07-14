@@ -31,7 +31,7 @@ public class AbilitazioneMifidListInputModelBinder : IModelBinder
         bool ascending = Convert.ToBoolean(bindingContext.ValueProvider.GetValue("ascending").FirstValue);
 
         //AbilitazioniMifidOptions options = abilitazioniMifidOptions.CurrentValue;
-        AbilitazioniMifidOptions options = _abilitazioniMifidOptions.Get("AbilitazioneMifid");
+        AbilitazioniMifidOptions options = _abilitazioniMifidOptions.Get("AbilitazioniMifid");
 
         int? matricolaResult = int.TryParse(matricola, out var matricolaParsed) ? matricolaParsed : null;
 

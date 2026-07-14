@@ -12,12 +12,12 @@
 
     <form asp-action="Index" method="get">
         <div class="bg-light border py-2">
-            <div class="row text-center g-0 mx-0 px-2 fw-semibold" style="font-size: 0.75rem;">
-                <div class="col-lg-2">Tipo</div>
-                <div class="col-lg-1">Data Riferimento</div>
+            <div class="row text-center g-0 mx-0 px-2 fw-semibold">
+                <div class="col-lg-1">Tipo</div>
+                <div class="col-lg-2">Data Riferimento</div>
                 <div class="col-lg-1">Stato</div>
                 <div class="col-lg-2">Ultima Lavorazione</div>
-                <div class="col-lg-3">Note Pubblicazione</div>
+                <div class="col-lg-4">Note Pubblicazione</div>
                 <div class="col-lg-1"></div>
             </div>
         </div>
@@ -26,19 +26,18 @@
     @foreach (PubblicazioneBudgetViewModel pubblicazione in Model.PubblicazioniBudget.Results)
     {
         <div class="row g-0 border-bottom py-1 align-items-center mx-0 px-2">
-            <div class="col-lg-2">
+            <div class="col-lg-1">
                 <span>@pubblicazione.TipoPubblicazioneDes</span>
             </div>
-            <div class="col-lg-1 text-center">
+            <div class="col-lg-2 text-center">
                 <span>@pubblicazione.DataRiferimento</span>
             </div>
             <div class="col-lg-1 text-center">
-                <span>@pubblicazione.FlagStato</span>
+                <span>@(pubblicazione.FlagStato ? "Completato" : "In Corso")</span>
+            </div>            <div class="col-lg-2 text-center">
+            <span>@pubblicazione.DataUltimaLavorazione</span>
             </div>
-            <div class="col-lg-2 text-center">
-                <span>@pubblicazione.DataUltimaLavorazione</span>
-            </div>
-            <div class="col-lg-3 text-center">
+            <div class="col-lg-4 text-center">
                 <div class="note-inline-container" data-id="@pubblicazione.IdPubblicazione" style="position: relative; cursor: pointer; min-height: 30px;">
                     <span class="note-text">@pubblicazione.Note</span>
                     <i class="fas fa-pencil-alt text-muted edit-icon d-none" style="margin-left: 8px; font-size: 0.8rem;"></i>

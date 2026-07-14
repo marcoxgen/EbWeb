@@ -100,3 +100,15 @@ body {
 .note-inline-container:hover .edit-icon {
     display: inline-block !important;
 }
+
+.bg-orange {
+    background-color: #ff8c00 !important;
+}
+
+.bg-yellow {
+    background-color: #ffff00 !important;
+}
+
+.bg-light-yellow {
+    background-color: #ffff99 !important;
+}

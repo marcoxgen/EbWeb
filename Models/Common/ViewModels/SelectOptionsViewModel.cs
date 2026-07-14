@@ -1,4 +1,4 @@
-namespace EbWeb.Models.AbilitazioniMifid.ViewModels;
+namespace EbWeb.Models.Common.ViewModels;
 
 public class SelectOptionsViewModel
 {

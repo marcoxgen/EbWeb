@@ -36,7 +36,7 @@ public class AdoNetEsecutoreComandiService : IEsecutoreComandiService
 
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                using (var command = new SqlCommand(sqlComando, connection) { CommandTimeout = 120 })
+                using (var command = new SqlCommand(sqlComando, connection) { CommandTimeout = 600 })
                 {
                     var adapter = new SqlDataAdapter(command);
                     var ds = new DataSet();

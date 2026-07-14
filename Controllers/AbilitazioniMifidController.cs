@@ -98,7 +98,7 @@ public class AbilitazioniMifidController : Controller
     [HttpPost]
     public async Task<IActionResult> Delete(int matricola)
     {
-        await abilitazioneMifidService.DeleteAbilitazioneMifidAsync(matricola       );
+        await abilitazioneMifidService.DeleteAbilitazioneMifidAsync(matricola);
         TempData["ConfirmationMessage"] = "L'abilitazione è stata eliminata";
         return RedirectToAction(nameof(Index));
     }

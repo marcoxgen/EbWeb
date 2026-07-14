@@ -1,0 +1,164 @@
+@model AbilitazioneIvassEditInputModel
+
+<section class="abilitazione-info container py-2">
+    <form method="post">
+        <div class="d-flex align-items-center">
+            <a asp-action="Detail" asp-route-id="@Model.Id"
+            class="btn btn-outline-secondary btn-sm rounded-circle me-3"
+            title="Annulla e torna indietro"
+            style="width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;">
+                <i class="fas fa-arrow-left" style="font-size: 0.8rem;"></i>
+            </a>
+
+            <h3 class="mb-0">
+                @ViewData["Title"]: <span class="text-primary">@Model.Intestazione</span>
+            </h3>
+
+            <button type="submit" class="btn btn-outline-success btn-sm px-3 ms-3">
+                <i class="fas fa-save me-2"></i>Salva
+            </button>
+        </div>
+        
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+        <input type="hidden" asp-for="Id">
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <!-- Status IVASS -->
+                <div class="card shadow-sm border-primary mb-4">
+                    <div class="card-header bg-primary text-white fw-bold">
+                        <i class="fas fa-balance-scale me-2"></i>Status IVASS
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-lg-8">
+                                <div class="row mb-3 align-items-center">
+                                    <label asp-for="DataEsame" class="col-sm-3 col-form-label fw-bold"></label>
+
+                                    <div class="col-sm-4">
+                                        <input type="date" class="form-control" asp-for="DataEsame">
+                                    </div>
+                                </div>
+                                <div class="p-3 border border-warning rounded bg-warning bg-opacity-10">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label asp-for="DataSospensione" class="form-label small fw-bold"></label>
+                                            <input type="date" class="form-control form-control-sm" asp-for="DataSospensione">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="DataTermineSospensione" class="form-label small fw-bold"></label>
+                                            <input type="date" class="form-control form-control-sm" asp-for="DataTermineSospensione">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="card shadow-sm mb-3">
+                                    <div class="card-header py-1 px-2 bg-light">
+                                        <small class="fw-bold">Abilitazione IVASS</small>
+                                    </div>
+
+                                    <div class="card-body p-2">
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <label class="small">Inizio</label>
+                                                <input type="date" class="form-control form-control-sm" asp-for="DataAbilitazioneIvass">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="small">Fine</label>
+                                                <input type="date" class="form-control form-control-sm" asp-for="DataFineAbilitazioneIvass">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card shadow-sm">
+                                    <div class="card-header py-1 px-2 bg-light">
+                                        <small class="fw-bold">Abilitazione Operativa</small>
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <label class="small">Inizio</label>
+                                                <input type="date" class="form-control form-control-sm" asp-for="DataAbilitazioneOperativa">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="small">Fine</label>
+                                                <input type="date" class="form-control form-control-sm" asp-for="DataFineAbilitazioneOperativa">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Note -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light fw-bold">
+                        <i class="fas fa-sticky-note me-2"></i>Note
+                    </div>
+                    <div class="card-body">
+                        <textarea asp-for="Note" class="form-control" rows="8" placeholder="Aggiungi eventuali annotazioni..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formazione -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-light fw-bold">
+                        <i class="fas fa-graduation-cap me-2"></i>Formazione
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="Formazione2021" class="form-label small fw-bold"></label>
+                            <input type="text" class="form-control" asp-for="Formazione2021">
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Formazione2022" class="form-label small fw-bold"></label>
+                            <input type="text" class="form-control" asp-for="Formazione2022">
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Formazione2023" class="form-label small fw-bold"></label>
+                            <input type="text" class="form-control" asp-for="Formazione2023">
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Formazione2024" class="form-label small fw-bold"></label>
+                            <input type="text" class="form-control" asp-for="Formazione2024">
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Formazione2025" class="form-label small fw-bold"></label>
+                            <input type="text" class="form-control" asp-for="Formazione2025">
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Formazione2026" class="form-label small fw-bold"></label>
+                            <input type="text" class="form-control" asp-for="Formazione2026">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function (event) {
+        btnConferma.addEventListener('click', function() {
+            swEscluso.checked = true;
+            modalElement.hide();
+        });
+
+        const chiudiModale = () => {
+            swEscluso.checked = false;
+            modalElement.hide();
+        };
+
+        btnAnnulla.addEventListener('click', chiudiModale);
+        document.getElementById('modalConfermaEscluso').addEventListener('hidden.bs.modal', function() {
+            if (!swEscluso.checked) swEscluso.checked = false; 
+        });
+    });
+</script>

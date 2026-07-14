@@ -1,8 +1,14 @@
 ﻿@model AzionePubblicazioneViewModel
 
+<input type="hidden" id="esitoTechnical" value="@(Model?.Esito == true ? "true" : "false")" />
 <input type="hidden" id="jsonMessaggioTechnical" value="@Model?.Messaggio" />
 <input type="hidden" id="jsonRisultatiTechnical" value="@Model?.Risultati" />
 <input type="hidden" id="dataEsecuzioneTechnical" value="@Model?.DataEsecuzione?.ToString("dd/MM/yyyy HH:mm:ss")" />
+@if (Model.IdAzioniSuccessori != null && Model.IdAzioniSuccessori.Any())
+{
+    <input type="hidden" id="idAzioniSuccessoriTechnical"
+           value="@string.Join(",", Model.IdAzioniSuccessori)" />
+}
 
 <div class="tab-pane fade show active" id="tabResults" role="tabpanel" aria-labelledby="results-tab">
     @if (Model?.TabellaRisultati?.Righe != null && Model.TabellaRisultati.Righe.Any())

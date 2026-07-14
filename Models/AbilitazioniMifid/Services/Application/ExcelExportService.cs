@@ -1,5 +1,4 @@
 using ClosedXML.Excel;
-using EbWeb.Models.AbilitazioniMifid.Services.Application;
 using EbWeb.Models.AbilitazioniMifid.ViewModels;
 
 namespace EbWeb.Models.AbilitazioniMifid.Services.Application;
