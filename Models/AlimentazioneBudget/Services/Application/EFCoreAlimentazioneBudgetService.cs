@@ -1,10 +1,11 @@
-using System.Data;
-using Microsoft.EntityFrameworkCore;
 using EbWeb.Models.AlimentazioneBudget.Entities;
 using EbWeb.Models.AlimentazioneBudget.InputModels;
 using EbWeb.Models.AlimentazioneBudget.Services.Infrastructure;
 using EbWeb.Models.AlimentazioneBudget.ViewModels;
 using EbWeb.Models.Common.Services.Application;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
+using System.Diagnostics;
 
 namespace EbWeb.Models.AlimentazioneBudget.Services.Application;
 
@@ -107,14 +108,27 @@ public class EFCoreAlimentazioneBudgetService : IAlimentazioneBudgetService
         await _dbContext.SaveChangesAsync();
 
         var tasksPubblicazione = await _dbContext.TasksPubblicazione
-            .Where(tp => tp.Tipo_Pubblicazione_Cod == tipoCod)
-            .GroupJoin(
-                _dbContext.DipendenzeTasks,
+            .Join(
+                _dbContext.TemplateTasks,
                 tp => tp.Id_Task,
+                t => t.Id_Task,
+                (tp, t) => new { tp, t }
+            )
+            .Where(x => x.tp.Tipo_Pubblicazione_Cod == tipoCod
+                     && x.t.Abilitato == true)
+            .GroupJoin(
+                _dbContext.DipendenzeTasks
+                    .Join(
+                        _dbContext.TemplateTasks.Where(t => t.Abilitato == true),
+                        dt => dt.Id_Task_Predecessore,
+                        t => t.Id_Task,
+                        (dt, t) => dt
+                    ),
+                x => x.tp.Id_Task,
                 dt => dt.Id_Task_Successore,
-                (tp, dtGroup) => new
+                (x, dtGroup) => new
                 {
-                    Id_Task = tp.Id_Task,
+                    Id_Task = x.tp.Id_Task,
                     Flag_Esecuzione = !dtGroup.Any()
                 }
             )
@@ -135,6 +149,19 @@ public class EFCoreAlimentazioneBudgetService : IAlimentazioneBudgetService
         await _dbContext.SaveChangesAsync();
 
         return true;
+    }
+
+    public async Task SalvaNotaPubblicazioneAsync(int idPubblicazione, string nota)
+    {
+        var pubblicazione = await _dbContext.Pubblicazioni
+            .FirstOrDefaultAsync(x => x.Id_Pubblicazione == idPubblicazione);
+
+        if (pubblicazione == null)
+            throw new Exception("Pubblicazione non trovata.");
+
+        pubblicazione.Note = nota;
+
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<bool> DeletePubblicazioneAsync(int idPubblicazione)
@@ -210,14 +237,23 @@ public class EFCoreAlimentazioneBudgetService : IAlimentazioneBudgetService
             risultato.Righe = new List<Dictionary<string, object>>();
         }
 
-        // Salvo nella tabella Azioni
+        var dataEsecuzione = DateTime.Now;
+
+        // Aggiorno la tabella Azioni con i risultati dell'esecuzione
         await _dbContext.Azioni
             .Where(a => a.Id_Azione == idAzione)
             .ExecuteUpdateAsync(setters => setters
                 .SetProperty(a => a.Messaggio, messaggioFinale)
-                .SetProperty(a => a.Data_Esecuzione, DateTime.Now)
+                .SetProperty(a => a.Data_Esecuzione, dataEsecuzione)
                 .SetProperty(a => a.Risultati, risultatiJson)
                 .SetProperty(a => a.Utente, _userService.GetUserName())
+            );
+
+        // Aggiorno la tabella Pubblicazioni con la data dell'ultima lavorazione
+        await _dbContext.Pubblicazioni
+            .Where(p => p.Id_Pubblicazione == datiVista.Id_Pubblicazione)
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(p => p.Data_Ultima_Lavorazione, dataEsecuzione)
             );
 
         // Modifica esito nelle azioni dipendenti
@@ -267,13 +303,21 @@ public class EFCoreAlimentazioneBudgetService : IAlimentazioneBudgetService
 
         await _dbContext.SaveChangesAsync();
 
+        await RicalcolaEsitiGerarchiciAsync(azione.Id_Azione);
+
         int idPubblicazioneCorrente = azione.Id_Pubblicazione;
         char tipoCod = azione.Pubblicazione.Tipo_Pubblicazione_Cod;
 
-        // Cerca tutti i Task uccessori dell'Azione oggetto di salvataggio
+        // Cerca tutti i Task successori dell'Azione oggetto di salvataggio
         var idTaskSuccessori = await _dbContext.DipendenzeTasks
             .Where(dt => dt.Id_Task_Predecessore == azione.Id_Task && dt.Tipo_Pubblicazione_Cod == tipoCod)
-            .Select(dt => dt.Id_Task_Successore)
+            .Join(
+                _dbContext.Azioni.Where(a => a.Id_Pubblicazione == idPubblicazioneCorrente),
+                dt => dt.Id_Task_Successore,
+                a => a.Id_Task,
+                (dt, a) => dt.Id_Task_Successore
+            )
+            .Distinct()
             .ToListAsync();
 
         foreach (var idSuccessore in idTaskSuccessori)
@@ -291,6 +335,51 @@ public class EFCoreAlimentazioneBudgetService : IAlimentazioneBudgetService
             await _dbContext.Azioni
                 .Where(a => a.Id_Task == idSuccessore && a.Id_Pubblicazione == idPubblicazioneCorrente)
                 .ExecuteUpdateAsync(setters => setters.SetProperty(a => a.Flag_Esecuzione, allPredecessoriTrue));
+        }
+
+        bool tutteLeAzioniOk = await _dbContext.Azioni
+            .Where(a => a.Id_Pubblicazione == idPubblicazioneCorrente)
+            .AllAsync(a => a.Esito);
+
+        azione.Pubblicazione.Flag_Stato = tutteLeAzioniOk;
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task RicalcolaEsitiGerarchiciAsync(int idAzione)
+    {
+        var corrente = await _dbContext.AzioniPubblicazione
+            .FirstOrDefaultAsync(x => x.Id_Azione == idAzione);
+
+        while (corrente?.Id_Task_Padre != null)
+        {
+            var padre = await _dbContext.AzioniPubblicazione
+                .FirstOrDefaultAsync(x =>
+                    x.Id_Pubblicazione == corrente.Id_Pubblicazione &&
+                    x.Id_Task == corrente.Id_Task_Padre);
+
+            if (padre == null)
+                break;
+
+            var nuovoEsito = await _dbContext.AzioniPubblicazione
+                .Where(x =>
+                    x.Id_Pubblicazione == padre.Id_Pubblicazione &&
+                    x.Id_Task_Padre == padre.Id_Task)
+                .AllAsync(x => x.Esito);
+
+            var azionePadre = await _dbContext.Azioni
+                .FindAsync(padre.Id_Azione);
+
+            if (azionePadre == null)
+                break;
+
+            if (azionePadre.Esito != nuovoEsito)
+            {
+                azionePadre.Esito = nuovoEsito;
+                await _dbContext.SaveChangesAsync();
+            }
+
+            corrente = padre;
         }
     }
 

@@ -79,13 +79,13 @@
                 <div class="col-lg-1 text-center">Abilitato Finanza</div>
                 <div class="col-lg-1 text-center">Abilitato IVASS</div>
                 <div class="col-lg-1 text-center">
-                    <a asp-route-orderby="FineSupervisione"
-                        asp-route-ascending="@(Model.Input.OrderBy == "DataFineAbilitazioneIvass" ? !Model.Input.Ascending : true)"
+                    <a asp-route-orderby="DataAbilitazioneIvass"
+                        asp-route-ascending="@(Model.Input.OrderBy == "DataAbilitazioneIvass" ? !Model.Input.Ascending : true)"
                         asp-route-matricola="@Model.Input.Matricola"
                         asp-route-intestazione="@Model.Input.Intestazione"
                         asp-route-descrUO="@Model.Input.DescrUO"
                         class="text-decoration-none">
-                            Data Fine Abilitazione @if(Model.Input.OrderBy == "DataFineAbilitazioneIvass") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
+                            Inizio Abilitazione @if(Model.Input.OrderBy == "DataAbilitazioneIvass") { <i class="fas fa-caret-@(Model.Input.Ascending ? "up" : "down")"></i> }
                     </a>
                 </div>
                 <div class="col-lg-1 text-center">Azioni</div>
@@ -173,7 +173,7 @@
                 <span>@(abilitazione.AbilitatoOperativitaIvass == true ? "Si" : "No")</span>
             </div>
             <div class="col-lg-1 text-center">
-                <span>@abilitazione.DataFineAbilitazioneIvass</span>
+                <span>@abilitazione.DataAbilitazioneIvass</span>
             </div>
             
             <div class="col-lg-1 d-flex text-center justify-content-center">

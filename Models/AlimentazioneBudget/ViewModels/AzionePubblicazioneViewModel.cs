@@ -12,11 +12,12 @@ public class AzionePubblicazioneViewModel
     public int IdTask { get; set; }
     public string Descrizione { get; set; }
     public short Ordine { get; set; }
-    public byte Livello { get; set; }
+    public int LivelloCalcolato { get; set; }
     public bool? Abilitato { get; set; }
     public string? NomeDatabase { get; set; }
     public string? Comando { get; set; }
     public string? Istruzioni { get; set; }
+    public int? IdTaskPadre { get; set; }
     public bool Esito { get; set; }
     public DateTime? DataEsecuzione { get; set; }
     public string? Messaggio { get; set; }
@@ -27,8 +28,11 @@ public class AzionePubblicazioneViewModel
     public JsonTabellaResult? TabellaRisultati { get; set; }
     public string ClasseColore => Esito ? "text-success" : "text-danger";
     public string IconaStato => Esito ? "fa-check-circle" : "fa-times-circle";
-    public int PaddingLivello => Livello * 30;
-    public string ClasseGrassetto => Livello == 0 ? "fw-bold" : string.Empty;
+
+    public int PaddingLivello => LivelloCalcolato * 30;
+    public string ClasseGrassetto =>
+        LivelloCalcolato == 0 ? "fw-bold" : string.Empty;
+
     public string DataEsecuzioneFriendly
     {
         get
@@ -64,11 +68,12 @@ public class AzionePubblicazioneViewModel
             IdTask = azione.Id_Task,
             Descrizione = azione.Descrizione,
             Ordine = azione.Ordine,
-            Livello = azione.Livello,
+            LivelloCalcolato = azione.Livello_Calcolato,
             Abilitato = azione.Abilitato,
             NomeDatabase = azione.Nome_Database,
             Comando = azione.Comando,
             Istruzioni = azione.Istruzioni,
+            IdTaskPadre = azione.Id_Task_Padre,
             Esito = azione.Esito,
             DataEsecuzione = azione.Data_Esecuzione,
             Messaggio = azione.Messaggio,

@@ -2,6 +2,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using EbWeb.Models.Options;
+using EbWeb.Models.AlimentazioneBudget.Options;
 using EbWeb.Models.AlimentazioneBudget.Services.Infrastructure;
 
 namespace EbWeb.Models.AlimentazioneBudget.Services.Application;
@@ -9,10 +10,14 @@ namespace EbWeb.Models.AlimentazioneBudget.Services.Application;
 public class AdoNetEsecutoreComandiService : IEsecutoreComandiService
 {
     private readonly IOptionsMonitor<ConnectionStringsOptions> _connectionStringOptions;
+    private readonly IOptionsMonitor<AlimentazioneBudgetOptions> _budgetOptions;
 
-    public AdoNetEsecutoreComandiService(IOptionsMonitor<ConnectionStringsOptions> connectionStringOptions)
+    public AdoNetEsecutoreComandiService(
+        IOptionsMonitor<ConnectionStringsOptions> connectionStringOptions,
+        IOptionsMonitor<AlimentazioneBudgetOptions> budgetOptions)
     {
         _connectionStringOptions = connectionStringOptions;
+        _budgetOptions = budgetOptions;
     }
 
     public async Task<SqlExecutionResult> EseguiComandoDinamicoAsync(string dbName, string sqlComando)
@@ -22,6 +27,10 @@ public class AdoNetEsecutoreComandiService : IEsecutoreComandiService
 
         var connectionStringBase = _connectionStringOptions.CurrentValue.Alimentazione_Budget;
         var builder = new SqlConnectionStringBuilder(connectionStringBase) { InitialCatalog = dbName };
+
+        // Recupera il timeout leggendolo dalle opzioni di AlimentazioneBudget
+        var timeout = _budgetOptions.CurrentValue.CommandTimeout;
+        
         var risultato = new SqlExecutionResult();
 
         try
@@ -36,7 +45,7 @@ public class AdoNetEsecutoreComandiService : IEsecutoreComandiService
 
                 await connection.OpenAsync().ConfigureAwait(false);
 
-                using (var command = new SqlCommand(sqlComando, connection) { CommandTimeout = 600 })
+                using (var command = new SqlCommand(sqlComando, connection) { CommandTimeout = timeout })
                 {
                     var adapter = new SqlDataAdapter(command);
                     var ds = new DataSet();

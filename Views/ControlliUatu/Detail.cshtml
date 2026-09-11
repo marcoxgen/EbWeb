@@ -1,0 +1,389 @@
+﻿@model AnomaliaListViewModel
+
+<div class="container">
+    <div class="d-flex align-items-center mb-4">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle me-3" title="Torna indietro" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+
+        <h3 class="mb-0">@Model.Anomalia</h3>
+    </div>
+
+    <div class="bg-light border rounded-top p-0">
+        <div class="row align-items-center fw-bold text-center">
+            <div class="col-lg-5">Descrizione</div>
+            <div class="col-lg-4">Note</div>
+            <div class="col-lg-1">Risolto</div>
+            <div class="col-lg-1">Ult.Modifica</div>
+            <div class="col-lg-1"></div>
+        </div>
+    </div>
+
+    <div class="list-group list-group-flush border border-top-0 rounded-bottom">
+        @foreach (var item in Model.Anomalie.Results)
+        {
+            <div class="list-group-item p-1 azione-container"
+                 data-id-azione="@item.IdAzione"
+                 data-id-source="@item.IdSource"
+                 data-descrizione="@item.Descrizione"
+                 data-chiave-hash="@item.ChiaveHash">
+
+                <div class="row align-items-center">
+                    <div class="col-lg-5 text-break">
+                        @item.Descrizione
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="note-inline-container d-flex align-items-center">
+                            <span class="note-text text-start">@item.Nota</span>
+                            <i class="fas fa-pencil-alt text-muted edit-icon ms-1" data-bs-toggle="tooltip" title="Modifica nota" style="cursor: pointer;"></i>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-1 d-flex justify-content-center align-items-center">
+                        <div class="form-check form-switch m-0 p-0">
+                            <input class="form-check-input js-toggle-risolto m-0" type="checkbox" checked="@item.Risolta" style="float: none;">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-1 text-center">
+                        <small class="text-muted js-data-modifica">@item.UltimaModifica?.ToString("dd/MM/yyyy")</small>
+                    </div>
+
+                    <div class="col-lg-1 text-center">
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-sm text-secondary rounded-pill px-3 py-0 border" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+
+                            <div class="dropdown-menu dropdown-menu-end shadow-sm">
+                                <button type="button" class="dropdown-item py-2 btn-copia-valore" data-valore="@item.Descrizione" title="Copia Valore">
+                                    <i class="fas fa-copy text-muted me-2 small"></i> Copia Valore
+                                </button>
+
+                                <button type="button" class="dropdown-item py-2 js-open-storico" data-id-source="@item.IdSource" data-chiave-hash="@item.ChiaveHash" title="Storico Azioni">
+                                    <i class="fas fa-clock-rotate-left"></i> Storico Azioni
+                                </button>
+
+                                <div class="dropdown-divider my-1"></div>
+                                
+                                <button type="button"
+                                    class="dropdown-item py-2 @(Model.FlagEccezioni ? "js-open-eccezione" : "")"
+                                    data-id-source="@item.IdSource"
+                                    data-chiave-hash="@item.ChiaveHash"
+                                    @(Model.FlagEccezioni ? "" : "disabled")>
+                                    <i class="fas fa-bell-slash text-muted me-2 small"></i> Eccezione
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @{
+        int totalPages = (int)Math.Ceiling(Model.Anomalie.TotalCount / (decimal)Model.Input.Limit);
+        int currentPage = Model.Input.Page;
+    }
+
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Paginazione" class="mt-4">
+            <ul class="pagination d-flex justify-content-center">
+                @if (currentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" asp-route-idSource="@Model.Input.IdSource" asp-route-page="@(currentPage - 1)">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                }
+
+                @for (int p = Math.Max(1, currentPage - 4); p <= Math.Min(totalPages, currentPage + 4); p++)
+                {
+                    if (p == currentPage)
+                    {
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" asp-route-idSource="@Model.Input.IdSource" asp-route-page="@p">@p</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item">
+                            <a class="page-link" asp-route-idSource="@Model.Input.IdSource" asp-route-page="@p">@p</a>
+                        </li>
+                    }
+                }
+
+                @if (currentPage < totalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link"
+                           asp-route-idSource="@Model.Input.IdSource"
+                           asp-route-page="@(currentPage + 1)">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasDettaglio" style="width: 50vw;">
+    <div class="offcanvas-header bg-white border-bottom shadow-sm">
+        <div>
+            <span class="badge bg-secondary me-2">STORICO</span>
+            <span id="titoloOffcanvas" class="fw-semibold"></span>
+        </div>
+
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+
+    <div class="offcanvas-body" id="contenutoDettaglio"></div>
+</div>
+
+<div class="modal fade" id="eccezioneModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="eccezioneModalContent"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // 1. Click sulla matita (Modifica nota)
+        $(document).on('click', '.edit-icon', function() {
+            const $container = $(this).closest('.note-inline-container');
+            const $testo = $container.find('.note-text');
+            const testoOriginale = $testo.text().trim();
+
+            $container.data('testo-originale', testoOriginale);
+
+            $testo.replaceWith(`
+                <input type="search"
+                    class="form-control form-control-sm note-edit d-inline-block w-75 me-1"
+                    value="${testoOriginale.replace(/"/g, '&quot;')}">
+            `);
+
+            $(this)
+                .removeClass('fa-pencil-alt text-muted edit-icon')
+                .addClass('fa-save text-success save-icon')
+                .attr('title', 'Salva');
+
+            if (!$container.find('.btn-annulla-nota').length) {
+                $(this).after(`
+                    <i class="fas fa-times text-danger ms-2 btn-annulla-nota"
+                        style="cursor:pointer"
+                        title="Annulla">
+                    </i>
+                `);
+            }
+
+            $container.find('.note-edit').focus();
+        });
+
+        // 2. Click sulla "X" (Annulla nota)
+        $(document).on('click', '.btn-annulla-nota', function() {
+            const $container = $(this).closest('.note-inline-container');
+            chiudiModifica($container);
+        });
+
+        // 3. Click sul "Dischetto" (Salva nota)
+        $(document).on('click', '.save-icon', function() {
+            const $container = $(this).closest('[data-id-source]');
+            const $noteContainer = $(this).closest('.note-inline-container');
+            const nuovoTesto = $noteContainer.find('.note-edit').val() || '';
+
+            var payload = {
+                idAzione: $container.data('id-azione') || $container.attr('data-id-azione') || null,
+                idSource: $container.data('id-source'),
+                descrizione: $container.data('descrizione'),
+                chiaveHash: $container.data('chiave-hash'),
+                nota: nuovoTesto,
+                risolto: $container.find('.js-toggle-risolto').is(':checked')
+            };
+
+            $noteContainer.find('.note-edit').replaceWith(
+                `<span class="note-text">${nuovoTesto}</span>`
+            );
+            chiudiModificaGrafica($noteContainer);
+
+            inviaAggiornamento(payload, $container);
+        });
+
+        function chiudiModificaGrafica($container) {
+            $container.find('.btn-annulla-nota').remove();
+
+            const $iconaSalva = $container.find('.save-icon');
+            $iconaSalva
+                .removeClass('fa-save text-success save-icon')
+                .addClass('fa-pencil-alt text-muted edit-icon')
+                .attr('title', 'Modifica nota');
+        }
+
+        function chiudiModifica($container) {
+            const testoOriginale = $container.data('testo-originale') || '';
+            $container.find('.note-edit').replaceWith(
+                `<span class="note-text">${testoOriginale}</span>`
+            );
+            chiudiModificaGrafica($container);
+        }
+
+        // 4. Copia Valore
+        $(document).on('click', '.btn-copia-valore', function () {
+            var valore = $(this).attr('data-valore');
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(valore);
+            } else {
+                var $temp = $("<input>");
+                $("body").append($temp);
+                $temp.val(valore).select();
+                document.execCommand("copy");
+                $temp.remove();
+            }
+        });
+
+        // 5. Toggle Switch Risolto
+        $(document).on('change', '.js-toggle-risolto', function () {
+            var $checkbox = $(this);
+            var $container = $checkbox.closest('[data-id-source]');
+            var $noteContainer = $container.find('.note-inline-container');
+
+            var testoNota = $noteContainer.find('.note-edit').length
+                ? $noteContainer.find('.note-edit').val()
+                : $noteContainer.find('.note-text').text().trim();
+
+            var payload = {
+                idAzione: $container.data('id-azione') || $container.attr('data-id-azione') || null,
+                idSource: $container.data('id-source'),
+                descrizione: $container.data('descrizione'),
+                chiaveHash: $container.data('chiave-hash'),
+                nota: testoNota,
+                risolto: $checkbox.is(':checked')
+            };
+
+            inviaAggiornamento(payload, $container);
+        });
+
+        // 6. Chiamata AJAX
+        function inviaAggiornamento(payload, $container) {
+            $.post('@Url.Action("SaveActionState", "ControlliUatu")', payload, function (response) {
+                if (response.success) {
+
+                    // Aggiorna l'ID generato dal DB sia nel DOM che nella cache jQuery per evitare F5
+                    if (response.idAzione) {
+                        $container.data('id-azione', response.idAzione).attr('data-id-azione', response.idAzione);
+                    }
+
+                    // Aggiorna il testo della data a video usando l'identificatore js-data-modifica
+                    var $targetData = $container.find('.js-data-modifica');
+                    if ($targetData.length && response.dataModifica) {
+                        $targetData.text(response.dataModifica);
+                    }
+
+                } else {
+                    alert(response.message || 'Si è verificato un errore durante il salvataggio.');
+                }
+            }).fail(function () {
+                alert('Errore di rete durante il salvataggio.');
+            });
+        }
+
+        $(document).on('click', '.js-open-storico', function () {
+            const idSource = $(this).data('id-source');
+            const chiaveHash = $(this).data('chiave-hash');
+
+            const descrizione = $(this)
+                .closest('.azione-container')
+                .data('descrizione');
+
+            $('#titoloOffcanvas').text(descrizione);
+
+            const offcanvasBody = $('#contenutoDettaglio');
+
+            offcanvasBody.html(`
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary"></div>
+                </div>
+            `);
+
+            const offcanvasEl = document.getElementById('offcanvasDettaglio');
+
+            let offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+
+            if (!offcanvas) {
+                offcanvas = new bootstrap.Offcanvas(offcanvasEl);
+            }
+
+            offcanvas.show();
+
+            $.get('@Url.Action("StoricoAzioni", "ControlliUatu")', {
+                idSource: idSource,
+                chiaveHash: chiaveHash
+            })
+            .done(function (html) {
+                offcanvasBody.html(html);
+            })
+            .fail(function () {
+                offcanvasBody.html(`
+                    <div class="alert alert-danger">
+                        Errore durante il caricamento delle azioni.
+                    </div>
+                `);
+            });
+        });
+
+        $(document).on('click', '.js-open-eccezione', function (e) {
+            e.preventDefault();
+
+            var idSource = $(this).data('id-source');
+            var chiaveHash = $(this).data('chiave-hash');
+
+            $.get(
+                '@Url.Action("Eccezione", "ControlliUatu")',
+                {
+                    idSource: idSource,
+                    chiaveHash: chiaveHash
+                },
+                function (html) {
+
+                    $('#eccezioneModalContent').html(html);
+
+                    var modal = new bootstrap.Modal(
+                        document.getElementById('eccezioneModal')
+                    );
+
+                    modal.show();
+                }
+            );
+        });
+
+        $(document).on('submit', '#formEccezione', function (e) {
+
+            e.preventDefault();
+
+            var dati = $(this).serialize();
+
+            console.log(dati);
+
+            $.post(
+                '@Url.Action("SalvaEccezione", "ControlliUatu")',
+                dati
+            )
+            .done(function () {
+
+                bootstrap.Modal
+                    .getInstance(document.getElementById('eccezioneModal'))
+                    ?.hide();
+
+                location.reload();
+            })
+            .fail(function (xhr) {
+                console.log(xhr.responseText);
+                alert(xhr.responseText);
+            });
+        });
+    </script>
+}

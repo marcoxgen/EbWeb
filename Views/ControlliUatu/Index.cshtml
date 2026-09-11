@@ -1,0 +1,78 @@
+@model List<ControlloUatuViewModel>
+
+<div class="mb-2">
+    <div class="d-flex align-items-center gap-3">
+        <img src="~/images/uatu-logo.png"
+             alt="Logo Uatu"
+             style="height:60px; letter-spacing:2px;">
+
+        <div class="d-flex flex-column" style="font-family:'Orbitron', sans-serif !important;">
+            <h1 class="mb-0 fw-bold" style="letter-spacing:2px;">
+                @ViewData["Title"]
+            </h1>
+
+            <small class="text-muted" style="letter-spacing:1px;">
+                THE WATCHER
+            </small>
+        </div>
+    </div>
+
+    <form asp-action="Index" method="get">
+        <div class="bg-light border py-1">
+            <div class="row text-center g-0 mx-0 px-2 fw-semibold">
+                <div class="col-lg-8">Anomalia</div>
+                <div class="col-lg-1">Nr Anomalie</div>
+                <div class="col-lg-2">Ultimo Aggiornamento</div>
+                <div class="col-lg-1"></div>
+            </div>
+        </div>
+    </form>
+
+    @foreach (ControlloUatuViewModel controllo in Model)
+    {
+        <div class="row g-0 border-bottom py-1 align-items-center mx-0 px-2 position-relative">
+            <div class="position-absolute start-0 top-0 bottom-0 @controllo.RowCssClass" style="width: 6px;"></div>
+
+            <div class="col-lg-8 ps-3">
+                <span class="text-truncate d-block">@controllo.Anomalia</span>
+            </div>
+            <div class="col-lg-1 text-center">
+                <span class="fw-semibold">@controllo.NumeroRecord</span>
+            </div>
+            <div class="col-lg-2 text-center small text-muted">
+                <span data-animation data-timestamp="@controllo.UltimoAggiornamento?.ToString("yyyy-MM-ddTHH:mm:ss")"
+                      title="@controllo.UltimoAggiornamento?.ToString("dd/MM/yyyy HH:mm:ss")">
+                    @controllo.UltimoAggiornamentoFriendly
+                </span>
+            </div>
+            <div class="col-lg-1 d-flex text-center justify-content-center">
+                <a asp-action="Detail"
+                   asp-route-idSource="@controllo.IdSource"
+                   title="Visualizza dettagli"
+                   class="text-secondary">
+                    <i class="fas fa-info-circle"></i>
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    let lastRefresh = null;
+
+    async function checkRefresh() {
+        const response = await fetch('@Url.Action("GetLastRefresh", "ControlliThanos2")');
+        const currentRefresh = await response.text();
+
+        if (lastRefresh === null) {
+            lastRefresh = currentRefresh;
+            return;
+        }
+
+        if (currentRefresh !== lastRefresh) {
+            location.reload();
+        }
+    }
+
+    setInterval(checkRefresh, 10000);
+</script>

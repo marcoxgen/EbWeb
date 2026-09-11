@@ -13,9 +13,10 @@ public class AzionePubblicazione
     public short Ordine { get; set; }
     public bool? Abilitato { get; set; }
     public string? Nome_Database { get; set; }
-    public byte Livello { get; set; }
+    public int Livello_Calcolato { get; set; }
     public string? Comando { get; set; }
     public string? Istruzioni { get; set; }
+    public int? Id_Task_Padre { get; set; }
     public bool Esito { get; set; }
     public DateTime? Data_Esecuzione { get; set; }
     public string? Risultati { get; set; }

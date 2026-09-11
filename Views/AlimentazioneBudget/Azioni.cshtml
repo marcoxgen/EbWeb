@@ -3,10 +3,16 @@
 @model AzionePubblicazioneListViewModel
 
 <div class="container">
+    <div style="position: sticky; top: 50vh; transform: translateY(-50%); float: left; margin-left: -32px; z-index: 1050; width: 0; height: 0;">
+        <a href="javascript:history.back()"
+            class="btn btn-secondary border-end-0 rounded-start-2 rounded-end-0 shadow-sm d-flex align-items-center justify-content-center p-0"
+            style="width: 32px; height: 42px;"
+            title="Torna indietro">
+            <i class="fa-solid fa-chevron-left"></i>
+        </a>
+    </div>
+
     <div class="d-flex align-items-center mb-4">
-        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-circle me-3" title="Torna indietro" style="width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;">
-            <i class="fas fa-arrow-left"></i>
-       </a>
         <h3 class="mb-0">@ViewData["Title"]: @Model.TipoPubblicazioneDes - @Model.DataRiferimento</h3>
     </div>
 
@@ -14,8 +20,7 @@
         @foreach (var item in Model.Azioni.Results)
         {
             <div class="list-group-item"
-                onclick="apriDettaglio(@item.IdAzione, this)" 
-                style="padding-left: @(item.PaddingLivello + 10)px; cursor: pointer;">
+                style="padding-left: @(item.PaddingLivello + 10)px;">
 
                 <div class="row align-items-start">
                     <div class="col-lg-6">
@@ -71,7 +76,7 @@
                     </div>
 
                     <div class="col-lg-1 d-flex align-items-center justify-content-center">
-                        <small id="data-lista-@item.IdAzione"
+                        <small id="data-lista-@item.DataEsecuzione"
                             class="text-muted"
                             data-timestamp="@item.DataEsecuzione?.ToString("yyyy-MM-ddTHH:mm:ss")"
                             title="@item.DataEsecuzione?.ToString("dd/MM/yyyy HH:mm:ss")">
@@ -219,6 +224,8 @@
                 }
 
                 bootstrap.Offcanvas.getInstance(document.getElementById('cassettoAzione')).hide();
+
+                window.location.reload();
             });
         }
 
@@ -251,7 +258,6 @@
                 $icona.removeClass('fas fa-check').addClass('far fa-copy');
             }, 1500);
         }
-
 
         $(document).on('change', '#SwitchEsito', function() {
             var chk = $(this).is(':checked');

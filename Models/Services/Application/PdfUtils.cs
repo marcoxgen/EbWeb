@@ -1,8 +1,8 @@
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Pdf.IO;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 using EbWeb.Models.ViewModels;
 
 namespace EbWeb.Models.Services.Application;

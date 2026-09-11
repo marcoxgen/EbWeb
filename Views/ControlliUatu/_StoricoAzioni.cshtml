@@ -1,0 +1,54 @@
+﻿@model List<AnomaliaViewModel>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        Nessuna azione trovata.
+    </div>
+}
+else
+{
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Nota</th>
+                <th class="text-center">Stato</th>
+                <th class="text-center">Attiva</th>
+                <th class="text-center">Ultima Modifica</th>
+                <th class="text-center">Disattivazione</th>
+                <th class="text-center">Utente</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Nota</td>
+                    <td class="text-center">
+                        @if (item.Risolta == true)
+                        {
+                            <span class="badge bg-success">Risolta</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Aperta</span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        @if (item.Attiva == true)
+                        {
+                            <i class="fas fa-triangle-exclamation text-warning fs-5" title="Attiva"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-circle-check text-success fs-5" title="Disattivata"></i>
+                        }
+                    </td>
+                    <td class="text-center">@item.UltimaModifica</td>
+                    <td class="text-center">@item.DataDisattivazione</td>
+                    <td class="text-center">@item.Utente</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

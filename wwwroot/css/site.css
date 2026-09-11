@@ -1,73 +1,75 @@
 html {
-  font-size: 14px;
+    position: relative;
+    min-height: 100%;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
+
+/* Bootstrap focus */
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 .1rem #fff, 0 0 0 .25rem #258cfb;
+}
+
+/* Tabelle */
 
 .table-small-text th,
 .table-small-text td {
-  font-size: 0.8rem; /* default è 1rem */
+    font-size: .8rem;
 }
 
 .table thead th {
     vertical-align: top !important;
 }
 
-/* 1. Prepariamo il contenitore ts-control */
+/* Tom Select */
+
 .ts-control {
     position: relative !important;
-    padding-right: 35px !important; /* Spazio vitale per la freccia */
-    min-height: 38px; /* Altezza standard per allinearsi agli altri input */
     display: flex;
     align-items: center;
+    min-height: 38px;
+    padding-right: 35px !important;
 }
 
-/* 2. Creiamo la freccia (Caret) */
 .ts-wrapper.single .ts-control::after {
-    content: " " !important;
-    display: block !important;
+    content: "";
     position: absolute !important;
-    right: 12px !important;
     top: 50% !important;
-    transform: translateY(-50%); /* Centra perfettamente la freccia verticalmente */
-    width: 0 !important;
-    height: 0 !important;
-    border-left: 5px solid transparent !important;
-    border-right: 5px solid transparent !important;
-    border-top: 5px solid #666 !important; /* Colore della freccia */
-    margin-top: 0 !important;
+    right: 12px !important;
+    transform: translateY(-50%);
     z-index: 5;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #666;
 }
 
-/* 3. Effetto al click (opzionale: la freccia punta in su) */
 .ts-wrapper.single.dropdown-active .ts-control::after {
-    border-top: 0 !important;
-    border-bottom: 5px solid #666 !important;
+    border-top: 0;
+    border-bottom: 5px solid #666;
 }
 
-/* Nascondi l'icona di chiusura di default */
+/* Pulsante ricerca */
+
 .btn-search-toggle .icon-close {
     display: none !important;
 }
 
-/* Quando il menu è aperto (aria-expanded="true") */
 .btn-search-toggle[aria-expanded="true"] .icon-open {
     display: none !important;
 }
@@ -76,30 +78,56 @@ body {
     display: inline-block !important;
 }
 
+/* Riga selezionata */
+
 .riga-selezionata {
     background-color: #fff3cd !important;
-    transition: background-color 0.3s ease;
     border-left: 4px solid #ffc107 !important;
+    transition: background-color .3s ease;
 }
+
+/* Note */
 
 .note-inline-container {
-    padding: 6px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    min-height: 32px;
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s ease-in-out;
+    width: 100%;
+    min-height: 32px;
+    padding: 6px 32px 6px 10px;
+    border-radius: 4px;
+    transition: background-color .2s ease-in-out;
 }
 
-.note-inline-container:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    .note-inline-container:hover {
+        background-color: rgba(0, 0, 0, .04);
+    }
+
+.note-text {
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
+}
+
+.edit-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .2s ease-in-out;
 }
 
 .note-inline-container:hover .edit-icon {
-    display: inline-block !important;
+    opacity: 1;
 }
+
+.note-edit {
+    width: 100%;
+}
+
+/* Colori */
 
 .bg-orange {
     background-color: #ff8c00 !important;
@@ -111,4 +139,17 @@ body {
 
 .bg-light-yellow {
     background-color: #ffff99 !important;
+}
+
+/* Font Orbitron */
+
+@font-face {
+    font-family: 'Orbitron';
+    src: url('/fonts/Orbitron-VariableFont_wght.ttf') format('truetype');
+    font-style: normal;
+    font-weight: 100 900;
+}
+
+.orbitron {
+    font-family: 'Orbitron', sans-serif;
 }

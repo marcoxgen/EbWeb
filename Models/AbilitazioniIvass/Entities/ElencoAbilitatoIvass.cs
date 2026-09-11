@@ -27,4 +27,6 @@ public class ElencoAbilitatoIvass
     public bool? Abilitato_Operativita_Ivass { get; set; }
     public DateOnly? Data_Ultimo_Aggiornamento { get; set; }
     public bool? Escluso { get; set; }
+    public string? Lettera_Nomina { get; set; }
+    public string? Lettera_Revoca { get; set; }
 }

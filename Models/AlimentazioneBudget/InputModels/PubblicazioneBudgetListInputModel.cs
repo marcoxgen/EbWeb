@@ -7,7 +7,7 @@ namespace EbWeb.Models.AlimentazioneBudget.InputModels;
 [ModelBinder(BinderType = typeof(PubblicazioneBudgetListInputModelBinder))]
 public class PubblicazioneBudgetListInputModel
 {
-    public PubblicazioneBudgetListInputModel(int id_pubblicazione, int page, string orderby, bool ascending, int limit, AlimentazioneBudgetOrderOptions orderOptions)
+    public PubblicazioneBudgetListInputModel(int id_pubblicazione, int page, string orderby, bool ascending, int limit, OrderOptions orderOptions)
     {
         if (!orderOptions.Allow.Contains(orderby))
         {

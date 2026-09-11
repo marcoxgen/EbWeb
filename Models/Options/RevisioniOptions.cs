@@ -1,4 +1,4 @@
-namespace EbWeb.Models.Options;
+﻿namespace EbWeb.Models.Options;
 
 public class RevisioniOptions
 {

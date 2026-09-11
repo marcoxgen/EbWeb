@@ -1,0 +1,59 @@
+﻿@model EccezioneViewModel
+
+<form id="formEccezione">
+    <input type="hidden" name="IdSource" value="@Model.IdSource" />
+
+    <div class="modal-header">
+        <h5 class="modal-title">@Model.Eccezioni</h5>
+
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body">
+        @foreach (var colonna in Model.Colonne)
+        {
+            <div class="mb-3">
+                <label class="form-label">
+                    @colonna.NomeColonna
+                </label>
+
+                @switch (colonna.TipoDato?.ToLower())
+                {
+                    case "date":
+                        <input type="date"
+                            name="@colonna.NomeColonna"
+                            class="form-control @(colonna.ReadOnly ? "bg-light" : "")"
+                            readonly="@colonna.ReadOnly"
+                            value="@(colonna.Valore is DateTime dt ? dt.ToString("yyyy-MM-dd") : colonna.Valore)" />
+                        break;
+                    case "boolean":
+                        <div class="form-check">
+                            <input type="checkbox"
+                                name="@colonna.NomeColonna"
+                                class="form-check-input"
+                                checked="@(Convert.ToBoolean(colonna.Valore))"
+                                disabled="@colonna.ReadOnly" />
+                        </div>
+                        break;
+                    default:
+                        <input type="text"
+                            name="@colonna.NomeColonna"
+                            class="form-control @(colonna.ReadOnly ? "bg-light" : "")"
+                            readonly="@colonna.ReadOnly"
+                            value="@colonna.Valore" />
+                        break;
+                }
+            </div>
+        }
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Chiudi
+        </button>
+
+        <button type="submit" class="btn btn-primary">
+            Salva
+        </button>
+    </div>
+</form>

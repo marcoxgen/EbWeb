@@ -37,8 +37,7 @@ public static class AbilitazioniMifidConfig
         services.Configure<AuthorizationOptions>(options =>
         {
             options.AddPolicy(policyName, p =>
-                p.RequireAuthenticatedUser()
-                 .AddRequirements(new AdGroupRequirement(sectionName)));
+                p.RequireAuthenticatedUser().AddRequirements(new AdGroupRequirement(sectionName)));
         });
 
         return services;

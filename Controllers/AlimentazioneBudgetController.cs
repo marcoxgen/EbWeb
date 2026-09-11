@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
-
+using EbWeb.Models.AlimentazioneBudget.InputModels;
 using EbWeb.Models.AlimentazioneBudget.Services.Application;
 using EbWeb.Models.AlimentazioneBudget.ViewModels;
-using EbWeb.Models.AlimentazioneBudget.InputModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EbWeb.Controllers;
 
@@ -73,6 +73,26 @@ public class AlimentazioneBudgetController : Controller
         if (azioniPubblicazione == null) return NotFound();
 
         return View(azioniPubblicazione);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> SalvaNotaPubblicazione(int idPubblicazione, string nota)
+    {
+        try
+        {
+            await _alimentazioneBudgetService
+                .SalvaNotaPubblicazioneAsync(idPubblicazione, nota);
+
+            return Json(new { success = true });
+        }
+        catch (Exception ex)
+        {
+            return Json(new
+            {
+                success = false,
+                message = ex.Message
+            });
+        }
     }
 
     [HttpGet]

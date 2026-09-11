@@ -13,7 +13,7 @@ public class AbilitazioneIvassViewModel
     public bool? FlagAbilitatoFinanza { get; set; }
     public bool? AbilitatoOperativitaIvass { get; set; }
     public DateOnly? DataSospensione { get; set; }
-    public DateOnly? DataFineAbilitazioneIvass { get; set; }
+    public DateOnly? DataAbilitazioneIvass { get; set; }
 
     public static AbilitazioneIvassViewModel FromEntity(ElencoAbilitatoIvass abilitato)
     {
@@ -27,7 +27,7 @@ public class AbilitazioneIvassViewModel
             FlagAbilitatoFinanza = abilitato.Flag_Abilitato_Finanza,
             AbilitatoOperativitaIvass = abilitato.Abilitato_Operativita_Ivass,
             DataSospensione = abilitato.Data_sospensione,
-            DataFineAbilitazioneIvass = abilitato.Data_fine_abilitazione_IVASS
+            DataAbilitazioneIvass = abilitato.Data_abilitazione_IVASS
         };
     }
 }

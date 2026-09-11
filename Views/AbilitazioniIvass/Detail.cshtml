@@ -188,13 +188,38 @@
             </div>
         </div>
 
-        <div class="col-md-12 mb-2">
+        <div class="col-md-8 mb-2">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-light fw-bold"><i class="fas fa-sticky-note me-2"></i>Note</div>
                 <div class="card-body">
 <p class="fst-italic text-secondary mb-0">
     @(string.IsNullOrWhiteSpace(Model.Note) ? "Nessuna nota presente" : Model.Note)
 </p>                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-2">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-light fw-bold"><i class="fas fa-envelope-open-text me-2"></i>Creazione Lettere</div>
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-6">
+                            <a href="@(string.IsNullOrEmpty(Model.LetteraNomina) ? "javascript:void(0)" : Model.LetteraNomina)"
+                               target="_blank"
+                               class="btn btn-sm w-100 @(string.IsNullOrEmpty(Model.LetteraNomina) ? "btn-secondary disabled" : "btn-outline-primary")">
+                                <i class="fas fa-external-link-alt me-1"></i> Nomina
+                            </a>
+                        </div>
+
+                        <div class="col-6">
+                            <a href="@(string.IsNullOrEmpty(Model.LetteraRevoca) ? "javascript:void(0)" : Model.LetteraRevoca)"
+                               target="_blank"
+                               class="btn btn-sm w-100 @(string.IsNullOrEmpty(Model.LetteraRevoca) ? "btn-secondary disabled" : "btn-outline-primary")">
+                                <i class="fas fa-external-link-alt me-1"></i> Revoca
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

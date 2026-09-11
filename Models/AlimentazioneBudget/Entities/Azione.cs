@@ -1,3 +1,4 @@
+
 namespace EbWeb.Models.AlimentazioneBudget.Entities;
 
 public class Azione
@@ -13,4 +14,9 @@ public class Azione
 	public bool Flag_Esecuzione { get; set; }
 	public string? Utente { get; set; }
     public virtual Pubblicazione Pubblicazione { get; set; }
+
+    public static implicit operator Azione?(ControlliUatu.Entities.Azione? v)
+    {
+        throw new NotImplementedException();
+    }
 }

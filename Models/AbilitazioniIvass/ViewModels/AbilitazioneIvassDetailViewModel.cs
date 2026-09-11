@@ -31,6 +31,8 @@ public class AbilitazioneIvassDetailViewModel
     public bool? AbilitatoOperativitaIvass { get; set; }
     public DateOnly? DataUltimoAggiornamento { get; set; }
     public bool? Escluso { get; set; }
+    public string? LetteraNomina { get; set; }
+    public string? LetteraRevoca { get; set; }
 
     public static AbilitazioneIvassDetailViewModel FromEntity(ElencoAbilitatoIvass abilitato)
     {
@@ -59,7 +61,9 @@ public class AbilitazioneIvassDetailViewModel
             Note = abilitato.Note,
             AbilitatoOperativitaIvass = abilitato.Abilitato_Operativita_Ivass,
             DataUltimoAggiornamento = abilitato.Data_Ultimo_Aggiornamento,
-            Escluso = abilitato.Escluso
+            Escluso = abilitato.Escluso,
+            LetteraNomina = abilitato.Lettera_Nomina,
+            LetteraRevoca = abilitato.Lettera_Revoca
         };
     }
 }

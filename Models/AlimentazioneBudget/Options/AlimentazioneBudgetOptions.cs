@@ -2,13 +2,14 @@ namespace EbWeb.Models.AlimentazioneBudget.Options;
 
 public class AlimentazioneBudgetOptions
 {
-    public int PerPage { get; set; }
-    public AlimentazioneBudgetOrderOptions Order { get; set; } = default!;
+    public int PerPage { get; set; } = 10;
+    public int CommandTimeout { get; set; } = 900;
+    public OrderOptions Order { get; set; } = new();
 }
 
-public class AlimentazioneBudgetOrderOptions
+public class OrderOptions
 {
-    public string By { get; set; } = default!;
+    public string By { get; set; } = string.Empty;
     public bool Ascending { get; set; }
-    public string[] Allow { get; set; } = [];
+    public List<string> Allow { get; set; } = new();
 }

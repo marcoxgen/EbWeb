@@ -1,11 +1,12 @@
-using Microsoft.AspNetCore.Authentication.Negotiate;
-using Microsoft.EntityFrameworkCore;
-using Hangfire;
-using Hangfire.SqlServer;
 using EbWeb.Configuration;
+using EbWeb.Models.ControlliUatu.Services.Application;
 using EbWeb.Models.Options;
 using EbWeb.Models.Services.Application;
 using EbWeb.Models.Services.Infrastructure;
+using Hangfire;
+using Hangfire.SqlServer;
+using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -28,7 +29,7 @@ builder.Services.AddTransient<ISchedaBudgetService, EFCoreSchedaBudgetService>()
 builder.Services.AddAbilitazioniMifid(configuration, "AbilitazioniMifid", "MifidAccess");
 builder.Services.AddAbilitazioniIvass(configuration, "AbilitazioniIvass", "IvassAccess");
 builder.Services.AddAlimentazioneBudget(configuration);
-builder.Services.AddControlliThanos2(configuration);
+builder.Services.AddControlliUatu(configuration);
 
 // Contiene tutto ciò che riguarda una singola richiesta HTTP in corso
 builder.Services.AddHttpContextAccessor();
@@ -88,6 +89,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseHangfireDashboard("/hangfire");
+
+RecurringJob.AddOrUpdate< IControlloUatuService> (
+    "refresh-view",
+    x => x.RefreshView(),
+    "*/5 * * * *"
+);
 
 // Stabilisce la convenzione per interpretare gli URL del browser
 app.MapControllerRoute(

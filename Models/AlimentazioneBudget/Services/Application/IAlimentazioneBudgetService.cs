@@ -10,8 +10,10 @@ public interface IAlimentazioneBudgetService
     Task<AzionePubblicazioneListViewModel> GetAzioniPubblicazioneIdAsync(int idPubblicazione);
     Task<AzionePubblicazioneViewModel> GetAzionePubblicazioneAsync(int idAzione);
     Task<bool> CreatePubblicazioneAsync(char tipoCod, DateOnly dataRiferimento);
+    Task SalvaNotaPubblicazioneAsync(int idPubblicazione, string nota);
     Task<bool> DeletePubblicazioneAsync(int idPubblicazione);
     Task SalvaStatoAzioneAsync(ActionSaveInputModel input);
+    Task RicalcolaEsitiGerarchiciAsync(int idAzione);
     Task<SqlExecutionResult> EseguiAzioneAsync(int idAzione);
     Task<List<TipoPubblicazioneLookupViewModel>> GetTipiPubblicazioneLookupAsync();
     Task<List<CalendarioDinamicoLookupViewModel>> GetCalendariDinamiciLookupAsync(char tipoCod);

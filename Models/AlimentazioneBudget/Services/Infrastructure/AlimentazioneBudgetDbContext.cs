@@ -63,7 +63,7 @@ public class AlimentazioneBudgetDbContext : DbContext
         modelBuilder.Entity<TemplateTask>(entity =>
         {
             entity.ToTable("Task", schema: "dbo");
-            entity.HasNoKey();
+            entity.HasKey(e => e.Id_Task);
         });
 
         modelBuilder.Entity<DipendenzeTask>(entity =>
