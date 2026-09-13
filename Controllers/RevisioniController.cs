@@ -48,18 +48,23 @@ public class RevisioniController : Controller
         return View("Error!");
     }
 
+    [HttpPost]
     public async Task<IActionResult> CreatePdf(int nag)
     {
-        List<RevisioneViewModel> revisione = await revisioneService.GetRevisioneAsync(nag);
+        var result = await revisioneService.CreatePdfAsync(nag);
 
-        var pdfLegenda = PdfUtils.CreaLegendaPdf(revisione);
+        if (!result.Success)
+        {
+            return BadRequest(new
+            {
+                campi = result.CampiMancanti
+            });
+        }
 
-        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "pdf", "Legenda report.pdf");
-        var pdfEsistente = System.IO.File.ReadAllBytes(path);
-
-        var pdfUnito = PdfUtils.UnisciPdf(pdfLegenda, pdfEsistente);
-
-        return File(pdfUnito, "application/pdf", $"dettaglio_indicatori_{nag}.pdf");
+        return Ok(new
+        {
+            pdf = Convert.ToBase64String(result.Pdf!)
+        });
     }
 
     [HttpPost]

@@ -11,7 +11,7 @@ public class ErrorController : Controller
     public IActionResult Index()
     {
         var feature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
-        
+
         if (feature?.Error is AnomaliaNagDuplicateException)
         {
             ViewData["Title"] = "Nag duplicato";

@@ -1,10 +1,26 @@
 # Cartelle di compilazione e file temporanei da ignorare
 
-# Cartelle generate da .NET/C#/Visual Studio:
+# .NET / Visual Studio
 bin/
 obj/
 publish/
 
-# Altri file o cartelle comuni da escludere:
-*.log
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.rsuser
+*.sln.docstates
+
+# IIS Express
+applicationhost.config
+
+# Publish profile locali
+*.pubxml.user
+
+# VS Code
 .vscode/
+
+# Log
+*.log

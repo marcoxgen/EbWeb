@@ -3,6 +3,7 @@
 public class RevisioniOptions
 {
     public int PerPage { get; set; }
+    public string[] ColonneObbligatorie { get; set; } = [];
     public RevisioniOrderOptions Order { get; set; } = default!;
 }
 

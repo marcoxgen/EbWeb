@@ -55,38 +55,138 @@
 }
 
 <div class="text-center">
-    <a class="btn btn-primary mt-3" asp-controller="Revisioni" asp-action="CreatePdf" asp-route-nag="@Model.First().Nag_Affidato"><i class="fas fa-file-alt"></i> Crea PDF</a>
+    <button id="btnCreaPdf" type="button" class="btn btn-primary mt-3" data-nag="@Model.First().Nag_Affidato">
+        <i class="fas fa-file-alt"></i>
+        Crea PDF
+    </button>
 </div>
 
-<script>
-    function salvaNote(id, index) {
-        const note = $('#note-' + index).val();
-        const token = $('input[name="__RequestVerificationToken"]').val();
-        const urlSalvataggio = '@Url.Action("SaveNote", "Revisioni")';
+<div class="modal fade" id="campiMancantiModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
-        console.log("Invio:", { Id: id, NoteIstruttore: note, Token: token });
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Dati mancanti per la generazione del PDF
+                </h5>
 
-        $.ajax({
-            url: urlSalvataggio,
-            method: 'POST',
-            dataType: 'json',
-            data: {
-                __RequestVerificationToken: token,
-                id: id,
-                noteIstruttore: note
-            },
-            success: function (response) {
-                alert(response.message);
-            },
-            error: function (xhr) {
-                try {
-                    const response = JSON.parse(xhr.responseText);
-                    alert(response.message || "Errore durante il salvataggio della nota.");
-                } catch (e) {
-                    console.error("Errore AJAX:", xhr.responseText);
-                    alert("Errore imprevisto.");
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <p>
+                    Compilare le Note Istruttore per i seguenti Indicatori:
+                </p>
+
+                <ul id="campiMancantiList"></ul>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Chiudi
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function salvaNote(id, index) {
+            const note = $('#note-' + index).val();
+            const token = $('input[name="__RequestVerificationToken"]').val();
+            const urlSalvataggio = '@Url.Action("SaveNote", "Revisioni")';
+
+            console.log("Invio:", { Id: id, NoteIstruttore: note, Token: token });
+
+            $.ajax({
+                url: urlSalvataggio,
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    __RequestVerificationToken: token,
+                    id: id,
+                    noteIstruttore: note
+                },
+                success: function (response) {
+                    alert(response.message);
+                },
+                error: function (xhr) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        alert(response.message || "Errore durante il salvataggio della nota.");
+                    } catch (e) {
+                        console.error("Errore AJAX:", xhr.responseText);
+                        alert("Errore imprevisto.");
+                    }
                 }
-            }
+            });
+        }
+
+        $("#btnCreaPdf").click(function () {
+
+            const nag = $(this).data("nag");
+
+            $.ajax({
+                url: '@Url.Action("CreatePdf", "Revisioni")',
+                type: 'POST',
+                data: { nag },
+
+                success: function (response) {
+                    downloadPdf(response.pdf);
+                },
+
+                error: function (xhr) {
+
+                    if (xhr.status === 400) {
+                        mostraCampiMancanti(xhr.responseJSON.campi);
+                    }
+                }
+            });
         });
-    }
-</script>
+
+        function downloadPdf(base64Pdf) {
+
+            const bytes = Uint8Array.from(
+                atob(base64Pdf),
+                c => c.charCodeAt(0)
+            );
+
+            const blob = new Blob(
+                [bytes],
+                { type: "application/pdf" }
+            );
+
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.download = "Report.pdf";
+            link.click();
+
+            URL.revokeObjectURL(url);
+        }
+
+        function mostraCampiMancanti(campi) {
+
+            const lista = $("#campiMancantiList").empty();
+
+            campi.forEach(campo => {
+                lista.append(`<li>${campo}</li>`);
+            });
+
+            new bootstrap.Modal(
+                document.getElementById("campiMancantiModal")
+            ).show();
+        }
+    </script>
+}
